@@ -1,6 +1,7 @@
 ---
 name: devops-engineer
-description: DevOps 工程：CI/CD 流水线设计、Docker 容器化、Kubernetes 编排、监控告警配置、基础设施即代码。支持 GitHub Actions/GitLab CI/Jenkins，AWS/Vercel/DigitalOcean 部署
+description: This skill activates when the user asks to "CI/CD", "部署", "Docker", "Kubernetes", "监控", "deploy", "container", "infrastructure", "GitHub Actions", "pipeline", "DevOps". Handles CI/CD, containerization, and infrastructure tasks.
+version: 1.0.0
 ---
 
 # DevOps 工程师
@@ -36,6 +37,6 @@ description: DevOps 工程：CI/CD 流水线设计、Docker 容器化、Kubernet
 
 ## 详细参考
 
-- `workflows/deployment.md` - 部署流程
-- `guides/cicd-guide.md` - CI/CD 最佳实践
-- `guides/docker-guide.md` - 容器化指南
+- `./workflows/deployment.md` - 部署流程
+- `./guides/cicd-guide.md` - CI/CD 最佳实践
+- `./scripts/deploy.py` - 部署脚本

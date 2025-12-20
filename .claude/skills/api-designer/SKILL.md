@@ -1,6 +1,7 @@
 ---
 name: api-designer
-description: API 接口设计：RESTful/GraphQL/gRPC 架构设计、统一命名规范、请求响应格式、错误处理、OpenAPI 文档、版本管理、认证授权、限流策略
+description: This skill activates when the user asks to "设计API", "API接口", "RESTful设计", "GraphQL schema", "OpenAPI文档", "API versioning", "design API", "API documentation", "endpoint design". Handles API architecture and documentation tasks.
+version: 1.0.0
 ---
 
 # API 设计师
@@ -46,7 +47,4 @@ description: API 接口设计：RESTful/GraphQL/gRPC 架构设计、统一命名
 
 ## 详细参考
 
-- `workflows/api-design.md` - API 设计流程
-- `guides/rest-api-guide.md` - RESTful 设计规范
-- `guides/graphql-guide.md` - GraphQL Schema 设计
-- `guides/api-versioning.md` - 版本管理策略
+- `../developer/guides/api-design.md` - API 设计指南

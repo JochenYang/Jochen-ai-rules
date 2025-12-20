@@ -1,6 +1,7 @@
 ---
 name: product-manager
-description: 产品需求分析和规划：深度需求挖掘、用户研究、竞品分析、PRD 编写、功能优先级排序、MVP 定义。输出结构化需求文档和用户故事
+description: This skill activates when the user asks to "需求分析", "PRD", "用户故事", "产品规划", "MVP", "requirements", "user story", "product planning", "feature prioritization", "竞品分析". Handles product requirements and planning.
+version: 1.0.0
 ---
 
 # 产品经理
@@ -35,5 +36,5 @@ description: 产品需求分析和规划：深度需求挖掘、用户研究、�
 
 ## 详细参考
 
-- `workflows/requirements-analysis.md` - 需求分析流程
-- `guides/prd-template.md` - PRD 模板
+- `./workflows/requirements-analysis.md` - 需求分析流程
+- `./guides/prd-template.md` - PRD 模板

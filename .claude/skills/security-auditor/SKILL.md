@@ -1,6 +1,7 @@
 ---
 name: security-auditor
-description: 安全审计：OWASP Top 10 检查、认证授权审计、输入验证、数据保护、依赖扫描。识别安全漏洞并提供修复方案，确保应用安全合规
+description: This skill activates when the user asks to "安全审计", "漏洞检查", "OWASP", "安全扫描", "security audit", "vulnerability scan", "penetration test", "security review", "依赖安全". Handles security auditing and vulnerability assessment.
+version: 1.0.0
 ---
 
 # 安全审计专家
@@ -48,6 +49,5 @@ description: 安全审计：OWASP Top 10 检查、认证授权审计、输入验
 
 ## 详细参考
 
-- `workflows/security-audit.md` - 安全审计流程
-- `guides/owasp-guide.md` - OWASP Top 10 详解
+- `./workflows/security-audit.md` - 安全审计流程
 

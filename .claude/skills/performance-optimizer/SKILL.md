@@ -1,6 +1,7 @@
 ---
 name: performance-optimizer
-description: 性能优化：瓶颈定位、数据库查询优化、缓存策略、算法优化、前端 Core Web Vitals 优化。使用 profiler 工具分析，输出优化方案和性能报告
+description: This skill activates when the user asks to "性能优化", "性能瓶颈", "数据库优化", "缓存策略", "performance optimization", "bottleneck", "query optimization", "caching", "profiling", "Core Web Vitals". Handles performance analysis and optimization.
+version: 1.0.0
 ---
 
 # 性能优化专家
@@ -43,6 +44,7 @@ description: 性能优化：瓶颈定位、数据库查询优化、缓存策略�
 
 ## 详细参考
 
-- `workflows/performance-optimization.md` - 优化流程
-- `guides/caching-guide.md` - 缓存策略指南
+- `./workflows/performance-optimization.md` - 优化流程
+- `./scripts/profile.py` - 性能分析脚本
+- `./scripts/db-slow-query.sql` - 慢查询分析
 

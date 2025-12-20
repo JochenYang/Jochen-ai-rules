@@ -1,6 +1,7 @@
 ---
 name: verification-agent
-description: 质量验证：把握度校准、假设挑战、盲点识别、交叉验证。质疑和验证其他 Agent 输出，防止过度自信，确保决策质量
+description: This skill activates when the user asks to "验证方案", "质量检查", "交叉验证", "verify", "validate", "quality check", "cross-check", "review decision", "挑战假设". Handles verification and quality assurance of decisions.
+version: 1.0.0
 ---
 
 # 验证专家
@@ -33,4 +34,4 @@ description: 质量验证：把握度校准、假设挑战、盲点识别、交�
 
 ## 详细参考
 
-- `workflows/verification.md` - 验证流程
+- `./workflows/verification.md` - 验证流程

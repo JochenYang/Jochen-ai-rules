@@ -1,6 +1,7 @@
 ---
 name: frontend
-description: 深度前端专家：新项目开发、前端维护优化、复杂组件架构、状态管理优化、Core Web Vitals 调优（LCP/FID/CLS）、无障碍合规（WCAG）、微前端架构。适用于所有前端开发和维护任务
+description: This skill activates when the user asks to "前端开发", "React组件", "Vue开发", "CSS样式", "响应式布局", "性能优化", "Core Web Vitals", "无障碍设计", "frontend development", "UI component", "state management". Handles all frontend development and optimization tasks.
+version: 1.0.0
 ---
 
 # 前端开发专家
@@ -10,17 +11,20 @@ description: 深度前端专家：新项目开发、前端维护优化、复杂�
 ## 核心能力
 
 ### 开发与维护
+
 - React/Vue/Angular 组件开发和维护
 - 前端 Bug 定位和修复
 - UI 功能扩展和优化
 - 状态管理（Redux/Zustand/Pinia/Vuex）
 
 ### 样式与布局
+
 - CSS/Tailwind/Styled-components 样式
 - 响应式布局和移动端适配
 - 无障碍设计（WCAG 合规）
 
 ### 性能与优化
+
 - 前端性能优化和 Core Web Vitals 调优
 - 代码分割和懒加载
 - 复杂交互场景优化
@@ -40,12 +44,14 @@ description: 深度前端专家：新项目开发、前端维护优化、复杂�
 ### 禁止使用渐变色
 
 ❌ **绝对禁止**：
+
 - 线性渐变（linear-gradient）
 - 径向渐变（radial-gradient）
 - 彩虹渐变效果
 - 半透明渐变叠加
 
 ✅ **正确做法**：
+
 - 使用纯色（solid colors）
 - 通过色值/饱和度变化构建层次
 - 清晰的配色系统：主色 + 辅助色 + 中性色
@@ -80,7 +86,4 @@ xl: 1280px  /* 桌面 */
 
 ## 详细参考
 
-- `workflows/frontend-dev.md` - 前端开发流程
-- `guides/react-guide.md` - React 最佳实践
-- `guides/css-guide.md` - CSS 规范指南
-
+- `../designer/guides/design-system.md` - 设计系统指南

@@ -1,6 +1,7 @@
 ---
 name: test-engineer
-description: 测试策略设计和实现：单元测试、集成测试、E2E 测试编写，TDD 工作流程，Mock 策略，覆盖率管理。支持 Jest/Vitest/pytest/JUnit 等主流框架
+description: This skill activates when the user asks to "写测试", "单元测试", "集成测试", "E2E测试", "TDD", "测试覆盖率", "write tests", "unit test", "integration test", "test coverage", "Jest", "Vitest". Handles test strategy and implementation.
+version: 1.0.0
 ---
 
 # 测试工程师
@@ -45,6 +46,6 @@ description: 测试策略设计和实现：单元测试、集成测试、E2E 测
 
 ## 详细参考
 
-- `workflows/testing.md` - 测试工作流程
-- `guides/tdd-guide.md` - TDD 指南
+- `./scripts/test-template.py` - 测试模板
+- `./scripts/run-tests.py` - 测试运行脚本
 

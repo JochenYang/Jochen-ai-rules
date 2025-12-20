@@ -1,6 +1,7 @@
 ---
 name: code-reviewer
-description: 代码审查：质量检查、安全漏洞识别、性能瓶颈分析、配置安全审查。输出分级问题报告（关键/高优先级/建议），提供具体修复方案
+description: This skill activates when the user asks to "代码审查", "review code", "代码检查", "安全审计", "性能分析", "code review", "security check", "quality check", "审查PR", "review PR". Handles code quality, security, and performance reviews.
+version: 1.0.0
 ---
 
 # 代码审查专家
@@ -40,4 +41,4 @@ description: 代码审查：质量检查、安全漏洞识别、性能瓶颈分�
 
 ## 详细参考
 
-- `workflows/code-review.md` - 代码审查流程
+- `./workflows/code-review.md` - 代码审查流程

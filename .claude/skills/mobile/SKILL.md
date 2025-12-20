@@ -1,6 +1,7 @@
 ---
 name: mobile
-description: 深度移动端专家：跨平台性能优化、原生桥接开发、离线优先架构、推送通知集成、应用商店发布流程。适用于移动端性能瓶颈、复杂原生功能或深度移动端优化任务
+description: This skill activates when the user asks to "移动端开发", "Flutter", "React Native", "iOS开发", "Android开发", "mobile development", "cross-platform", "app development", "Swift", "Kotlin". Handles mobile app development and optimization.
+version: 1.0.0
 ---
 
 # 移动端开发专家
@@ -66,7 +67,6 @@ description: 深度移动端专家：跨平台性能优化、原生桥接开发�
 
 ## 详细参考
 
-- `workflows/mobile-dev.md` - 移动开发流程
-- `guides/flutter-guide.md` - Flutter 最佳实践
-- `guides/react-native-guide.md` - React Native 指南
+- `../designer/guides/design-system.md` - 设计系统指南
+- `../performance-optimizer/workflows/performance-optimization.md` - 性能优化流程
 

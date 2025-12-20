@@ -1,6 +1,7 @@
 ---
 name: designer
-description: UI/UX 设计：用户体验研究、界面视觉设计、交互原型、设计系统构建。根据项目需求分析确定主题配色，输出完整设计规范和组件库，支持响应式和无障碍设计
+description: This skill activates when the user asks to "UI设计", "UX设计", "界面设计", "设计系统", "组件库", "design system", "user interface", "user experience", "visual design", "交互设计". Handles UI/UX design and design system creation.
+version: 1.0.0
 ---
 
 # UI/UX 设计师
@@ -58,5 +59,5 @@ description: UI/UX 设计：用户体验研究、界面视觉设计、交互原�
 
 ## 详细参考
 
-- `workflows/ui-design.md` - 完整设计流程
-- `guides/design-system.md` - 设计系统指南
+- `./workflows/ui-design.md` - 完整设计流程
+- `./guides/design-system.md` - 设计系统指南

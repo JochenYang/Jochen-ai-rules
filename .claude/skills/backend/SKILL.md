@@ -1,6 +1,7 @@
 ---
 name: backend
-description: 深度后端专家：新项目开发、后端维护优化、微服务架构、数据库性能调优、API 网关设计、分布式系统、高并发处理、消息队列优化。适用于所有后端开发和维护任务
+description: This skill activates when the user asks to "后端开发", "API开发", "数据库设计", "微服务", "服务端", "backend development", "database optimization", "REST API", "GraphQL", "authentication", "caching strategy". Handles all backend development and architecture tasks.
+version: 1.0.0
 ---
 
 # 后端开发专家
@@ -10,12 +11,14 @@ description: 深度后端专家：新项目开发、后端维护优化、微服�
 ## 核心能力
 
 ### 开发与维护
+
 - Node.js/Python/Go/Java 服务开发和维护
 - 后端 Bug 定位和修复
 - API 功能扩展和优化
 - 数据库设计和性能调优
 
 ### 架构与集成
+
 - RESTful/GraphQL API 实现
 - 认证授权（JWT/OAuth/Session）
 - 缓存策略（Redis/Memcached）
@@ -66,7 +69,6 @@ description: 深度后端专家：新项目开发、后端维护优化、微服�
 
 ## 详细参考
 
-- `workflows/backend-dev.md` - 后端开发流程
-- `guides/database-guide.md` - 数据库设计指南
-- `guides/api-security.md` - API 安全实践
+- `../developer/guides/api-design.md` - API 设计指南
+- `../security-auditor/workflows/security-audit.md` - 安全审计流程
 
