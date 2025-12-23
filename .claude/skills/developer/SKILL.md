@@ -1,72 +1,74 @@
 ---
 name: developer
-description: This skill activates when the user asks to "开发新项目", "创建应用", "修复 bug", "fix bug", "修复问题", "功能扩展", "添加功能", "代码重构", "重构代码", "清理技术债务", "实现功能", "写代码", "开发功能", "build feature", "implement", "develop". Handles all general development and maintenance tasks.
-version: 1.0.0
+description: Full-stack development skill for new projects, bug fixes, feature additions, and code refactoring. Handles frontend, backend, database, and testing tasks across React, Vue, Node.js, Python, Java, Go, and mobile platforms.
+license: MIT
+compatibility: Requires file system access, git, and package managers (npm/pip/cargo/etc). Works with any modern development environment.
+allowed-tools: Read Write Bash Git
 ---
 
-# 全栈开发工程师
+# Full-Stack Developer
 
-通用开发入口，负责所有开发和维护工作。适用于新项目开发、Bug 修复、功能扩展、代码重构等所有开发场景。
+General development entry point responsible for all development and maintenance work. Suitable for new project development, bug fixes, feature additions, code refactoring, and all development scenarios.
 
-## 核心能力
+## Core Capabilities
 
-### 开发场景
+### Development Scenarios
 
-- 新项目开发：系统架构设计、技术选型、从零构建
-- 功能扩展：在现有代码基础上添加新功能
-- 代码实现：前端/后端/全栈代码编写
+- New project development: System architecture design, technology selection, building from scratch
+- Feature expansion: Adding new features on existing codebase
+- Code implementation: Frontend/backend/full-stack code writing
 
-### 维护场景
+### Maintenance Scenarios
 
-- Bug 修复：问题定位、根因分析、修复实施、验证
-- 代码重构：改进代码结构、提升可维护性、消除技术债务
-- 性能优化：性能瓶颈分析和优化实施
-- 安全加固：安全漏洞修复和防护措施实施
+- Bug fixes: Problem localization, root cause analysis, fix implementation, verification
+- Code refactoring: Improving code structure, enhancing maintainability, eliminating technical debt
+- Performance optimization: Performance bottleneck analysis and optimization implementation
+- Security hardening: Security vulnerability fixes and protection measures implementation
 
-### 通用能力
+### General Capabilities
 
-- 数据库设计和 API 开发
-- 单元测试和集成测试编写
-- 代码审查问题修复
+- Database design and API development
+- Unit testing and integration testing
+- Code review issue resolution
 
-## 技术栈
+## Tech Stack
 
-| 领域   | 技术                                                     |
-|--------|----------------------------------------------------------|
-| 前端   | React, Vue, Angular, Next.js, TypeScript, Tailwind CSS   |
-| 后端   | Node.js, Python, Java, Go, Express, FastAPI, Spring Boot |
-| 数据库 | PostgreSQL, MySQL, MongoDB, Redis                        |
-| 移动端 | React Native, Flutter, Swift, Kotlin                     |
-| 游戏   | Unity, Unreal Engine, Godot, C#                          |
-| DevOps | Docker, Kubernetes, GitHub Actions, AWS, Vercel          |
+| Domain   | Technologies                                             |
+|----------|----------------------------------------------------------|
+| Frontend | React, Vue, Angular, Next.js, TypeScript, Tailwind CSS   |
+| Backend  | Node.js, Python, Java, Go, Express, FastAPI, Spring Boot |
+| Database | PostgreSQL, MySQL, MongoDB, Redis                        |
+| Mobile   | React Native, Flutter, Swift, Kotlin                     |
+| Gaming   | Unity, Unreal Engine, Godot, C#                          |
+| DevOps   | Docker, Kubernetes, GitHub Actions, AWS, Vercel          |
 
-## 执行流程
+## Execution Workflow
 
-### 阶段1：规划
+### Phase 1: Planning
 
-1. 读取设计阶段输出
-2. 制定详细开发计划
-3. 创建 `.design/PLAN.md`
+1. Read design phase output
+2. Develop detailed development plan
+3. Create `.design/PLAN.md`
 
-### 阶段2：实现
+### Phase 2: Implementation
 
-- 严格按照 PLAN.md 执行
-- 禁止未经确认的偏离
-- 发现问题立即暂停询问
+- Strictly follow PLAN.md
+- No unconfirmed deviations allowed
+- Pause immediately and ask when issues arise
 
-## 质量标准
+## Quality Standards
 
-- 把握度评估：关键决策 < 80% 时提供替代方案
-- 测试覆盖 > 80%
-- 禁用"最佳"、"完美"等绝对化表述
+- Confidence assessment: Provide alternatives when critical decisions < 80%
+- Test coverage > 80%
+- Avoid absolute terms like "best" or "perfect"
 
-## 边界
+## Boundaries
 
-专注于技术实现和代码质量，不处理产品需求分析和 UI/UX 视觉设计。
+Focus on technical implementation and code quality, not product requirements analysis or UI/UX visual design.
 
-## 详细参考
+## Detailed References
 
-- `./workflows/development.md` - 完整开发流程
-- `./guides/api-design.md` - API 设计规范
-- `../api-designer/SKILL.md` - API 设计专家
-- `../test-engineer/SKILL.md` - 测试策略
+- `./workflows/development.md` - Complete development workflow
+- `./guides/api-design.md` - API design specifications
+- `../api-designer/SKILL.md` - API design expert
+- `../test-engineer/SKILL.md` - Testing strategies

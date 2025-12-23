@@ -1,114 +1,115 @@
 ---
 name: color-system
-description: This skill activates when the user asks to "配色方案", "色彩系统", "主题颜色", "color palette", "color system", "theme colors", "brand colors", "对比度", "WCAG". Handles color system design and accessibility.
-version: 1.0.0
+description: Color system design and accessibility compliance. Creates brand color palettes, semantic color schemes, dark/light theme variants, and ensures WCAG 2.1 AA contrast ratios (4.5:1).
+license: MIT
+compatibility: No special requirements. Outputs color specifications and CSS/Tailwind variable definitions.
+allowed-tools: Read Write
 ---
 
-# 配色系统设计师
+# Color System Designer
 
-根据项目需求设计专业的配色系统，输出完整的色彩规范和使用指南。
+Design professional color systems based on project requirements, delivering complete color specifications and usage guidelines.
 
-## 核心能力
+## Core Capabilities
 
-- 品牌色彩分析和提取
-- 主题配色方案设计
-- 色彩层次和对比度优化
-- 无障碍色彩设计（WCAG 2.1）
-- 暗色/亮色主题适配
+- Brand color analysis and extraction
+- Theme color scheme design
+- Color hierarchy and contrast optimization
+- Accessible color design (WCAG 2.1)
+- Dark/light theme adaptation
 
-## 🚫 绝对禁止：渐变色
+## 🚫 Absolute Prohibition: Gradients
 
-### 禁止使用的效果
+### Prohibited Effects
 
-❌ **线性渐变**：`linear-gradient()`
-❌ **径向渐变**：`radial-gradient()`
-❌ **彩虹渐变**：多色过渡效果
-❌ **半透明渐变叠加**：渐变遮罩
-❌ **紫蓝渐变**：典型 AI 风格渐变
+❌ **Linear gradients**: `linear-gradient()`
+❌ **Radial gradients**: `radial-gradient()`
+❌ **Rainbow gradients**: Multi-color transitions
+❌ **Semi-transparent gradient overlays**: Gradient masks
+❌ **Purple-blue gradients**: Typical AI-style gradients
 
-### 正确的设计方法
+### Correct Design Approach
 
-✅ **纯色设计**：使用 solid colors
-✅ **色值层次**：通过明度/饱和度变化构建层次
-✅ **清晰系统**：主色 + 辅助色 + 中性色
-✅ **对比度达标**：WCAG 2.1 AA（4.5:1）
+✅ **Solid colors**: Use solid colors only
+✅ **Color hierarchy**: Build hierarchy through lightness/saturation variations
+✅ **Clear system**: Primary + secondary + neutral colors
+✅ **Contrast compliance**: WCAG 2.1 AA (4.5:1)
 
-## 配色确定流程
+## Color Definition Workflow
 
-### 1. 需求分析
+### 1. Requirements Analysis
 
-- 项目类型（企业/消费/工具/娱乐）
-- 目标用户群体
-- 品牌调性（专业/活力/温暖/科技）
-- 竞品配色分析
+- Project type (enterprise/consumer/tool/entertainment)
+- Target audience
+- Brand tone (professional/energetic/warm/tech)
+- Competitor color analysis
 
-### 2. 主色确定
+### 2. Primary Color Selection
 
-| 调性     | 推荐色相 | 示例    |
-|----------|----------|---------|
-| 专业信任 | 蓝色系   | #2563EB |
-| 活力创新 | 橙色系   | #EA580C |
-| 自然健康 | 绿色系   | #16A34A |
-| 温暖亲和 | 暖色系   | #DC2626 |
-| 高端奢华 | 深色系   | #1F2937 |
+| Tone                 | Recommended Hue | Example |
+|----------------------|-----------------|---------|
+| Professional Trust   | Blue            | #2563EB |
+| Energetic Innovation | Orange          | #EA580C |
+| Natural Health       | Green           | #16A34A |
+| Warm Affinity        | Warm tones      | #DC2626 |
+| Premium Luxury       | Dark tones      | #1F2937 |
 
-### 3. 色彩系统输出
+### 3. Color System Output
 
-```
-主色（Primary）
-├── primary-50   # 最浅
+```text
+Primary
+├── primary-50   # Lightest
 ├── primary-100
 ├── primary-200
 ├── primary-300
 ├── primary-400
-├── primary-500  # 基准色
+├── primary-500  # Base color
 ├── primary-600
 ├── primary-700
 ├── primary-800
-└── primary-900  # 最深
+└── primary-900  # Darkest
 
-辅助色（Secondary）
+Secondary
 ├── secondary-50 ~ secondary-900
 
-中性色（Neutral）
+Neutral
 ├── gray-50 ~ gray-900
 
-语义色（Semantic）
+Semantic
 ├── success: #16A34A
 ├── warning: #CA8A04
 ├── error: #DC2626
 └── info: #2563EB
 ```
 
-## 对比度标准
+## Contrast Standards
 
-| 用途      | 最小对比度 | 推荐对比度 |
-|-----------|------------|------------|
-| 正文文本  | 4.5:1      | 7:1        |
-| 大标题    | 3:1        | 4.5:1      |
-| 图标/装饰 | 3:1        | 4.5:1      |
+| Use Case         | Minimum Contrast | Recommended Contrast |
+|------------------|------------------|----------------------|
+| Body Text        | 4.5:1            | 7:1                  |
+| Large Headings   | 3:1              | 4.5:1                |
+| Icons/Decorative | 3:1              | 4.5:1                |
 
-## 暗色主题适配
+## Dark Theme Adaptation
 
-- 背景：gray-900 (#111827)
-- 表面：gray-800 (#1F2937)
-- 文本：gray-100 (#F3F4F6)
-- 主色：适当提高亮度
+- Background: gray-900 (#111827)
+- Surface: gray-800 (#1F2937)
+- Text: gray-100 (#F3F4F6)
+- Primary: Increase brightness appropriately
 
-## 输出规范
+## Output Specifications
 
-每个配色方案必须包含：
+Each color scheme must include:
 
-1. **色彩变量表**：完整的色值定义
-2. **使用场景说明**：每个颜色的用途
-3. **对比度验证**：关键组合的对比度值
-4. **代码实现**：CSS/Tailwind 变量定义
+1. **Color variable table**: Complete color value definitions
+2. **Usage scenarios**: Purpose of each color
+3. **Contrast verification**: Contrast ratios for key combinations
+4. **Code implementation**: CSS/Tailwind variable definitions
 
-## 边界
+## Boundaries
 
-专注于配色系统设计，不处理 UI 布局和交互设计。
+Focus on color system design only. Does not handle UI layout and interaction design.
 
-## 详细参考
+## Detailed References
 
-- `../designer/guides/design-system.md` - 设计系统指南
-
+- `../designer/guides/design-system.md` - Design system guide

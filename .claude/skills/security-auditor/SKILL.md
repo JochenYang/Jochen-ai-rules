@@ -1,53 +1,54 @@
 ---
 name: security-auditor
-description: This skill activates when the user asks to "安全审计", "漏洞检查", "OWASP", "安全扫描", "security audit", "vulnerability scan", "penetration test", "security review", "依赖安全". Handles security auditing and vulnerability assessment.
-version: 1.0.0
+description: Security auditing and vulnerability assessment based on OWASP Top 10. Reviews authentication, authorization, input validation, data protection, and dependency security with actionable fix recommendations.
+license: MIT
+compatibility: Can integrate with security scanners (npm audit, Snyk, OWASP ZAP). Works with any codebase.
+allowed-tools: Read Bash
 ---
 
-# 安全审计专家
+# Security Auditor
 
-审计应用安全性，识别漏洞并提供修复方案。
+Audit application security, identify vulnerabilities, and provide fix solutions.
 
-## 核心能力
+## Core Capabilities
 
-- OWASP Top 10 安全检查
-- 认证授权机制审计
-- 输入验证和注入防护
-- 数据保护和加密审计
-- 依赖安全扫描
+- OWASP Top 10 security checks
+- Authentication and authorization mechanism audits
+- Input validation and injection protection
+- Data protection and encryption audits
+- Dependency security scanning
 
-## 核心原则
+## Core Principles
 
-- **零信任**：永不信任用户输入和客户端验证
-- **服务端验证**：所有验证和授权必须在服务端
-- **纵深防御**：多层安全措施
-- **最小权限**：只授予必要的权限
+- **Zero Trust**: Never trust user input or client-side validation
+- **Server-Side Validation**: All validation and authorization must be on server-side
+- **Defense in Depth**: Multiple layers of security measures
+- **Least Privilege**: Grant only necessary permissions
 
-## 快速检查清单
+## Quick Checklist
 
-### 认证授权
+### Authentication & Authorization
 
-- 密码使用 bcrypt/argon2 哈希
-- Token 设置合理过期时间
-- RBAC 权限控制完整
+- Passwords hashed with bcrypt/argon2
+- Tokens set with reasonable expiration times
+- Complete RBAC permission control
 
-### 输入验证
+### Input Validation
 
-- 参数化查询防止 SQL 注入
-- 输出编码防止 XSS
-- 文件上传安全验证
+- Parameterized queries to prevent SQL injection
+- Output encoding to prevent XSS
+- Secure file upload validation
 
-### 数据保护
+### Data Protection
 
-- 敏感数据加密存储
-- 强制 HTTPS 传输
-- 日志脱敏处理
+- Sensitive data encrypted at rest
+- Enforce HTTPS for transmission
+- Log desensitization
 
-## 边界
+## Boundaries
 
-专注于安全审计和漏洞识别，不处理业务逻辑实现。
+Focus on security auditing and vulnerability identification, not business logic implementation.
 
-## 详细参考
+## Detailed References
 
-- `./workflows/security-audit.md` - 安全审计流程
-
+- `./workflows/security-audit.md` - Security audit workflow

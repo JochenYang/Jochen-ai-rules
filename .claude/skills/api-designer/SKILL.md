@@ -1,50 +1,52 @@
 ---
 name: api-designer
-description: This skill activates when the user asks to "设计API", "API接口", "RESTful设计", "GraphQL schema", "OpenAPI文档", "API versioning", "design API", "API documentation", "endpoint design". Handles API architecture and documentation tasks.
-version: 1.0.0
+description: API architecture design and documentation for RESTful, GraphQL, and gRPC services. Creates OpenAPI specifications, defines versioning strategies, and establishes authentication/authorization patterns.
+license: MIT
+compatibility: No special requirements. Outputs OpenAPI/Swagger documentation and design specifications.
+allowed-tools: Read Write
 ---
 
-# API 设计师
+# API Designer
 
-设计高质量的 API 接口，输出规范的接口文档和设计规范。
+Design high-quality API interfaces and output standardized interface documentation and design specifications.
 
-## 核心能力
+## Core Capabilities
 
-- RESTful/GraphQL/gRPC 架构设计
-- 统一命名规范和错误处理
-- OpenAPI/Swagger 文档生成
-- API 版本管理和向后兼容
-- 认证授权和限流策略
+- RESTful/GraphQL/gRPC architecture design
+- Unified naming conventions and error handling
+- OpenAPI/Swagger documentation generation
+- API versioning and backward compatibility
+- Authentication, authorization, and rate limiting strategies
 
-## 快速参考
+## Quick Reference
 
-### HTTP 方法语义
+### HTTP Method Semantics
 
-| 方法   | 用途     | 幂等性 |
-|--------|----------|--------|
-| GET    | 读取资源 | ✅      |
-| POST   | 创建资源 | ❌      |
-| PUT    | 完整更新 | ✅      |
-| PATCH  | 部分更新 | ❌      |
-| DELETE | 删除资源 | ✅      |
+| Method | Purpose         | Idempotent |
+|--------|-----------------|------------|
+| GET    | Read resource   | ✅          |
+| POST   | Create resource | ❌          |
+| PUT    | Full update     | ✅          |
+| PATCH  | Partial update  | ❌          |
+| DELETE | Delete resource | ✅          |
 
-### 常用状态码
+### Common Status Codes
 
-- `200` 成功 / `201` 创建成功 / `204` 无内容
-- `400` 参数错误 / `401` 未认证 / `403` 无权限 / `404` 不存在
-- `500` 服务器错误
+- `200` Success / `201` Created / `204` No Content
+- `400` Bad Request / `401` Unauthorized / `403` Forbidden / `404` Not Found
+- `500` Server Error
 
-## 设计原则
+## Design Principles
 
-1. **资源导向**：URL 使用名词复数，动作用 HTTP 方法表达
-2. **统一格式**：请求响应格式一致，错误信息结构化
-3. **版本管理**：URL 或 Header 版本控制，向后兼容
-4. **安全优先**：认证授权、输入验证、限流保护
+1. **Resource-Oriented**: Use plural nouns in URLs, express actions with HTTP methods
+2. **Unified Format**: Consistent request/response format, structured error messages
+3. **Version Management**: URL or Header version control, backward compatibility
+4. **Security First**: Authentication, authorization, input validation, rate limiting
 
-## 边界
+## Boundaries
 
-专注于 API 设计和文档规范，不处理具体业务逻辑实现。
+Focus on API design and documentation standards, not specific business logic implementation.
 
-## 详细参考
+## Detailed References
 
-- `../developer/guides/api-design.md` - API 设计指南
+- `../developer/guides/api-design.md` - API design guide

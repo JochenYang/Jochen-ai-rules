@@ -1,42 +1,44 @@
 ---
 name: devops-engineer
-description: This skill activates when the user asks to "CI/CD", "部署", "Docker", "Kubernetes", "监控", "deploy", "container", "infrastructure", "GitHub Actions", "pipeline", "DevOps". Handles CI/CD, containerization, and infrastructure tasks.
-version: 1.0.0
+description: CI/CD pipeline design, containerization, and infrastructure management. Handles Docker, Kubernetes, monitoring setup (Prometheus/Grafana), and infrastructure-as-code (Terraform/Pulumi).
+license: MIT
+compatibility: Requires Docker, kubectl, and cloud provider CLI tools (AWS/GCP/Azure). Works with GitHub Actions, GitLab CI, or Jenkins.
+allowed-tools: Read Write Bash
 ---
 
-# DevOps 工程师
+# DevOps Engineer
 
-设计和实施 CI/CD 流程，管理容器化部署和监控告警系统。
+Design and implement CI/CD processes, manage containerized deployments and monitoring/alerting systems.
 
-## 核心能力
+## Core Capabilities
 
-- CI/CD 流水线设计（GitHub Actions/GitLab CI/Jenkins）
-- Docker 镜像构建和优化
-- Kubernetes 部署配置
-- 监控告警系统搭建（Prometheus/Grafana）
-- 基础设施即代码（Terraform/Pulumi）
+- CI/CD pipeline design (GitHub Actions/GitLab CI/Jenkins)
+- Docker image building and optimization
+- Kubernetes deployment configuration
+- Monitoring and alerting system setup (Prometheus/Grafana)
+- Infrastructure as Code (Terraform/Pulumi)
 
-## 部署策略
+## Deployment Strategies
 
-| 策略       | 原理                    | 适用场景         |
-|------------|-------------------------|------------------|
-| 蓝绿部署   | 两套环境，流量一次性切换 | 稳定的大版本发布 |
-| 金丝雀发布 | 逐步增加新版本流量      | 高风险变更       |
-| 滚动更新   | 逐个替换实例            | Kubernetes 默认  |
+| Strategy       | Principle                                | Use Case              |
+|----------------|------------------------------------------|-----------------------|
+| Blue-Green     | Two environments, instant traffic switch | Stable major releases |
+| Canary Release | Gradually increase new version traffic   | High-risk changes     |
+| Rolling Update | Replace instances one by one             | Kubernetes default    |
 
-## 监控指标（Golden Signals）
+## Monitoring Metrics (Golden Signals)
 
-- **Latency**：响应时间（P50、P95、P99）
-- **Traffic**：每秒请求数（RPS）
-- **Errors**：错误率
-- **Saturation**：资源使用率
+- **Latency**: Response time (P50, P95, P99)
+- **Traffic**: Requests per second (RPS)
+- **Errors**: Error rate
+- **Saturation**: Resource utilization
 
-## 边界
+## Boundaries
 
-专注于 CI/CD 和基础设施，不处理业务代码开发。
+Focus on CI/CD and infrastructure, not business code development.
 
-## 详细参考
+## Detailed References
 
-- `./workflows/deployment.md` - 部署流程
-- `./guides/cicd-guide.md` - CI/CD 最佳实践
-- `./scripts/deploy.py` - 部署脚本
+- `./workflows/deployment.md` - Deployment workflow
+- `./guides/cicd-guide.md` - CI/CD best practices
+- `./scripts/deploy.py` - Deployment script

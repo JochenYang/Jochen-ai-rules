@@ -1,63 +1,65 @@
 ---
 name: designer
-description: This skill activates when the user asks to "UI设计", "UX设计", "界面设计", "设计系统", "组件库", "design system", "user interface", "user experience", "visual design", "交互设计". Handles UI/UX design and design system creation.
-version: 1.0.0
+description: UI/UX design and design system creation. Handles user research, information architecture, visual design, component libraries, responsive layouts, and accessibility compliance (WCAG 2.1).
+license: MIT
+compatibility: Outputs design specifications, color systems, and component documentation. No special tools required.
+allowed-tools: Read Write
 ---
 
-# UI/UX 设计师
+# UI/UX Designer
 
-创建符合现代审美的用户界面设计，输出完整设计系统和开发规范。
+Create user interfaces that meet modern aesthetics, output complete design systems and development specifications.
 
-## 核心能力
+## Core Capabilities
 
-- 用户研究、信息架构、交互设计
-- 视觉设计、设计系统、组件库
-- 响应式设计、无障碍设计
-- 设计规范文档输出
+- User research, information architecture, interaction design
+- Visual design, design systems, component libraries
+- Responsive design, accessibility design
+- Design specification documentation output
 
-##  配色规范（强制）
+## Color Guidelines (Mandatory)
 
-### 禁止使用
+### Prohibited
 
--  **禁止渐变色背景**（包括线性渐变、径向渐变）
--  禁止紫色/蓝紫渐变（典型 AI 风格）
--  禁止彩虹色/多色渐变
--  禁止半透明渐变叠加
+- **No gradient backgrounds** (including linear and radial gradients)
+- No purple/blue-purple gradients (typical AI style)
+- No rainbow/multi-color gradients
+- No semi-transparent gradient overlays
 
-### 必须遵循
+### Required
 
--  **使用纯色（Solid Colors）**
--  通过色彩明度/饱和度变化建立层次
--  主色 + 辅助色 + 中性色的清晰体系
--  确保 WCAG 2.1 AA 级对比度（4.5:1）
+- **Use solid colors only**
+- Build hierarchy through color brightness/saturation variations
+- Clear system of primary + secondary + neutral colors
+- Ensure WCAG 2.1 AA level contrast ratio (4.5:1)
 
-### 配色确定流程
+### Color Selection Process
 
-1. **分析项目需求**：行业特征、目标用户、使用场景、品牌调性
-2. **确定主色调**：基于分析结果选择符合项目气质的主色
-3. **构建色彩体系**：主色  辅助色  功能色  中性色
-4. **验证可访问性**：检查对比度、色盲友好性
+1. **Analyze project requirements**: Industry characteristics, target users, usage scenarios, brand tone
+2. **Determine primary color**: Select primary color that matches project temperament based on analysis
+3. **Build color system**: Primary → Secondary → Functional → Neutral colors
+4. **Verify accessibility**: Check contrast ratios, color-blind friendliness
 
-## 设计输出
+## Design Output
 
-完成设计后输出到 `.design/` 目录：
+Output to `.design/` directory after design completion:
 
-- `design-system.md` - 颜色/字体/间距/组件规范
-- `ui-spec.md` - 页面设计和交互说明
-- `components/` - 组件设计详情
+- `design-system.md` - Color/font/spacing/component specifications
+- `ui-spec.md` - Page design and interaction descriptions
+- `components/` - Component design details
 
-## 设计原则
+## Design Principles
 
-1. **用户中心**：易用性优先、一致性保证、及时反馈
-2. **视觉层次**：通过色彩明度、字重、间距建立层次（非渐变）
-3. **品牌一致**：配色和风格与项目定位匹配
-4. **开发友好**：输出可直接实现的设计规范
+1. **User-Centered**: Usability first, consistency guarantee, timely feedback
+2. **Visual Hierarchy**: Build hierarchy through color brightness, font weight, spacing (not gradients)
+3. **Brand Consistency**: Colors and style match project positioning
+4. **Developer-Friendly**: Output design specifications that can be directly implemented
 
-## 边界
+## Boundaries
 
-专注于 UI/UX 设计和设计系统，不处理产品需求分析和代码实现。
+Focus on UI/UX design and design systems, not product requirements analysis or code implementation.
 
-## 详细参考
+## Detailed References
 
-- `./workflows/ui-design.md` - 完整设计流程
-- `./guides/design-system.md` - 设计系统指南
+- `./workflows/ui-design.md` - Complete design workflow
+- `./guides/design-system.md` - Design system guide

@@ -1,47 +1,50 @@
 ---
 name: artifacts-builder
-description: 快速构建 React 交互式原型和单文件 HTML demo，使用 shadcn/ui 组件库一键打包，适用于产品演示、设计验证、交互测试。支持 40+ 组件可直接在浏览器预览和分享
+description: Rapid prototyping tool for React interactive demos and single-file HTML artifacts. Uses shadcn/ui component library with 40+ components. Perfect for product demos, design validation, and shareable browser previews.
+license: MIT
+compatibility: Requires Node.js 18+, npm/yarn. Uses React 18, Vite, Tailwind CSS, and Parcel for bundling.
+allowed-tools: Read Write Bash
 ---
 
-# 前端原型构建工具
+# Frontend Prototype Builder
 
-快速构建可分享的交互式原型，用于演示和产品验证。
+Rapidly build shareable interactive prototypes for demos and product validation.
 
-## 核心能力
+## Core Capabilities
 
-- React + TypeScript 交互式原型
-- 40+ shadcn/ui 组件即用
-- 单文件 HTML 打包分享
-- 浏览器直接预览
+- React + TypeScript interactive prototypes
+- 40+ shadcn/ui components ready to use
+- Single-file HTML bundling for sharing
+- Direct browser preview
 
-## 技术栈
+## Tech Stack
 
-- **框架**：React 18 + TypeScript + Vite
-- **样式**：Tailwind CSS + shadcn/ui
-- **打包**：Parcel + html-inline
+- **Framework**: React 18 + TypeScript + Vite
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Bundling**: Parcel + html-inline
 
-## 可执行工具
+## Executable Tools
 
-以下脚本可直接运行，无需读取源码：
+The following scripts can be run directly without reading source code:
 
-- `scripts/init-artifact.sh` - 初始化项目结构
-- `scripts/bundle-artifact.sh` - 打包成单文件 HTML
+- `scripts/init-artifact.sh` - Initialize project structure
+- `scripts/bundle-artifact.sh` - Bundle into single-file HTML
 
-## 设计规范
+## Design Guidelines
 
- **禁止"AI 风格"设计**：
+**No "AI Style" Design**:
 
--  禁止使用渐变色背景
--  避免过度居中布局
--  避免纯白大圆角
--  避免默认 Inter 字体
--  使用纯色和明确的色彩层次
+- No gradient backgrounds
+- Avoid excessive center alignment
+- Avoid pure white large rounded corners
+- Avoid default Inter font
+- Use solid colors and clear color hierarchy
 
-## 边界
+## Boundaries
 
-专注于交互式原型构建，不用于生产环境代码。完整应用请使用 developer skill。
+Focus on interactive prototype building, not production code. For complete applications, use developer skill.
 
-## 详细参考
+## Detailed References
 
-- `workflows/artifact-building.md` - 完整构建流程
-- `guides/quick-start.md` - 快速上手指南
+- `workflows/artifact-building.md` - Complete building workflow
+- `guides/quick-start.md` - Quick start guide

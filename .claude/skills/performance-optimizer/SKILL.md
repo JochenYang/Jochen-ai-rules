@@ -1,50 +1,51 @@
 ---
 name: performance-optimizer
-description: This skill activates when the user asks to "性能优化", "性能瓶颈", "数据库优化", "缓存策略", "performance optimization", "bottleneck", "query optimization", "caching", "profiling", "Core Web Vitals". Handles performance analysis and optimization.
-version: 1.0.0
+description: Performance bottleneck identification and optimization. Handles database query optimization, caching strategies, algorithm improvements, and Core Web Vitals tuning (LCP/FID/CLS).
+license: MIT
+compatibility: Requires profiling tools and database access. Works with any tech stack.
+allowed-tools: Read Write Bash
 ---
 
-# 性能优化专家
+# Performance Optimizer
 
-定位性能瓶颈，设计优化方案，提升应用响应速度和吞吐量。
+Identify performance bottlenecks, design optimization solutions, improve application response speed and throughput.
 
-## 核心能力
+## Core Capabilities
 
-- 性能瓶颈定位（CPU/内存/I/O/网络）
-- 数据库查询优化（索引、N+1、连接池）
-- 缓存策略设计（多级缓存）
-- 前端 Core Web Vitals 优化
-- 算法和数据结构优化
+- Performance bottleneck identification (CPU/Memory/I/O/Network)
+- Database query optimization (indexes, N+1, connection pools)
+- Caching strategy design (multi-level caching)
+- Frontend Core Web Vitals optimization
+- Algorithm and data structure optimization
 
-## 核心原则
+## Core Principles
 
-- **测量优先**：永远不要假设性能问题在哪里
-- **真实数据**：基于实际负载进行分析
-- **用户体验优先**：专注于直接影响用户的优化
-- **避免过早优化**：先保证正确性，再优化性能
+- **Measure First**: Never assume where performance issues are
+- **Real Data**: Analyze based on actual load
+- **User Experience First**: Focus on optimizations that directly impact users
+- **Avoid Premature Optimization**: Ensure correctness first, then optimize performance
 
-## 优化优先级
+## Optimization Priority
 
-| 影响程度 | 实现难度 | 优先级       |
-|----------|----------|--------------|
-| 高影响   | 低难度   | P0（立即优化） |
-| 高影响   | 高难度   | P1（重要）     |
-| 低影响   | 低难度   | P2（可选）     |
-| 低影响   | 高难度   | P3（忽略）     |
+| Impact | Implementation Difficulty | Priority       |
+|--------|---------------------------|----------------|
+| High   | Low                       | P0 (Immediate) |
+| High   | High                      | P1 (Important) |
+| Low    | Low                       | P2 (Optional)  |
+| Low    | High                      | P3 (Ignore)    |
 
-## Core Web Vitals 目标
+## Core Web Vitals Targets
 
-- **LCP** < 2.5s（最大内容绘制）
-- **FID** < 100ms（首次输入延迟）
-- **CLS** < 0.1（累积布局偏移）
+- **LCP** < 2.5s (Largest Contentful Paint)
+- **FID** < 100ms (First Input Delay)
+- **CLS** < 0.1 (Cumulative Layout Shift)
 
-## 边界
+## Boundaries
 
-专注于性能分析和优化方案设计，不处理业务逻辑实现。
+Focus on performance analysis and optimization solution design, not business logic implementation.
 
-## 详细参考
+## Detailed References
 
-- `./workflows/performance-optimization.md` - 优化流程
-- `./scripts/profile.py` - 性能分析脚本
-- `./scripts/db-slow-query.sql` - 慢查询分析
-
+- `./workflows/performance-optimization.md` - Optimization workflow
+- `./scripts/profile.py` - Performance profiling script
+- `./scripts/db-slow-query.sql` - Slow query analysis

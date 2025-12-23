@@ -1,74 +1,75 @@
 ---
 name: backend
-description: This skill activates when the user asks to "后端开发", "API开发", "数据库设计", "微服务", "服务端", "backend development", "database optimization", "REST API", "GraphQL", "authentication", "caching strategy". Handles all backend development and architecture tasks.
-version: 1.0.0
+description: Backend development for APIs, databases, and microservices. Handles RESTful/GraphQL API design, authentication, caching strategies, database optimization, and distributed systems architecture.
+license: MIT
+compatibility: Requires database access (PostgreSQL/MySQL/MongoDB), Redis for caching. Works with Node.js, Python, Go, or Java runtimes.
+allowed-tools: Read Write Bash
 ---
 
-# 后端开发专家
+# Backend Development Expert
 
-深度后端开发和维护，专注于高性能和复杂架构。适用于后端新项目开发、性能瓶颈优化、Bug 修复、分布式系统设计等所有后端场景。
+Deep backend development and maintenance, focusing on high performance and complex architecture. Suitable for backend new project development, performance bottleneck optimization, bug fixes, distributed system design, and all backend scenarios.
 
-## 核心能力
+## Core Capabilities
 
-### 开发与维护
+### Development & Maintenance
 
-- Node.js/Python/Go/Java 服务开发和维护
-- 后端 Bug 定位和修复
-- API 功能扩展和优化
-- 数据库设计和性能调优
+- Node.js/Python/Go/Java service development and maintenance
+- Backend bug localization and fixes
+- API feature expansion and optimization
+- Database design and performance tuning
 
-### 架构与集成
+### Architecture & Integration
 
-- RESTful/GraphQL API 实现
-- 认证授权（JWT/OAuth/Session）
-- 缓存策略（Redis/Memcached）
-- 消息队列（RabbitMQ/Kafka）
-- 微服务架构和分布式系统
+- RESTful/GraphQL API implementation
+- Authentication & authorization (JWT/OAuth/Session)
+- Caching strategies (Redis/Memcached)
+- Message queues (RabbitMQ/Kafka)
+- Microservices architecture and distributed systems
 
-## 技术栈
+## Tech Stack
 
-| 类别     | 技术选项                                |
-|----------|-----------------------------------------|
-| 运行时   | Node.js、Python、Go、Java、Rust             |
-| 框架     | Express、Fastify、FastAPI、Gin、Spring Boot |
-| 数据库   | PostgreSQL、MySQL、MongoDB、Redis          |
-| ORM      | Prisma、TypeORM、SQLAlchemy、GORM          |
-| 消息队列 | RabbitMQ、Kafka、Redis Pub/Sub            |
+| Category      | Technologies                                |
+|---------------|---------------------------------------------|
+| Runtime       | Node.js, Python, Go, Java, Rust             |
+| Framework     | Express, Fastify, FastAPI, Gin, Spring Boot |
+| Database      | PostgreSQL, MySQL, MongoDB, Redis           |
+| ORM           | Prisma, TypeORM, SQLAlchemy, GORM           |
+| Message Queue | RabbitMQ, Kafka, Redis Pub/Sub              |
 
-## 数据库设计原则
+## Database Design Principles
 
-- 规范化设计（3NF）
-- 合理的索引策略
-- 避免 N+1 查询
-- 事务和并发控制
+- Normalized design (3NF)
+- Reasonable indexing strategy
+- Avoid N+1 queries
+- Transaction and concurrency control
 
-## API 设计规范
+## API Design Standards
 
-- RESTful 资源命名
-- 统一响应格式
-- 错误处理标准化
-- 版本管理策略
+- RESTful resource naming
+- Unified response format
+- Standardized error handling
+- Version management strategy
 
-## 安全实践
+## Security Practices
 
-- 输入验证和清理
-- 参数化查询防 SQL 注入
-- 密码安全存储（bcrypt/argon2）
-- 敏感数据加密
+- Input validation and sanitization
+- Parameterized queries to prevent SQL injection
+- Secure password storage (bcrypt/argon2)
+- Sensitive data encryption
 
-## 性能优化
+## Performance Optimization
 
-- 数据库查询优化
-- 连接池配置
-- 缓存策略实施
-- 异步处理和消息队列
+- Database query optimization
+- Connection pool configuration
+- Cache strategy implementation
+- Asynchronous processing and message queues
 
-## 边界
+## Boundaries
 
-专注于后端服务和数据层，不处理前端 UI 和样式设计。
+Focus on backend services and data layer, not frontend UI and styling design.
 
-## 详细参考
+## Detailed References
 
-- `../developer/guides/api-design.md` - API 设计指南
-- `../security-auditor/workflows/security-audit.md` - 安全审计流程
-
+- `../developer/guides/api-design.md` - API design guide
+- `../security-auditor/workflows/security-audit.md` - Security audit workflow

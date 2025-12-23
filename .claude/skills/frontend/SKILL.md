@@ -1,89 +1,91 @@
 ---
 name: frontend
-description: This skill activates when the user asks to "前端开发", "React组件", "Vue开发", "CSS样式", "响应式布局", "性能优化", "Core Web Vitals", "无障碍设计", "frontend development", "UI component", "state management". Handles all frontend development and optimization tasks.
-version: 1.0.0
+description: Frontend development and optimization for React, Vue, Angular applications. Handles component architecture, state management, responsive design, Core Web Vitals optimization, and accessibility compliance.
+license: MIT
+compatibility: Requires Node.js, npm/yarn, and modern browsers for testing. Works with Vite, Webpack, or other build tools.
+allowed-tools: Read Write Bash
 ---
 
-# 前端开发专家
+# Frontend Development Expert
 
-深度前端开发和维护，专注于复杂场景和性能优化。适用于前端新项目开发、Bug 修复、性能瓶颈优化、复杂组件架构等所有前端场景。
+Deep frontend development and maintenance, focusing on complex scenarios and performance optimization. Suitable for frontend new project development, bug fixes, performance bottleneck optimization, complex component architecture, and all frontend scenarios.
 
-## 核心能力
+## Core Capabilities
 
-### 开发与维护
+### Development & Maintenance
 
-- React/Vue/Angular 组件开发和维护
-- 前端 Bug 定位和修复
-- UI 功能扩展和优化
-- 状态管理（Redux/Zustand/Pinia/Vuex）
+- React/Vue/Angular component development and maintenance
+- Frontend bug localization and fixes
+- UI feature expansion and optimization
+- State management (Redux/Zustand/Pinia/Vuex)
 
-### 样式与布局
+### Styling & Layout
 
-- CSS/Tailwind/Styled-components 样式
-- 响应式布局和移动端适配
-- 无障碍设计（WCAG 合规）
+- CSS/Tailwind/Styled-components styling
+- Responsive layout and mobile adaptation
+- Accessibility design (WCAG compliance)
 
-### 性能与优化
+### Performance & Optimization
 
-- 前端性能优化和 Core Web Vitals 调优
-- 代码分割和懒加载
-- 复杂交互场景优化
+- Frontend performance optimization and Core Web Vitals tuning
+- Code splitting and lazy loading
+- Complex interaction scenario optimization
 
-## 技术栈
+## Tech Stack
 
-| 类别 | 技术选项                                   |
-|------|--------------------------------------------|
-| 框架 | React、Vue 3、Angular、Svelte                 |
-| 构建 | Vite、Webpack、Turbopack                     |
-| 样式 | Tailwind CSS、CSS Modules、Styled-components |
-| 状态 | Redux Toolkit、Zustand、Pinia、Jotai          |
-| 测试 | Jest、Vitest、Testing Library、Playwright     |
+| Category  | Technologies                                 |
+|-----------|----------------------------------------------|
+| Framework | React, Vue 3, Angular, Svelte                |
+| Build     | Vite, Webpack, Turbopack                     |
+| Styling   | Tailwind CSS, CSS Modules, Styled-components |
+| State     | Redux Toolkit, Zustand, Pinia, Jotai         |
+| Testing   | Jest, Vitest, Testing Library, Playwright    |
 
-## 设计规范
+## Design Guidelines
 
-### 禁止使用渐变色
+### No Gradients Policy
 
-❌ **绝对禁止**：
+❌ **Absolutely Forbidden**:
 
-- 线性渐变（linear-gradient）
-- 径向渐变（radial-gradient）
-- 彩虹渐变效果
-- 半透明渐变叠加
+- Linear gradients (linear-gradient)
+- Radial gradients (radial-gradient)
+- Rainbow gradient effects
+- Semi-transparent gradient overlays
 
-✅ **正确做法**：
+✅ **Correct Approach**:
 
-- 使用纯色（solid colors）
-- 通过色值/饱和度变化构建层次
-- 清晰的配色系统：主色 + 辅助色 + 中性色
+- Use solid colors
+- Build hierarchy through hue/saturation variations
+- Clear color system: Primary + Secondary + Neutral colors
 
-### 响应式断点
+### Responsive Breakpoints
 
 ```css
-/* 移动优先 */
-sm: 640px   /* 小屏手机 */
-md: 768px   /* 平板 */
-lg: 1024px  /* 笔记本 */
-xl: 1280px  /* 桌面 */
-2xl: 1536px /* 大屏 */
+/* Mobile-first */
+sm: 640px   /* Small phones */
+md: 768px   /* Tablets */
+lg: 1024px  /* Laptops */
+xl: 1280px  /* Desktops */
+2xl: 1536px /* Large screens */
 ```
 
-## 性能优化
+## Performance Optimization
 
-- 代码分割和懒加载
-- 图片优化（WebP/AVIF、懒加载）
-- 关键 CSS 内联
-- Tree Shaking 移除未使用代码
+- Code splitting and lazy loading
+- Image optimization (WebP/AVIF, lazy loading)
+- Critical CSS inlining
+- Tree shaking to remove unused code
 
-## Core Web Vitals 目标
+## Core Web Vitals Targets
 
 - **LCP** < 2.5s
 - **FID** < 100ms
 - **CLS** < 0.1
 
-## 边界
+## Boundaries
 
-专注于前端 UI 和交互实现，不处理后端 API 和数据库设计。
+Focus on frontend UI and interaction implementation, not backend API and database design.
 
-## 详细参考
+## Detailed References
 
-- `../designer/guides/design-system.md` - 设计系统指南
+- `../designer/guides/design-system.md` - Design system guide

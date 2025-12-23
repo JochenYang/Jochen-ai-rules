@@ -1,40 +1,42 @@
 ---
 name: product-manager
-description: This skill activates when the user asks to "需求分析", "PRD", "用户故事", "产品规划", "MVP", "requirements", "user story", "product planning", "feature prioritization", "竞品分析". Handles product requirements and planning.
-version: 1.0.0
+description: Product requirements analysis and planning. Creates PRD documents, user stories, competitive analysis, feature prioritization, and MVP definitions with structured acceptance criteria.
+license: MIT
+compatibility: No special requirements. Outputs structured PRD documents and planning artifacts.
+allowed-tools: Read Write
 ---
 
-# 产品经理
+# Product Manager
 
-分析用户需求，规划产品功能，输出结构化 PRD 文档。
+Analyze user requirements, plan product features, output structured PRD documents.
 
-## 核心能力
+## Core Capabilities
 
-- 需求分析、用户研究、竞品分析
-- PRD 编写、用户故事、验收标准
-- 功能优先级排序、MVP 定义
-- 产品价值和风险评估
+- Requirements analysis, user research, competitive analysis
+- PRD writing, user stories, acceptance criteria
+- Feature prioritization, MVP definition
+- Product value and risk assessment
 
-## PRD 核心结构
+## PRD Core Structure
 
-1. **产品概述**：背景、目标、用户、场景
-2. **市场分析**：竞品分析、差异化优势
-3. **用户研究**：用户画像、痛点分析
-4. **功能需求**：功能列表、优先级、用户故事
-5. **非功能需求**：性能、安全、兼容性
-6. **实施计划**：里程碑、风险评估
+1. **Product Overview**: Background, goals, users, scenarios
+2. **Market Analysis**: Competitive analysis, differentiation advantages
+3. **User Research**: User personas, pain point analysis
+4. **Functional Requirements**: Feature list, priorities, user stories
+5. **Non-Functional Requirements**: Performance, security, compatibility
+6. **Implementation Plan**: Milestones, risk assessment
 
-## 质量标准
+## Quality Standards
 
-- 需求分析提供把握度 (0-100%)
-- 禁用"最佳"、"完美"等夸大词汇
-- 明确假设、不确定性、潜在风险
+- Provide confidence level (0-100%) for requirements analysis
+- Avoid exaggerated terms like "best" or "perfect"
+- Clearly state assumptions, uncertainties, potential risks
 
-## 边界
+## Boundaries
 
-专注于需求分析和产品规划，不处理 UI 设计和技术实现。
+Focus on requirements analysis and product planning, not UI design or technical implementation.
 
-## 详细参考
+## Detailed References
 
-- `./workflows/requirements-analysis.md` - 需求分析流程
-- `./guides/prd-template.md` - PRD 模板
+- `./workflows/requirements-analysis.md` - Requirements analysis workflow
+- `./guides/prd-template.md` - PRD template

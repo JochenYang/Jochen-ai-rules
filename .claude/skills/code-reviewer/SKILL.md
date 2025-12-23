@@ -1,44 +1,46 @@
 ---
 name: code-reviewer
-description: This skill activates when the user asks to "代码审查", "review code", "代码检查", "安全审计", "性能分析", "code review", "security check", "quality check", "审查PR", "review PR". Handles code quality, security, and performance reviews.
-version: 1.0.0
+description: Code quality, security, and performance review. Identifies vulnerabilities, performance bottlenecks, configuration issues, and provides prioritized fix recommendations with severity levels.
+license: MIT
+compatibility: Works with any codebase. Can integrate with linters, security scanners, and static analysis tools.
+allowed-tools: Read
 ---
 
-# 代码审查专家
+# Code Reviewer
 
-审查代码质量、安全性和性能，输出分级问题报告和修复建议。
+Review code quality, security, and performance, output graded issue reports and fix recommendations.
 
-## 核心能力
+## Core Capabilities
 
-- 代码质量检查（规范性、可维护性）
-- 安全漏洞识别（输入验证、权限控制）
-- 性能瓶颈分析（算法效率、资源优化）
-- 配置安全审查（魔法数字、超时配置）
+- Code quality inspection (standards, maintainability)
+- Security vulnerability identification (input validation, access control)
+- Performance bottleneck analysis (algorithm efficiency, resource optimization)
+- Configuration security review (magic numbers, timeout settings)
 
-## 审查输出格式
+## Review Output Format
 
-- 🚨 **关键**：必须修复（安全漏洞、系统故障风险）
-- ⚠️ **高优先级**：应该修复（性能问题、可维护性）
-- 💡 **建议**：可选改进（代码风格、优化机会）
+- 🚨 **Critical**: Must fix (security vulnerabilities, system failure risks)
+- ⚠️ **High Priority**: Should fix (performance issues, maintainability)
+- 💡 **Suggestion**: Optional improvements (code style, optimization opportunities)
 
-## 质量标准
+## Quality Standards
 
-- 每个结论提供把握度 (0-100%)
-- 禁用"完美"、"最佳"等绝对化表述
-- 明确潜在风险和改进空间
+- Provide confidence level (0-100%) for each conclusion
+- Avoid absolute terms like "perfect" or "best"
+- Clearly state potential risks and improvement areas
 
-⚠️ **配置变更警示**：那些"只是改变数字"的配置变更往往是最危险的。
+⚠️ **Configuration Change Warning**: Those "just changing numbers" configuration changes are often the most dangerous.
 
-## 工作流程
+## Workflow
 
-1. **审查阶段**：识别问题、分级、提供修复建议
-2. **修复阶段**：审查完成后，自动激活 `developer` skill 实施修复
-3. **验证阶段**：修复后重新审查，确保问题解决
+1. **Review Phase**: Identify issues, grade them, provide fix recommendations
+2. **Fix Phase**: After review completion, automatically activate `developer` skill to implement fixes
+3. **Verification Phase**: Re-review after fixes to ensure issues are resolved
 
-## 边界
+## Boundaries
 
-专注于代码审查和问题识别。审查完成后，由 `developer` skill 负责实施修复。
+Focus on code review and issue identification. After review completion, `developer` skill is responsible for implementing fixes.
 
-## 详细参考
+## Detailed References
 
-- `./workflows/code-review.md` - 代码审查流程
+- `./workflows/code-review.md` - Code review workflow
