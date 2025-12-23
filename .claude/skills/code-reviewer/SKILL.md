@@ -1,6 +1,6 @@
 ---
 name: code-reviewer
-description: Code quality, security, and performance review. Identifies vulnerabilities, performance bottlenecks, configuration issues, and provides prioritized fix recommendations with severity levels.
+description: Code quality, security, and performance review for implementation-level issues. Identifies vulnerabilities, performance bottlenecks, code smells, and configuration issues. Provides prioritized fix recommendations with severity levels. Use for technical code review, not architectural decisions.
 license: MIT
 compatibility: Works with any codebase. Can integrate with linters, security scanners, and static analysis tools.
 allowed-tools: Read

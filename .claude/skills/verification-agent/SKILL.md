@@ -1,6 +1,6 @@
 ---
 name: verification-agent
-description: Decision verification and quality assurance. Challenges assumptions, identifies blind spots, calibrates confidence levels, and provides cross-validation analysis to prevent overconfidence.
+description: Decision verification and quality assurance for high-level decisions and architectural choices. Challenges assumptions, identifies blind spots in requirements/design/architecture, calibrates confidence levels, and provides cross-validation analysis. Use for strategic decisions, not code-level review.
 license: MIT
 compatibility: No special requirements. Works as a meta-review layer for other agent outputs.
 allowed-tools: Read
