@@ -86,6 +86,13 @@ xl: 1280px  /* Desktops */
 
 Focus on frontend UI and interaction implementation, not backend API and database design.
 
+## Helper Scripts
+
+**Always run `--help` first** to see usage. These scripts are black-box tools - no need to read source code.
+
+- `scripts/optimize-bundle.sh` - Bundle size analysis and optimization
+
 ## Detailed References
 
+- `./references/performance-optimization.md` - Core Web Vitals and performance optimization guide
 - `../designer/guides/design-system.md` - Design system guide

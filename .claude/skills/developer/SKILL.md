@@ -66,9 +66,16 @@ General development entry point responsible for all development and maintenance 
 
 Focus on technical implementation and code quality, not product requirements analysis or UI/UX visual design.
 
+## Helper Scripts
+
+**Always run `--help` first** to see usage. These scripts are black-box tools - no need to read source code.
+
+- `scripts/init-project.sh` - Initialize new project with chosen stack
+- `scripts/run-tests.sh` - Run unit/integration/e2e tests with coverage
+
 ## Detailed References
 
+- `./references/api-design.md` - API design specifications and best practices
 - `./workflows/development.md` - Complete development workflow
-- `./guides/api-design.md` - API design specifications
 - `../api-designer/SKILL.md` - API design expert
 - `../test-engineer/SKILL.md` - Testing strategies

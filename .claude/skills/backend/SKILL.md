@@ -69,7 +69,14 @@ Deep backend development and maintenance, focusing on high performance and compl
 
 Focus on backend services and data layer, not frontend UI and styling design.
 
+## Helper Scripts
+
+**Always run `--help` first** to see usage. These scripts are black-box tools - no need to read source code.
+
+- `scripts/db-migrate.sh` - Database migration management (create/up/down/status/reset)
+
 ## Detailed References
 
-- `../developer/guides/api-design.md` - API design guide
+- `./references/database-optimization.md` - Database query optimization and caching strategies
+- `../developer/references/api-design.md` - API design guide
 - `../security-auditor/workflows/security-audit.md` - Security audit workflow

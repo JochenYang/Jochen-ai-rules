@@ -49,4 +49,4 @@ Focus on API design and documentation standards, not specific business logic imp
 
 ## Detailed References
 
-- `../developer/guides/api-design.md` - API design guide
+- `../developer/references/api-design.md` - API design specifications and best practices
