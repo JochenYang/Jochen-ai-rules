@@ -3,6 +3,11 @@ name: artifacts-builder
 description: Rapid prototyping tool for React interactive demos and single-file HTML artifacts. Uses shadcn/ui component library with 40+ components. Perfect for product demos, design validation, and shareable browser previews.
 license: MIT
 compatibility: Requires Node.js 18+, npm/yarn. Uses React 18, Vite, Tailwind CSS, and Parcel for bundling.
+metadata:
+  author: "jochen-ai"
+  version: "1.0.0"
+  category: "prototyping"
+  tags: ["react", "prototype", "demo", "shadcn", "artifacts"]
 allowed-tools: Read Write Bash
 ---
 

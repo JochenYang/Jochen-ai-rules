@@ -3,6 +3,11 @@ name: product-manager
 description: Product requirements analysis and planning. Creates PRD documents, user stories, competitive analysis, feature prioritization, and MVP definitions with structured acceptance criteria.
 license: MIT
 compatibility: No special requirements. Outputs structured PRD documents and planning artifacts.
+metadata:
+  author: "jochen-ai"
+  version: "1.0.0"
+  category: "product"
+  tags: ["product", "requirements", "roadmap", "strategy", "prd"]
 allowed-tools: Read Write
 ---
 

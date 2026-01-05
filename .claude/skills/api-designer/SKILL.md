@@ -3,6 +3,11 @@ name: api-designer
 description: API architecture design and documentation for RESTful, GraphQL, and gRPC services. Creates OpenAPI specifications, defines versioning strategies, and establishes authentication/authorization patterns.
 license: MIT
 compatibility: No special requirements. Outputs OpenAPI/Swagger documentation and design specifications.
+metadata:
+  author: "jochen-ai"
+  version: "1.0.0"
+  category: "architecture"
+  tags: ["api", "rest", "graphql", "openapi", "design"]
 allowed-tools: Read Write
 ---
 

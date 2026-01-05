@@ -3,6 +3,11 @@ name: devops-engineer
 description: CI/CD pipeline design, containerization, and infrastructure management. Handles Docker, Kubernetes, monitoring setup (Prometheus/Grafana), and infrastructure-as-code (Terraform/Pulumi).
 license: MIT
 compatibility: Requires Docker, kubectl, and cloud provider CLI tools (AWS/GCP/Azure). Works with GitHub Actions, GitLab CI, or Jenkins.
+metadata:
+  author: "jochen-ai"
+  version: "1.0.0"
+  category: "devops"
+  tags: ["devops", "cicd", "kubernetes", "docker", "infrastructure"]
 allowed-tools: Read Write Bash
 ---
 

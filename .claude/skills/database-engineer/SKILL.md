@@ -3,117 +3,122 @@ name: database-engineer
 description: Database architecture design, schema optimization, query performance tuning, and data migration. Handles PostgreSQL, MySQL, MongoDB, Redis with focus on scalability, indexing strategies, and transaction management.
 license: MIT
 compatibility: Requires database clients and migration tools. Works with SQL and NoSQL databases.
+metadata:
+  author: "jochen-ai"
+  version: "1.0.0"
+  category: "database"
+  tags: ["database", "sql", "nosql", "optimization", "migration"]
 allowed-tools: Read Write Bash
 ---
 
 # Database Engineer
 
-专注于数据库架构设计、性能优化、数据迁移和高可用方案。适用于复杂的数据库设计、性能瓶颈分析、大规模数据迁移等专业任务。
+Focus on database architecture design, performance optimization, data migration, and high availability solutions. Suitable for complex database design, performance bottleneck analysis, large-scale data migration, and other professional tasks.
 
 ## Core Capabilities
 
-### 数据库设计
-- Schema 设计和范式化
-- 索引策略和优化
-- 分区和分片设计
-- 数据模型设计（关系型/文档型/图数据库）
+### Database Design
+- Schema design and normalization
+- Index strategy and optimization
+- Partitioning and sharding design
+- Data model design (relational/document/graph databases)
 
-### 性能优化
-- 查询性能分析和优化
-- 索引优化和覆盖索引
-- 执行计划分析
-- 慢查询诊断和修复
+### Performance Optimization
+- Query performance analysis and optimization
+- Index optimization and covering indexes
+- Execution plan analysis
+- Slow query diagnosis and fixes
 
-### 数据迁移
-- 数据库版本升级
-- 跨数据库迁移（MySQL → PostgreSQL）
-- 大规模数据迁移策略
-- 零停机迁移方案
+### Data Migration
+- Database version upgrades
+- Cross-database migration (MySQL → PostgreSQL)
+- Large-scale data migration strategies
+- Zero-downtime migration solutions
 
-### 高可用方案
-- 主从复制配置
-- 读写分离架构
-- 故障转移和恢复
-- 备份和恢复策略
+### High Availability Solutions
+- Master-slave replication configuration
+- Read-write separation architecture
+- Failover and recovery
+- Backup and recovery strategies
 
 ## Tech Stack
 
-| 类型 | 技术栈 |
-|------|--------|
-| 关系型数据库 | PostgreSQL, MySQL, MariaDB |
-| NoSQL | MongoDB, Redis, Cassandra |
-| 时序数据库 | InfluxDB, TimescaleDB |
-| 搜索引擎 | Elasticsearch, OpenSearch |
-| 迁移工具 | Flyway, Liquibase, Alembic |
-| 监控工具 | pg_stat_statements, Percona Toolkit |
+| Category         | Technologies                        |
+|------------------|-------------------------------------|
+| Relational DB    | PostgreSQL, MySQL, MariaDB          |
+| NoSQL            | MongoDB, Redis, Cassandra           |
+| Time-Series DB   | InfluxDB, TimescaleDB               |
+| Search Engine    | Elasticsearch, OpenSearch           |
+| Migration Tools  | Flyway, Liquibase, Alembic          |
+| Monitoring Tools | pg_stat_statements, Percona Toolkit |
 
-## 设计原则
+## Design Principles
 
-### 1. 范式化与反范式化平衡
-- 3NF 用于事务性数据
-- 适度反范式化提升查询性能
-- 避免过度范式化导致的 JOIN 复杂度
+### 1. Balance Normalization and Denormalization
+- Use 3NF for transactional data
+- Moderate denormalization to improve query performance
+- Avoid excessive normalization leading to JOIN complexity
 
-### 2. 索引策略
-- 高选择性列优先建索引
-- 复合索引遵循最左前缀原则
-- 避免过度索引影响写入性能
-- 使用覆盖索引减少回表
+### 2. Index Strategy
+- Prioritize indexing high-selectivity columns
+- Follow leftmost prefix principle for composite indexes
+- Avoid over-indexing that impacts write performance
+- Use covering indexes to reduce table lookups
 
-### 3. 查询优化
-- 避免 SELECT *
-- 使用 EXPLAIN ANALYZE 分析执行计划
-- 避免 N+1 查询问题
-- 合理使用批量操作
+### 3. Query Optimization
+- Avoid SELECT *
+- Use EXPLAIN ANALYZE to analyze execution plans
+- Avoid N+1 query problems
+- Use batch operations appropriately
 
-### 4. 事务管理
-- 选择合适的隔离级别
-- 避免长事务锁表
-- 使用乐观锁处理并发
-- 死锁检测和预防
+### 4. Transaction Management
+- Choose appropriate isolation levels
+- Avoid long transactions that lock tables
+- Use optimistic locking for concurrency
+- Detect and prevent deadlocks
 
 ## Execution Workflow
 
-### Phase 1: 需求分析
-1. 理解业务需求和数据模型
-2. 评估数据量和增长趋势
-3. 确定性能和可用性要求
+### Phase 1: Requirements Analysis
+1. Understand business requirements and data models
+2. Assess data volume and growth trends
+3. Determine performance and availability requirements
 
-### Phase 2: 设计方案
-1. 设计 Schema 和索引
-2. 选择合适的数据库类型
-3. 规划分区和分片策略
-4. 设计备份和恢复方案
+### Phase 2: Design Solution
+1. Design schema and indexes
+2. Choose appropriate database types
+3. Plan partitioning and sharding strategies
+4. Design backup and recovery solutions
 
-### Phase 3: 实施优化
-1. 执行 Schema 变更
-2. 创建和优化索引
-3. 重构慢查询
-4. 配置监控和告警
+### Phase 3: Implementation and Optimization
+1. Execute schema changes
+2. Create and optimize indexes
+3. Refactor slow queries
+4. Configure monitoring and alerts
 
 ## Quality Standards
 
-- 查询响应时间 < 100ms（简单查询）
-- 索引命中率 > 95%
-- 数据库连接池利用率 < 80%
-- 备份恢复时间目标（RTO）< 1 小时
+- Query response time < 100ms (simple queries)
+- Index hit rate > 95%
+- Database connection pool utilization < 80%
+- Recovery Time Objective (RTO) < 1 hour
 
 ## Boundaries
 
-专注于数据库层面的设计和优化，不涉及应用层业务逻辑实现。
+Focus on database-level design and optimization, not application-layer business logic implementation.
 
 ## Helper Scripts
 
 **Always run `--help` first** to see usage.
 
-- `scripts/analyze-schema.sh` - Schema 分析和优化建议
-- `scripts/index-advisor.sh` - 索引优化建议
-- `scripts/migration-plan.sh` - 数据迁移计划生成
+- `scripts/analyze-schema.sh` - Schema analysis and optimization recommendations
+- `scripts/index-advisor.sh` - Index optimization recommendations
+- `scripts/migration-plan.sh` - Data migration plan generation
 
 ## Detailed References
 
-- `./references/schema-design.md` - Schema 设计最佳实践
-- `./references/query-optimization.md` - 查询优化指南
-- `./references/migration-strategies.md` - 数据迁移策略
-- `../backend/references/database-optimization.md` - 数据库优化基础
+- `./references/schema-design.md` - Schema design best practices
+- `./references/query-optimization.md` - Query optimization guide
+- `./references/migration-strategies.md` - Data migration strategies
+- `../backend/references/database-optimization.md` - Database optimization fundamentals
 
