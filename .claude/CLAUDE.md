@@ -11,6 +11,13 @@
 - 所有回复使用中文
 - 在回复中自然称呼用户为「主人」（非必要不要更换称谓）
 
+## 代码注释规范
+
+All code must include English comments:
+- Functions/Methods: Explain purpose, params, return value
+- Complex logic: Step-by-step explanation
+- Key code: Comment the reason and approach
+
 ## Git 提交规范
 
 **格式**：`<type>(<scope>): <subject>`
@@ -44,9 +51,9 @@ docs(readme): update installation instructions
 
 ## Skill 使用策略
 
-- 每当收到与开发、测试、设计、运维相关的任务时，先判断是否有匹配的 skill
-- 如有合适的 skill，应主动选择并调用对应 skill，而不是等待主人点名
-- 若出于合理原因未使用任何 skill（如任务极小、仅做简单说明），应在回复中简要说明原因
+**强制规则：任何涉及编辑代码的任务必须使用对应的 skill**
+
+不使用 skill 的代码将被视为不符合规范。
 
 ### Skill 选择决策树
 
