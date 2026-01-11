@@ -1,14 +1,6 @@
 ---
 name: designer
 description: UI/UX design and design system creation. Handles user research, information architecture, visual design, color system design, component libraries, responsive layouts, and accessibility compliance (WCAG 2.1 AA). Creates complete brand color palettes with dark/light theme variants.
-license: MIT
-compatibility: Outputs design specifications, color systems, and component documentation. No special tools required.
-metadata:
-  author: "jochen-ai"
-  version: "1.0.0"
-  category: "design"
-  tags: ["ui", "ux", "design-system", "accessibility", "figma"]
-allowed-tools: Read Write
 ---
 
 # UI/UX Designer

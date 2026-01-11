@@ -1,14 +1,6 @@
 ---
 name: performance-optimizer
 description: Performance bottleneck identification and optimization. Handles database query optimization, caching strategies, algorithm improvements, and Core Web Vitals tuning (LCP/FID/CLS).
-license: MIT
-compatibility: Requires profiling tools and database access. Works with any tech stack.
-metadata:
-  author: "jochen-ai"
-  version: "1.0.0"
-  category: "optimization"
-  tags: ["performance", "profiling", "optimization", "monitoring"]
-allowed-tools: Read Write Bash
 ---
 
 # Performance Optimizer

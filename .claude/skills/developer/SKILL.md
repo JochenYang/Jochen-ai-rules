@@ -1,14 +1,6 @@
 ---
 name: developer
 description: Comprehensive full-stack development for web, mobile, and game projects. Handles frontend (React/Vue/Angular), backend (Node.js/Python/Go/Java), mobile (Flutter/React Native/Swift/Kotlin), and game development (Unity/Unreal/Godot). Covers architecture design, implementation, optimization, and deployment.
-license: MIT
-compatibility: Requires file system access, git, package managers, and platform-specific SDKs. Works with any modern development environment including game engines.
-metadata:
-  author: "jochen-ai"
-  version: "2.0.0"
-  category: "development"
-  tags: ["fullstack", "frontend", "backend", "mobile", "game", "web", "development"]
-allowed-tools: Read Write Bash Git
 ---
 
 # Full-Stack Developer

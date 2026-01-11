@@ -1,14 +1,6 @@
 ---
 name: database-engineer
 description: Database architecture design, schema optimization, query performance tuning, and data migration. Handles PostgreSQL, MySQL, MongoDB, Redis with focus on scalability, indexing strategies, and transaction management.
-license: MIT
-compatibility: Requires database clients and migration tools. Works with SQL and NoSQL databases.
-metadata:
-  author: "jochen-ai"
-  version: "1.0.0"
-  category: "database"
-  tags: ["database", "sql", "nosql", "optimization", "migration"]
-allowed-tools: Read Write Bash
 ---
 
 # Database Engineer

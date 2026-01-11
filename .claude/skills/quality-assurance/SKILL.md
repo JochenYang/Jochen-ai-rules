@@ -1,14 +1,6 @@
 ---
 name: quality-assurance
 description: Comprehensive code quality assurance covering code review, testing strategies, and security auditing. Identifies bugs, vulnerabilities, performance issues, and maintainability problems. Implements unit/integration/E2E testing and provides actionable recommendations following OWASP and industry best practices.
-license: MIT
-compatibility: Works with any codebase and testing framework. Can integrate with linters, security scanners (npm audit, Snyk, OWASP ZAP), and testing tools (Jest, Vitest, Playwright, Cypress, pytest).
-metadata:
-  author: "jochen-ai"
-  version: "1.0.0"
-  category: "quality-assurance"
-  tags: ["code-review", "testing", "security", "quality", "audit", "e2e", "unit-test"]
-allowed-tools: Read Write Bash
 ---
 
 # Quality Assurance Engineer

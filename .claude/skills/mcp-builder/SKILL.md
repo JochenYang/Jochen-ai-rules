@@ -1,14 +1,6 @@
 ---
 name: mcp-builder
 description: MCP server development for AI agents. Designs tool schemas, implements Python/TypeScript servers, creates evaluation tests. Supports GitHub/Notion/Slack integrations with complete templates and automation scripts.
-license: MIT
-compatibility: Requires Python 3.10+ or Node.js 18+. Needs MCP SDK installation (mcp or @modelcontextprotocol/sdk).
-metadata:
-  author: "jochen-ai"
-  version: "1.0.0"
-  category: "ai-tools"
-  tags: ["mcp", "ai", "tools", "integration", "server"]
-allowed-tools: Read Write Bash
 ---
 
 # MCP Server Development Tool
