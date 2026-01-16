@@ -206,9 +206,3 @@ Focus on code quality, testing, and security. Not responsible for product requir
 - `./workflows/security-audit.md` - Security audit methodology
 - `./references/owasp-top-10.md` - OWASP Top 10 vulnerabilities guide
 - `./references/testing-patterns.md` - Common testing patterns and anti-patterns
-
-## Official Resources
-
-- OWASP Top 10: https://owasp.org/www-project-top-ten/
-- Testing Best Practices: https://testingjavascript.com/
-- Security Guidelines: https://cheatsheetseries.owasp.org/

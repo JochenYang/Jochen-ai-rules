@@ -41,14 +41,8 @@ Focus on MCP server development and tool design, not third-party API development
 
 ## Detailed References
 
-- `workflows/mcp-development.md` - Complete development workflow
-- `guides/mcp_best_practices.md` - MCP best practices
-- `guides/python_mcp_server.md` - Python implementation guide
-- `guides/node_mcp_server.md` - TypeScript implementation guide
-- `guides/evaluation.md` - Evaluation creation guide
-
-## Official Documentation
-
-- MCP Protocol: https://modelcontextprotocol.io
-- Python SDK: https://github.com/modelcontextprotocol/python-sdk
-- TypeScript SDK: https://github.com/modelcontextprotocol/typescript-sdk
+- `./workflows/mcp-development.md` - Complete development workflow
+- `./guides/mcp_best_practices.md` - MCP best practices
+- `./guides/python_mcp_server.md` - Python implementation guide
+- `./guides/node_mcp_server.md` - TypeScript implementation guide
+- `./guides/evaluation.md` - Evaluation creation guide

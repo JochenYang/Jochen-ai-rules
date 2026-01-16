@@ -43,6 +43,6 @@ Focus on performance analysis and optimization solution design, not business log
 
 ## Detailed References
 
-- `./workflows/performance-optimization.md` - Optimization workflow
-- `./scripts/profile.py` - Performance profiling script
-- `./scripts/db-slow-query.sql` - Slow query analysis
+- `./guides/web-vitals-guide.md` - Core Web Vitals optimization
+- `./guides/caching-strategies.md` - Caching implementation guide
+- `./references/optimization-patterns.md` - Performance patterns reference

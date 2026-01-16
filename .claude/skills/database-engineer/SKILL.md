@@ -109,8 +109,7 @@ Focus on database-level design and optimization, not application-layer business 
 
 ## Detailed References
 
-- `./references/schema-design.md` - Schema design best practices
-- `./references/query-optimization.md` - Query optimization guide
-- `./references/migration-strategies.md` - Data migration strategies
-- `../backend/references/database-optimization.md` - Database optimization fundamentals
-
+- `./guides/mysql-guide.md` - MySQL database guide
+- `./guides/postgres-guide.md` - PostgreSQL database guide
+- `./guides/mongodb-guide.md` - MongoDB database guide
+- `./workflows/database-optimization.md` - Performance optimization workflow

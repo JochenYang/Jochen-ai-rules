@@ -44,6 +44,15 @@ Design high-quality API interfaces and output standardized interface documentati
 
 Focus on API design and documentation standards, not specific business logic implementation.
 
+## Helper Scripts
+
+**Always run `--help` first** to see usage.
+
+- `scripts/openapi-gen.sh` - Generate OpenAPI documentation
+
 ## Detailed References
 
-- `../developer/references/api-design.md` - API design specifications and best practices
+- `./workflows/api-design.md` - API design workflow
+- `./guides/rest-api.md` - REST API design guide
+- `./guides/graphql.md` - GraphQL API design guide
+- `./guides/grpc.md` - gRPC API design guide

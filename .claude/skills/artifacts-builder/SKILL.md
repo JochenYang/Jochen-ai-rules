@@ -43,5 +43,5 @@ Focus on interactive prototype building, not production code. For complete appli
 
 ## Detailed References
 
-- `workflows/artifact-building.md` - Complete building workflow
-- `guides/quick-start.md` - Quick start guide
+- `./workflows/artifact-building.md` - Complete building workflow
+- `./guides/quick-start.md` - Quick start guide

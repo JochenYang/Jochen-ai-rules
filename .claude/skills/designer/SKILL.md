@@ -126,5 +126,5 @@ Focus on UI/UX design and design systems, not product requirements analysis or c
 
 ## Detailed References
 
-- `./workflows/ui-design.md` - Complete design workflow
-- `./guides/design-system.md` - Design system guide
+- `./references/accessibility-guide.md` - WCAG accessibility guide
+- `./references/typography-system.md` - Typography system guide

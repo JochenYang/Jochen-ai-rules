@@ -35,5 +35,5 @@ Focus on requirements analysis and product planning, not UI design or technical 
 
 ## Detailed References
 
-- `./workflows/requirements-analysis.md` - Requirements analysis workflow
-- `./guides/prd-template.md` - PRD template
+- `./workflows/prd-template.md` - PRD template guide
+- `./workflows/user-story-mapping.md` - User story mapping workshop guide

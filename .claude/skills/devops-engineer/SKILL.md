@@ -36,6 +36,5 @@ Focus on CI/CD and infrastructure, not business code development.
 
 ## Detailed References
 
-- `./workflows/deployment.md` - Deployment workflow
-- `./guides/cicd-guide.md` - CI/CD best practices
-- `./scripts/deploy.py` - Deployment script
+- `./references/docker-best-practices.md` - Docker optimization guide
+- `./references/kubernetes-patterns.md` - Kubernetes best practices
