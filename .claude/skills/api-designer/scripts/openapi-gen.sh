@@ -11,6 +11,19 @@ FORMAT="yaml"
 TITLE="API Documentation"
 VERSION="1.0.0"
 
+if [[ "$1" == "--help" ]]; then
+    echo "Usage: ./openapi-gen.sh [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --input <path>     Input directory (default: src)"
+    echo "  --output <path>    Output file (default: docs/openapi.yaml)"
+    echo "  --format <format>  Output format: json or yaml (default: yaml)"
+    echo "  --title <title>    API title (default: API Documentation)"
+    echo "  --version <ver>    API version (default: 1.0.0)"
+    echo "  --help             Show this help message"
+    exit 0
+fi
+
 while [[ $# -gt 0 ]]; do
     case $1 in
         --input)

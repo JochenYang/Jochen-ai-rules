@@ -7,6 +7,17 @@ set -e
 
 ACTION="analyze"
 
+if [[ "$1" == "--help" ]]; then
+    echo "Usage: ./optimize-bundle.sh [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --analyze     Analyze bundle size (default)"
+    echo "  --minify      Minify bundle"
+    echo "  --tree-shake  Enable tree shaking"
+    echo "  --help        Show this help message"
+    exit 0
+fi
+
 while [[ $# -gt 0 ]]; do
     case $1 in
         --analyze)

@@ -8,6 +8,18 @@ set -e
 REPORT_DIR="coverage-report"
 COVERAGE_THRESHOLD=80
 
+if [[ "$1" == "--help" ]]; then
+    echo "Usage: ./run-tests.sh [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --unit         Run unit tests only"
+    echo "  --integration  Run integration tests only"
+    echo "  --e2e          Run e2e tests only"
+    echo "  --coverage     Generate coverage report"
+    echo "  --help         Show this help message"
+    exit 0
+fi
+
 while [[ $# -gt 0 ]]; do
     case $1 in
         --unit)
