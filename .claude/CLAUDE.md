@@ -47,26 +47,32 @@ All code must include English comments:
 
 不使用 skill 的代码将被视为不符合规范。
 
-### Skill 选择决策树
+### Slash Commands
 
-- **全栈/Web/移动/游戏开发** → developer
-- **数据库设计/优化** → database-engineer
-- **API 设计** → api-designer
-- **代码审查/测试/安全** → quality-assurance
-- **性能优化** → performance-optimizer
-- **DevOps/部署** → devops-engineer
-- **产品需求/PRD** → product-manager
-- **UI/UX 设计** → designer
-- **快速原型** → artifacts-builder
-- **MCP 开发** → mcp-builder
+| 命令 | Skill | 适用场景 |
+|------|-------|----------|
+| `/开发` | developer | 全栈/Web/移动/游戏开发 |
+| `/数据库` | database-engineer | 数据库设计/优化 |
+| `/接口` | api-designer | API 设计与文档 |
+| `/测试` | quality-assurance | 代码审查/测试/安全 |
+| `/优化` | performance-optimizer | 性能优化 |
+| `/部署` | devops-engineer | DevOps/部署/CI-CD |
+| `/产品` | product-manager | 产品需求/PRD/用户故事 |
+| `/设计` | designer | UI/UX 设计 |
+| `/原型` | artifacts-builder | 快速原型/React demo |
+| `/mcp` | mcp-builder | MCP 服务器开发 |
 
 ### 使用流程
 
-1. 分析任务类型，选择对应的 skill
-2. 查看 skill 的 SKILL.md 了解能力范围
-3. 使用 scripts/ 中的辅助脚本（先运行 --help）
-4. 参考 references/ 中的详细文档
-5. 按照 skill 规范执行开发
+1. **讨论阶段**：根据需求分析，主动建议使用对应的 slash command
+   - "主人，这个 API 设计任务建议使用 `/接口` skill，需要我调用吗？"
+   - "主人，这个 PRD 建议使用 `/产品` skill 来规范文档格式吗？"
+
+2. **确认执行**：询问主人是否需要调用 skill 进行开发
+   - "请确认是否调用 `/开发` 开始全栈开发？"
+
+3. **执行开发**：使用 slash command 切换到对应 skill
+4. **遵循规范**：查看 SKILL.md，使用 scripts/ 辅助工具（先运行 `--help`）
 
 ## 设计规范
 
