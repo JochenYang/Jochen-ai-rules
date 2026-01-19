@@ -114,12 +114,18 @@ Focus on technical implementation and code quality, not product requirements ana
 
 **Always run `--help` first** to see usage. These scripts are black-box tools - no need to read source code.
 
+- `scripts/init-project.sh` - Initialize project structure
 - `scripts/optimize-bundle.sh` - Bundle size analysis and optimization (web)
 - `scripts/setup-unity-project.sh` - Initialize Unity project structure (game)
 - `scripts/build-mobile.sh` - Build mobile app for iOS/Android
+- `scripts/run-tests.sh` - Run unit/integration/e2e tests with coverage
 
 ## Detailed References
 
+- `./references/api-design.md` - API design specifications and best practices
 - `./references/frontend-optimization.md` - Frontend performance optimization
+- `./references/game-optimization.md` - Game performance optimization
 - `./references/mobile-best-practices.md` - Mobile development guidelines
+- `./references/unity-best-practices.md` - Unity development guidelines
 - `./guides/web-best-practices.md` - Web development best practices
+- `./workflows/development.md` - Complete development workflow

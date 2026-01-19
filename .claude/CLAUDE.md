@@ -43,36 +43,48 @@ All code must include English comments:
 
 ## Skill 使用策略
 
-**强制规则：任何涉及编辑代码的任务必须使用对应的 skill**
+**强制规则：任何涉及编辑代码的任务必须自动切换到对应 skill**
 
 不使用 skill 的代码将被视为不符合规范。
 
+### 强制触发机制
+
+满足任一条件就必须触发 skill：
+
+- 需要修改/新增/删除代码或配置
+- 需要生成 PRD、需求分析或需求模板
+- 需要进行代码审查、测试、安全检查
+- 需要数据库设计、优化或迁移
+- 需要 API 设计与文档
+- 需要 UI/UX 或原型设计
+- 需要性能优化、部署、运维
+
 ### Slash Commands
 
-| 命令 | Skill | 适用场景 |
-|------|-------|----------|
-| `/开发` | developer | 全栈/Web/移动/游戏开发 |
-| `/数据库` | database-engineer | 数据库设计/优化 |
-| `/接口` | api-designer | API 设计与文档 |
-| `/测试` | quality-assurance | 代码审查/测试/安全 |
-| `/优化` | performance-optimizer | 性能优化 |
-| `/部署` | devops-engineer | DevOps/部署/CI-CD |
-| `/产品` | product-manager | 产品需求/PRD/用户故事 |
-| `/设计` | designer | UI/UX 设计 |
-| `/原型` | artifacts-builder | 快速原型/React demo |
-| `/mcp` | mcp-builder | MCP 服务器开发 |
+| 命令      | Skill                 | 适用场景               |
+|-----------|-----------------------|------------------------|
+| `/开发`   | developer             | 全栈/Web/移动/游戏开发 |
+| `/数据库` | database-engineer     | 数据库设计/优化/迁移   |
+| `/接口`   | api-designer          | API 设计与文档         |
+| `/测试`   | quality-assurance     | 代码审查/测试/安全     |
+| `/优化`   | performance-optimizer | 性能优化               |
+| `/部署`   | devops-engineer       | DevOps/部署/CI-CD      |
+| `/产品`   | product-manager       | 产品需求/PRD/用户故事  |
+| `/设计`   | designer              | UI/UX 设计             |
+| `/原型`   | artifacts-builder     | 快速原型/React demo    |
+| `/mcp`    | mcp-builder           | MCP 服务器开发         |
 
-### 使用流程
+### 执行流程
 
-1. **讨论阶段**：根据需求分析，主动建议使用对应的 slash command
-   - "主人，这个 API 设计任务建议使用 `/接口` skill，需要我调用吗？"
-   - "主人，这个 PRD 建议使用 `/产品` skill 来规范文档格式吗？"
+1. **识别任务类型**：根据需求自动匹配 skill
+2. **立即切换**：直接使用对应 slash command
+3. **执行开发**：严格遵循该 skill 的 SKILL.md 与 scripts
 
-2. **确认执行**：询问主人是否需要调用 skill 进行开发
-   - "请确认是否调用 `/开发` 开始全栈开发？"
+### 提示语模板
 
-3. **执行开发**：使用 slash command 切换到对应 skill
-4. **遵循规范**：查看 SKILL.md，使用 scripts/ 辅助工具（先运行 `--help`）
+- "我已识别为 API 设计任务，切换到 `/接口` 继续执行。"
+- "我已识别为 PRD 任务，切换到 `/产品` 继续执行。"
+- "我已识别为代码改动任务，切换到 `/开发` 继续执行。"
 
 ## 设计规范
 
