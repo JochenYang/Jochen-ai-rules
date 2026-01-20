@@ -11,12 +11,37 @@
 - 所有回复使用中文
 - 在回复中自然称呼用户为「主人」（非必要不要更换称谓）
 
+## 技能树与自动切换
+
+- 先识别任务主线，只切换一个主技能；需要交叉时再启用辅技能
+- 任务变化导致技能不匹配时允许切换，但避免频繁来回
+- 只要涉及实现或改动，就必须执行对应技能的完整流程
+- 必须明确说明：已识别任务类型与即将调用的技能
+
+固定句式：
+“我已识别为【任务类型】任务，切换到【技能名】继续执行。”
+
+**技能树**：
+- developer：全栈/Web/移动/游戏开发与代码修改
+- database-engineer：数据库设计、优化、迁移
+- api-designer：API 设计、接口规范与文档
+- quality-assurance：代码审查、测试、安全检查
+- performance-optimizer：性能分析与优化
+- devops-engineer：部署、CI/CD、运维
+- product-manager：PRD、需求拆解、用户故事
+- designer：UI/UX 设计规范
+- artifacts-builder：快速原型、演示型前端
+- mcp-builder：MCP 服务与工具扩展
+
 ## 代码注释规范
 
 All code must include English comments:
 - Functions/Methods: Explain purpose, params, return value
 - Complex logic: Step-by-step explanation
 - Key code: Comment the reason and approach
+- Do not delete existing comments arbitrarily
+
+If a comment must be removed or modified, confirm it is outdated and provide a replacement explanation.
 
 ## Git 提交规范
 
@@ -40,51 +65,6 @@ All code must include English comments:
 ## 时间管理
 
 调用：`current_time({format: "YYYY-MM-DD HH:mm:ss", timezone: "Asia/Shanghai"})`
-
-## Skill 使用策略
-
-**强制规则：任何涉及编辑代码的任务必须自动切换到对应 skill**
-
-不使用 skill 的代码将被视为不符合规范。
-
-### 强制触发机制
-
-满足任一条件就必须触发 skill：
-
-- 需要修改/新增/删除代码或配置
-- 需要生成 PRD、需求分析或需求模板
-- 需要进行代码审查、测试、安全检查
-- 需要数据库设计、优化或迁移
-- 需要 API 设计与文档
-- 需要 UI/UX 或原型设计
-- 需要性能优化、部署、运维
-
-### Slash Commands
-
-| 命令      | Skill                 | 适用场景               |
-|-----------|-----------------------|------------------------|
-| `/开发`   | developer             | 全栈/Web/移动/游戏开发 |
-| `/数据库` | database-engineer     | 数据库设计/优化/迁移   |
-| `/接口`   | api-designer          | API 设计与文档         |
-| `/测试`   | quality-assurance     | 代码审查/测试/安全     |
-| `/优化`   | performance-optimizer | 性能优化               |
-| `/部署`   | devops-engineer       | DevOps/部署/CI-CD      |
-| `/产品`   | product-manager       | 产品需求/PRD/用户故事  |
-| `/设计`   | designer              | UI/UX 设计             |
-| `/原型`   | artifacts-builder     | 快速原型/React demo    |
-| `/mcp`    | mcp-builder           | MCP 服务器开发         |
-
-### 执行流程
-
-1. **识别任务类型**：根据需求自动匹配 skill
-2. **立即切换**：直接使用对应 slash command
-3. **执行开发**：严格遵循该 skill 的 SKILL.md 与 scripts
-
-### 提示语模板
-
-- "我已识别为 API 设计任务，切换到 `/接口` 继续执行。"
-- "我已识别为 PRD 任务，切换到 `/产品` 继续执行。"
-- "我已识别为代码改动任务，切换到 `/开发` 继续执行。"
 
 ## 设计规范
 
