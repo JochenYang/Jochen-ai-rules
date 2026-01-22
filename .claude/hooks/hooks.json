@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "tool == \"Bash\" && tool_input.command matches \"git push\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -Command \"Write-Host '[Hook] Review changes before push...' -ForegroundColor Yellow; git diff --stat\""
+          }
+        ],
+        "description": "Pause before git push to review changes"
+      },
+      {
+        "matcher": "tool == \"Bash\" && tool_input.command matches \"npm run dev|pnpm( run)? dev|yarn dev|bun run dev\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -Command \"Write-Host '[Hook] Consider running in tmux for log access' -ForegroundColor Cyan\""
+          }
+        ],
+        "description": "Reminder to use tmux for dev server"
+      },
+      {
+        "matcher": "tool == \"Bash\" && tool_input.command matches \"(npm install|pytest|vitest|playwright)\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -Command \"if (-not $env:TMUX) { Write-Host '[Hook] Consider using tmux for session persistence' -ForegroundColor Cyan }\""
+          }
+        ],
+        "description": "Reminder to use tmux for long-running commands"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "tool == \"Edit\" && tool_input.file_path matches \"\\\\.(ts|tsx|js|jsx)$\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -Command \"$file_path = '{{file_path}}'; if (Test-Path $file_path -PathType Leaf) { $dir = Split-Path $file_path -Parent; $project = $dir; while ($project -and -not (Test-Path (Join-Path $project 'package.json') -PathType Leaf)) { $project = Split-Path $project -Parent }; if ($project -and (Test-Path (Join-Path $project 'package.json') -PathType Leaf)) { try { npx prettier --write $file_path 2>$null | Out-Null } catch {} } }\""
+          }
+        ],
+        "description": "Auto-format JS/TS files with Prettier after edits"
+      },
+      {
+        "matcher": "tool == \"Edit\" && tool_input.file_path matches \"\\\\.(ts|tsx|js|jsx)$\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -Command \"$file_path = '{{file_path}}'; $content = Get-Content $file_path -ErrorAction SilentlyContinue | Select-Object -First 5; if ($content -match 'console\\\\.log') { Write-Host '[Hook] WARNING: console.log found' -ForegroundColor Red; Select-String -Path $file_path -Pattern 'console\\\\.log' | ForEach-Object { Write-Host $_.Line -ForegroundColor DarkGray } }\""
+          }
+        ],
+        "description": "Warn about console.log statements after edits"
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -Command \"$modified = git diff --name-only 2>$null | Where-Object { $_ -match '\\\\.(ts|tsx|js|jsx)$' }; if ($modified) { $hasConsole = $false; foreach ($f in $modified) { if (Test-Path $f -PathType Leaf) { $content = Get-Content $f -ErrorAction SilentlyContinue; if ($content -match 'console\\\\.log') { Write-Host \\\"[Hook] WARNING: console.log in $f\\\" -ForegroundColor Red; $hasConsole = $true } } }; if ($hasConsole) { Write-Host '[Hook] Remove console.log before committing' -ForegroundColor Yellow } }\""
+          },
+          {
+            "type": "command",
+            "command": "powershell -Command \"(New-Object Media.SoundPlayer 'C:/Users/Administrator/.claude/sounds/finish.wav').PlaySync()\""
+          }
+        ],
+        "description": "Final audit for console.log and play finish sound"
+      }
+    ]
+  }
+}
