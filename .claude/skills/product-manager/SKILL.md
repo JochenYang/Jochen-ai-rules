@@ -17,6 +17,15 @@ Analyze user requirements, plan product features, output structured PRD document
 - **Feature Prioritization**: Use frameworks like RICE, MoSCoW for prioritization
 - **MVP Definition**: Define minimum viable product scope and roadmap
 
+## Common Request Patterns
+
+- **Competitive Research**: Compare onboarding UX, pricing tiers, and positioning
+- **Tech Tradeoffs**: Evaluate stack choices with scalability, cost, and developer experience
+- **Risk & Compliance**: Identify regulatory risks for new features
+- **Feedback Synthesis**: Turn feedback into feature ideas and priorities
+- **Experiment Planning**: Propose A/B tests with hypotheses and success metrics
+- **Launch Communication**: Draft release notes, GTM FAQ, and value propositions
+
 ## PRD Core Structure
 
 1. **Product Overview**: Background, goals, users, scenarios

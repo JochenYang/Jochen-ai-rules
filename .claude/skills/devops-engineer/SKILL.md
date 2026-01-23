@@ -15,6 +15,13 @@ Design and implement CI/CD processes, manage containerized deployments and monit
 - Monitoring and alerting system setup (Prometheus/Grafana)
 - Infrastructure as Code (Terraform/Pulumi)
 
+## Operational Research & Communication
+
+- **Vendor Evaluation**: Compare cloud providers, remote access tools, and observability platforms
+- **Security Posture**: Assess zero trust frameworks and rollout considerations
+- **Reliability Comms**: Draft downtime notices with impact, timing, and contacts
+- **Incident Translation**: Explain error logs in business-friendly language
+
 ## Deployment Strategies
 
 | Strategy       | Principle                                | Use Case              |

@@ -26,6 +26,11 @@ General development entry point responsible for all development and maintenance 
 - **Godot**: GDScript/C# development, Node-based scene tree, Signal system
 - **Game Systems**: Physics, AI behavior trees, multiplayer networking, performance profiling
 
+### Research & Diagnostics
+- **Tech Evaluation**: Compare frameworks, cloud providers, and observability tools with pros/cons
+- **System Analysis**: Analyze logs, performance test results, error rates, and regressions
+- **Testing Support**: Brainstorm edge cases and failure scenarios for features
+
 ### Development Scenarios
 - New project development: Architecture design, technology selection, scaffolding
 - Feature expansion: Adding capabilities to existing codebases

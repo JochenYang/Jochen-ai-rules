@@ -23,6 +23,11 @@ Comprehensive quality assurance covering code review, testing, and security audi
 - **Test Design**: TDD workflows, mock strategies, fixture management
 - **Coverage Analysis**: Identifies untested code paths and edge cases
 
+### Bug Triage & Analytics
+- **Defect Prioritization**: Rank bugs by severity, frequency, and user impact
+- **Edge Case Discovery**: Generate high-risk scenarios for focused testing
+- **Quality Reporting**: Summarize error trends and regression risk
+
 ### Security Auditing
 - **OWASP Top 10**: Authentication, authorization, injection, XSS, CSRF
 - **Input Validation**: SQL injection, command injection, path traversal prevention
