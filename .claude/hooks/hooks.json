@@ -61,11 +61,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -Command \"$modified = git diff --name-only 2>$null | Where-Object { $_ -match '\\\\.(ts|tsx|js|jsx)$' }; if ($modified) { $hasConsole = $false; foreach ($f in $modified) { if (Test-Path $f -PathType Leaf) { $content = Get-Content $f -ErrorAction SilentlyContinue; if ($content -match 'console\\\\.log') { Write-Host \\\"[Hook] WARNING: console.log in $f\\\" -ForegroundColor Red; $hasConsole = $true } } }; if ($hasConsole) { Write-Host '[Hook] Remove console.log before committing' -ForegroundColor Yellow } }\""
+            "command": "powershell -Command \"$ErrorActionPreference = 'SilentlyContinue'; $git = (Get-Command git -ErrorAction SilentlyContinue).Source; if (-not $git) { exit 0 }; $modified = & $git diff --name-only 2>$null | Where-Object { $_ -match '\\\\.(ts|tsx|js|jsx)$' }; if ($modified) { $hasConsole = $false; foreach ($f in $modified) { if (Test-Path $f -PathType Leaf) { $content = Get-Content $f -ErrorAction SilentlyContinue; if ($content -match 'console\\\\.log') { Write-Host \\\"[Hook] WARNING: console.log in $f\\\" -ForegroundColor Red; $hasConsole = $true } } }; if ($hasConsole) { Write-Host '[Hook] Remove console.log before committing' -ForegroundColor Yellow } }; exit 0\""
           },
           {
             "type": "command",
-            "command": "powershell -Command \"(New-Object Media.SoundPlayer 'C:/Users/Administrator/.claude/sounds/finish.wav').PlaySync()\""
+            "command": "powershell -Command \"$ErrorActionPreference = 'SilentlyContinue'; $sound = 'C:/Users/Administrator/.claude/sounds/finish.wav'; if (Test-Path $sound) { (New-Object Media.SoundPlayer $sound).PlaySync() }; exit 0\""
           }
         ],
         "description": "Final audit for console.log and play finish sound"

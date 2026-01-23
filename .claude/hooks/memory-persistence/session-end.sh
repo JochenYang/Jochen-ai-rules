@@ -46,3 +46,5 @@ else
 EOF
   echo "[SessionEnd] Created session file: $SESSION_FILE" >&2
 fi
+
+exit 0
