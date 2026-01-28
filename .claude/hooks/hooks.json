@@ -23,7 +23,7 @@
         "description": "Reminder to use tmux for dev server"
       },
       {
-        "matcher": "tool == \"Bash\" && tool_input.command matches \"(npm install|pytest|vitest|playwright)\"",
+        "matcher": "tool == \"Bash\" && tool_input.command matches \"(npm (install|test)|pnpm (install|test)|yarn (install|test)?|bun (install|test)|cargo build|make|docker|pytest|vitest|playwright)\"",
         "hooks": [
           {
             "type": "command",
@@ -31,9 +31,85 @@
           }
         ],
         "description": "Reminder to use tmux for long-running commands"
+      },
+      {
+        "matcher": "tool == \"Write\" && tool_input.file_path matches \"\\\\.(md|txt)$\" && !(tool_input.file_path matches \"README\\\\.md|CLAUDE\\\\.md|AGENTS\\\\.md|CONTRIBUTING\\\\.md\")",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const fs=require('fs');let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const p=i.tool_input?.file_path||'';if(/\\.(md|txt)$/.test(p)&&!/(README|CLAUDE|AGENTS|CONTRIBUTING)\\.md$/.test(p)){console.error('[Hook] BLOCKED: Unnecessary documentation file creation');console.error('[Hook] File: '+p);console.error('[Hook] Use README.md for documentation instead');process.exit(1)}console.log(d)})\""
+          }
+        ],
+        "description": "Block creation of random .md files - keeps docs consolidated"
+      },
+      {
+        "matcher": "tool == \"Edit\" || tool == \"Write\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -l ~/.claude/hooks/strategic-compact/suggest-compact.sh"
+          }
+        ],
+        "description": "Suggest manual compaction at logical intervals"
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -l ~/.claude/skills/continuous-learning-v2/hooks/observe.sh pre"
+          }
+        ],
+        "description": "Observe tool usage for continuous-learning-v2"
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -l ~/.claude/hooks/memory-persistence/pre-compact.sh"
+          }
+        ],
+        "description": "Save state before context compaction"
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -l ~/.claude/hooks/memory-persistence/session-start.sh"
+          }
+        ],
+        "description": "Load previous context on new session"
       }
     ],
     "PostToolUse": [
+      {
+        "matcher": "tool == \"Bash\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const cmd=i.tool_input?.command||'';if(/gh pr create/.test(cmd)){const out=i.tool_output?.output||'';const m=out.match(/https:\\\/\\\/github.com\\\/[^/]+\\\/[^/]+\\\/pull\\\/\\d+/);if(m){console.error('[Hook] PR created: '+m[0]);const repo=m[0].replace(/https:\\\/\\\/github.com\\\/([^/]+\\\/[^/]+)\\\/pull\\\/\\d+/,'$1');const pr=m[0].replace(/.*\\\/pull\\\/(\\d+)/,'$1');console.error('[Hook] To review: gh pr review '+pr+' --repo '+repo)}}console.log(d)})\""
+          }
+        ],
+        "description": "Log PR URL and provide review command after PR creation"
+      },
+      {
+        "matcher": "tool == \"Bash\" && tool_input.command matches \"(npm run build|pnpm build|yarn build)\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{console.error('[Hook] Build completed - async analysis running in background');console.log(d)})\"",
+            "async": true,
+            "timeout": 30
+          }
+        ],
+        "description": "Example: async hook for build analysis (runs in background without blocking)"
+      },
       {
         "matcher": "tool == \"Edit\" && tool_input.file_path matches \"\\\\.(ts|tsx|js|jsx)$\"",
         "hooks": [
@@ -45,6 +121,16 @@
         "description": "Auto-format JS/TS files with Prettier after edits"
       },
       {
+        "matcher": "tool == \"Edit\" && tool_input.file_path matches \"\\\\.(ts|tsx)$\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -Command \"$file_path = '{{file_path}}'; if (Test-Path $file_path -PathType Leaf) { $dir = Split-Path $file_path -Parent; $project = $dir; while ($project -and -not (Test-Path (Join-Path $project 'tsconfig.json') -PathType Leaf)) { $project = Split-Path $project -Parent }; if ($project -and (Test-Path (Join-Path $project 'tsconfig.json') -PathType Leaf)) { try { npx tsc --noEmit --pretty false 2>$null | Out-Null } catch {} } }\""
+          }
+        ],
+        "description": "TypeScript check after editing .ts/.tsx files"
+      },
+      {
         "matcher": "tool == \"Edit\" && tool_input.file_path matches \"\\\\.(ts|tsx|js|jsx)$\"",
         "hooks": [
           {
@@ -53,6 +139,16 @@
           }
         ],
         "description": "Warn about console.log statements after edits"
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -l ~/.claude/skills/continuous-learning-v2/hooks/observe.sh post"
+          }
+        ],
+        "description": "Observe tool usage for continuous-learning-v2"
       }
     ],
     "Stop": [
@@ -69,6 +165,18 @@
           }
         ],
         "description": "Final audit for console.log and play finish sound"
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -l ~/.claude/hooks/memory-persistence/session-end.sh"
+          }
+        ],
+        "description": "Persist session state on end"
       }
     ]
   }
