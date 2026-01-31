@@ -199,6 +199,7 @@ Suggest splitting commits when detecting:
 * Use past tense
 * Commit broken code (unless explicitly intended)
 * Include sensitive information
+* Co-Author-by: Claude (xxxxx) noreply@anthropic.com is prohibited.
 
 ---
 
