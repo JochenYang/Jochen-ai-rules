@@ -1,6 +1,6 @@
 # Orchestrate Command
 
-Multi-agent sequential collaboration workflow command.
+Sequential agent workflow for complex tasks. This command coordinates a chain of specialized **Agents** (defined in `.claude/agents/`) to complete features, bug fixes, or refactors.
 
 ## Usage
 
@@ -11,39 +11,28 @@ Multi-agent sequential collaboration workflow command.
 ### feature
 
 Full feature implementation workflow:
-
-```
-dev-planner → tdd-guide → code-reviewer
-```
+`dev-planner` → `tdd-guide` → `code-reviewer`
 
 ### bugfix
 
-Bug investigation and resolution workflow:
-
-```
-bug-analyzer → tdd-guide → code-reviewer
-```
+Deep bug investigation and resolution workflow:
+`explorer` → `tdd-guide` → `code-reviewer`
 
 ### refactor
 
 Safe refactoring workflow:
+`dev-planner` → `code-reviewer` → `tdd-guide`
 
-```
-code-reviewer → tdd-guide
-```
+## Execution Pattern (INTERNAL)
 
-## Execution Pattern
-
-For each agent in the workflow:
-
-1. **Invoke Agent** - Pass context from the previous agent.
-2. **Collect Output** - Generate a structured Handoff document.
-3. **Pass to Next** - Relay information through the chain.
-4. **Consolidate** - Generate the final orchestration report.
+1. **Invoke Agent**: The orchestrator switches to the specified Agent by loading its definition from `.claude/agents/[agent-name].md`.
+2. **Collect Output**: Each Agent MUST capture its findings as a structured **HANDOFF** document.
+3. **Pass Context**: The orchestrator relays the handoff to the next agent in the chain to ensure continuity.
+4. **Aggregate Results**: Once the final agent finishes, the system generates a consolidated **Final Report**.
 
 ## Handoff Document Format
 
-Agents communicate via Handoff documents:
+Agents communicate via internal Handoff documents:
 
 ```markdown
 ## HANDOFF: [previous-agent] → [next-agent]
@@ -52,9 +41,9 @@ Agents communicate via Handoff documents:
 
 [Summary of work completed by the previous agent]
 
-### Findings
+### Findings & Decisions
 
-[Key discoveries or technical decisions]
+[Key discoveries, variable states, or technical decisions]
 
 ### Files Modified
 
@@ -69,61 +58,51 @@ Agents communicate via Handoff documents:
 [Suggested next steps]
 ```
 
-## Example: Feature Workflow
+## Example: Bugfix Workflow Execution
 
 ```bash
-/orchestrate feature "Add user authentication feature"
+/orchestrate bugfix "Fix race condition in Auth module"
 ```
 
-Execution Steps:
-
-1. **Dev Planner Agent**
-   - Requirements analysis
-   - Implementation planning
-   - Dependency identification
-   - Output: `HANDOFF: dev-planner → tdd-guide`
-
+1. **Explorer Agent** (formerly bug-analyzer)
+   - Deep root cause analysis & Reproduction
+   - Output: `HANDOFF: explorer → tdd-guide`
 2. **TDD Guide Agent**
-   - Read planner handoff
-   - Write tests first
-   - Implement code to pass tests
+   - Reads analysis & Writes test case to fail first
+   - Implements fix
    - Output: `HANDOFF: tdd-guide → code-reviewer`
-
 3. **Code Reviewer Agent**
-   - Review implementation
-   - Check for issues
-   - Suggest improvements
-   - Output: Final Report
+   - Security & Regression check
+   - Output: Final Orchestration Report
 
 ## Final Report Format
 
-```
-ORCHESTRATION REPORT
-====================
-Workflow: feature
-Task: Add user authentication feature
-Agents: dev-planner → tdd-guide → code-reviewer
+```markdown
+# ORCHESTRATION REPORT
 
-SUMMARY
--------
-[One-paragraph executive summary]
+Workflow: [type] | Task: [description]
+Agents: [Path taken]
 
-AGENT OUTPUTS
--------------
-Dev Planner: [Summary]
-TDD Guide: [Summary]
-Code Reviewer: [Summary]
+## SUMMARY
 
-FILES CHANGED
--------------
+[One-paragraph executive summary of the mission]
+
+## AGENT OUTPUTS
+
+- Agent 1: [summary]
+- Agent 2: [summary]
+  ...
+
+## FILES CHANGED
+
 [Complete list of modified files]
 
-TEST RESULTS
-------------
-[Summary of test passes/failures]
+## TEST RESULTS
 
-RECOMMENDATION
---------------
+[Summary of test passes/failures and coverage]
+
+## RECOMMENDATION
+
 [SHIP / NEEDS WORK / BLOCKED]
 ```
 
@@ -137,31 +116,33 @@ For independent checks, run agents in parallel:
 Run simultaneously:
 
 - code-reviewer (Quality)
-- bug-analyzer (Error Detection)
+- explorer (Deep Analysis)
 
 ### Merge Results
 
-Combine outputs into a single report.
+Combine outputs into a single consolidated report.
 ```
+
+## Available Agents
+
+Located in `.claude/agents/`:
+
+- **dev-planner**: Architecture and high-level strategy.
+- **explorer**: Root cause analysis and deep debugging.
+- **tdd-guide**: Test-driven implementation specialist.
+- **code-reviewer**: Quality, security, and performance auditor.
 
 ## Arguments
 
 $ARGUMENTS:
 
-- `feature <description>` - Full feature development workflow
-- `bugfix <description>` - Bug resolution workflow
-- `refactor <description>` - Code refactoring workflow
-- `custom <agents> <description>` - Custom sequence of agents
-
-## Custom Workflow Example
-
-```bash
-/orchestrate custom "dev-planner,tdd-guide,code-reviewer" "Redesign cache layer"
-```
+- `feature <description>` - Roadmap -> TDD Implementation -> Review
+- `bugfix <description>` - Deep Exploration -> Fix -> Review
+- `refactor <description>` - Planning -> Audit -> Implementation
+- `custom <agents> <description>` - Custom sequence of agents (e.g. "explorer,code-reviewer")
 
 ## Tips
 
-1. **Start with Planner** - Use dev-planner for complex features.
-2. **Always Review** - code-reviewer is mandatory before merging.
-3. **Keep Handoffs Concise** - Focus on what the next agent needs to know.
-4. **Verify Mid-Flow** - Insert verification steps between agents if needed.
+1. **Handoffs are mandatory**: Ensure state is passed between agents.
+2. **Planner first**: For multi-file changes, always start with `dev-planner`.
+3. **Exploration depth**: Use `explorer` instead of `bug-analyzer` for complex issues.
