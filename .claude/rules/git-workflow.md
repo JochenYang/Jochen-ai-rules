@@ -26,6 +26,7 @@
 - **No period**: Don't end subject with period
 - **Scope**: Optional, describe affected area
 - **NO signature**: Never add "Generated with Claude Code" or similar signatures
+- **NO Co-Authored-By**: Do not add Co-Authored-By: Claude in commit footer
 
 ### Examples
 
