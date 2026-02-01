@@ -10,28 +10,33 @@ General development entry point responsible for all development and maintenance 
 ## Core Capabilities
 
 ### Web Development
+
 - **Frontend**: Component architecture, state management, responsive design, Core Web Vitals optimization
 - **Backend**: RESTful/GraphQL APIs, authentication, caching, microservices architecture
 - **Full-Stack**: End-to-end feature implementation, database integration, deployment
 
 ### Mobile Development
+
 - **Cross-Platform**: Flutter/React Native app development with native integrations
 - **Native iOS**: Swift/SwiftUI development following Human Interface Guidelines
 - **Native Android**: Kotlin/Jetpack Compose following Material Design
 - **Mobile-Specific**: Offline-first architecture, push notifications, performance optimization
 
 ### Game Development
+
 - **Unity**: C# scripting, MonoBehaviour lifecycle, ScriptableObjects, Coroutines
 - **Unreal**: C++/Blueprint development, Actor-Component architecture, Gameplay Ability System
 - **Godot**: GDScript/C# development, Node-based scene tree, Signal system
 - **Game Systems**: Physics, AI behavior trees, multiplayer networking, performance profiling
 
 ### Research & Diagnostics
+
 - **Tech Evaluation**: Compare frameworks, cloud providers, and observability tools with pros/cons
 - **System Analysis**: Analyze logs, performance test results, error rates, and regressions
 - **Testing Support**: Brainstorm edge cases and failure scenarios for features
 
 ### Development Scenarios
+
 - New project development: Architecture design, technology selection, scaffolding
 - Feature expansion: Adding capabilities to existing codebases
 - Bug fixes: Problem localization, root cause analysis, fix implementation
@@ -42,30 +47,34 @@ General development entry point responsible for all development and maintenance 
 ## Tech Stack
 
 ### Web Development
+
 | Domain   | Technologies                                                                  |
-|----------|-------------------------------------------------------------------------------|
+| -------- | ----------------------------------------------------------------------------- |
 | Frontend | React, Vue, Angular, Svelte, Next.js, TypeScript, Tailwind CSS, Vite, Webpack |
 | Backend  | Node.js, Python, Java, Go, Rust, Express, Fastify, FastAPI, Gin, Spring Boot  |
 | Database | PostgreSQL, MySQL, MongoDB, Redis, Prisma, TypeORM, SQLAlchemy                |
 
 ### Mobile Development
+
 | Platform       | Technologies                    |
-|----------------|---------------------------------|
+| -------------- | ------------------------------- |
 | Cross-Platform | Flutter, React Native, Expo     |
 | iOS            | Swift, SwiftUI, UIKit           |
 | Android        | Kotlin, Jetpack Compose, XML    |
 | State Mgmt     | Provider, Riverpod, Redux, MobX |
 
 ### Game Development
+
 | Engine        | Languages      | Platforms                  |
-|---------------|----------------|----------------------------|
+| ------------- | -------------- | -------------------------- |
 | Unity         | C#, ShaderLab  | PC, Mobile, Console, VR/AR |
 | Unreal Engine | C++, Blueprint | PC, Console, VR/AR         |
 | Godot         | GDScript, C#   | PC, Mobile, Web            |
 
 ### DevOps & Tools
+
 | Category   | Technologies                       |
-|------------|------------------------------------|
+| ---------- | ---------------------------------- |
 | Containers | Docker, Kubernetes, Docker Compose |
 | CI/CD      | GitHub Actions, GitLab CI, Jenkins |
 | Cloud      | AWS, GCP, Azure, Vercel, Netlify   |
@@ -98,18 +107,21 @@ Focus on technical implementation and code quality, not product requirements ana
 ## Platform-Specific Guidelines
 
 ### Web Development
+
 - Follow responsive design principles (mobile-first)
 - Optimize Core Web Vitals (LCP < 2.5s, FID < 100ms, CLS < 0.1)
 - Use semantic HTML and WCAG 2.1 AA accessibility standards
 - Implement proper error handling and loading states
 
 ### Mobile Development
+
 - Follow platform design guidelines (HIG for iOS, Material Design for Android)
 - Implement offline-first architecture with data synchronization
 - Optimize for battery life and memory usage
 - Handle different screen sizes and orientations
 
 ### Game Development
+
 - Target 60 FPS for PC/console, 30-60 FPS for mobile
 - Use object pooling for frequently spawned objects
 - Implement LOD (Level of Detail) systems
@@ -128,6 +140,8 @@ Focus on technical implementation and code quality, not product requirements ana
 ## Detailed References
 
 - `./references/api-design.md` - API design specifications and best practices
+- `./references/backend-patterns.md` - Backend architecture patterns (Repository, CQRS, etc.)
+- `./references/frontend-patterns.md` - Frontend architecture patterns (Composition, Hooks, etc.)
 - `./references/frontend-optimization.md` - Frontend performance optimization
 - `./references/game-optimization.md` - Game performance optimization
 - `./references/mobile-best-practices.md` - Mobile development guidelines
