@@ -16,11 +16,31 @@ Create a comprehensive, actionable implementation plan.
 
 ## What This Does
 
-1. **Requirements Analysis** - Understand the feature request completely
-2. **Architecture Review** - Analyze existing codebase structure
-3. **Step Breakdown** - Create detailed steps with file paths
-4. **Implementation Order** - Prioritize by dependencies
-5. **Testing Strategy** - Define what to test
+1. **Requirements Clarification** - If the request is vague, actively ask questions to clarify:
+   - Use case and user story
+   - Expected behavior and edge cases
+   - Performance requirements
+   - Integration points
+   - Success criteria
+   - **Use AskUserQuestion tool for multi-turn brainstorming until requirements are clear**
+2. **Requirements Analysis** - Understand the feature request completely
+3. **Architecture Review** - Analyze existing codebase structure
+4. **Step Breakdown** - Create detailed steps with file paths
+5. **Implementation Order** - Prioritize by dependencies
+6. **Testing Strategy** - Define what to test
+
+## Clarification Questions (When Needed)
+
+If the user's request lacks detail, **proactively ask** questions like:
+
+- What problem does this solve for users?
+- What's the expected input/output?
+- Are there any performance requirements? (e.g., response time, concurrent users)
+- How should errors be handled?
+- What existing systems does this integrate with?
+- What are the acceptance criteria?
+
+**Continue asking until you have enough context to create a concrete plan.**
 
 ## Plan Format
 
