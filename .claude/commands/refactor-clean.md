@@ -1,5 +1,5 @@
 ---
-description: Clean up dead code, unused files, and improve code organization.
+description: Clean up dead code, unused files, and improve code organization. Can invoke code-reviewer agent for quality checks.
 ---
 
 # Refactor Clean Command
@@ -22,16 +22,18 @@ Clean up dead code and improve code organization.
 4. **Suggest improvements** - Identify code smells and refactoring opportunities
 5. **Implement safe changes** - Remove confirmed dead code
 
+**After cleanup**, this command may invoke the **code-reviewer** agent (`.claude/agents/code-reviewer.md`) to verify the changes are safe.
+
 ## Dead Code Types
 
-| Type | Detection |
-|------|-----------|
-| Unused functions | No calls, no exports used |
-| Unused variables | Defined but never used |
-| Unused imports | Import exists, nothing used |
-| Unreachable code | Code after return/throw |
-| Dead branches | if(false) { ... } |
-| Orphaned files | No imports from anywhere |
+| Type             | Detection                   |
+|------------------|-----------------------------|
+| Unused functions | No calls, no exports used   |
+| Unused variables | Defined but never used      |
+| Unused imports   | Import exists, nothing used |
+| Unreachable code | Code after return/throw     |
+| Dead branches    | if(false) { ... }           |
+| Orphaned files   | No imports from anywhere    |
 
 ## Safety Rules
 
@@ -47,3 +49,14 @@ Clean up dead code and improve code organization.
 - Commit removals separately from new code
 - Document removed code in commit message
 - Keep deprecated code marked with @deprecated
+
+## Related Commands
+
+- `/review` - Review refactoring changes
+- `/tdd` - Add tests to verify refactoring didn't break functionality
+- `/orchestrate refactor` - Full workflow: plan → refactor → review
+
+## Related Agents
+
+- `.claude/agents/code-reviewer.md` - For safety verification
+- `.claude/agents/dev-planner.md` - For planning large refactors

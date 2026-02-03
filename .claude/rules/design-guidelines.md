@@ -1,5 +1,11 @@
 # Design Guidelines
 
+**RULE TYPE**: Global mandatory design standards that ALL UI/UX work must follow.
+
+These are non-negotiable requirements for visual design and user experience.
+
+---
+
 ## Visual Style
 
 - Simple, flat, readable designs

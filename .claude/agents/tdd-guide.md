@@ -1,6 +1,7 @@
 ---
 name: tdd-guide
 description: Test-Driven Development specialist enforcing write-tests-first methodology. Use PROACTIVELY when writing new features, fixing bugs, or refactoring code. Ensures 80%+ test coverage.
+color: purple
 model: sonnet
 ---
 
@@ -106,3 +107,9 @@ When completing a TDD session, generate this report:
 
 [Specific areas for the Code Reviewer to check]
 ```
+
+## Reference Skills
+
+This agent references the following skills for best practices:
+- `.claude/skills/tdd-workflow/` - TDD methodology, patterns, and coverage standards
+- `.claude/skills/quality-assurance/` - Testing patterns and quality standards

@@ -1,5 +1,11 @@
 # Coding Standards
 
+**RULE TYPE**: Global mandatory standards that ALL agents and code must follow.
+
+These are non-negotiable requirements. Skills provide optional best practices; Rules are mandatory.
+
+---
+
 ## Code Comments (MANDATORY)
 
 All code must include English comments:
@@ -41,7 +47,7 @@ const delay = Math.min(1000 * Math.pow(2, retryCount), 30000);
 // Time complexity: O(log n) vs O(n) for linear search
 ```
 
-### Key Code
+### Key Decisions
 ```typescript
 // Deliberately using mutation here for performance with large arrays
 // Spread operator would create copy overhead on each iteration
@@ -61,6 +67,8 @@ name = user.name
 // Reset buffer to prevent memory leak from accumulated data
 buffer = [];
 ```
+
+---
 
 ## Immutability (CRITICAL)
 
@@ -88,7 +96,9 @@ items.push(newItem)
 const updatedItems = [...items, newItem]
 ```
 
-## Error Handling
+---
+
+## Error Handling (MANDATORY)
 
 ALWAYS handle errors comprehensively:
 
@@ -110,7 +120,9 @@ async function fetchData(url: string) {
 }
 ```
 
-## Type Safety
+---
+
+## Type Safety (MANDATORY)
 
 NEVER use `any`:
 
@@ -131,3 +143,56 @@ function getUser(id: string): Promise<User | null> {
   return database.users.find(id)
 }
 ```
+
+---
+
+## Input Validation (MANDATORY)
+
+ALWAYS validate user input:
+
+```typescript
+import { z } from 'zod'
+
+const schema = z.object({
+  email: z.string().email(),
+  age: z.number().int().min(0).max(150)
+})
+
+const validated = schema.parse(input)
+```
+
+---
+
+## File Organization
+
+MANY SMALL FILES > FEW LARGE FILES:
+- High cohesion, low coupling
+- 200-400 lines typical, 800 max
+- Extract utilities from large components
+- Organize by feature/domain, not by type
+
+---
+
+## Code Quality Checklist
+
+Before marking work complete:
+- [ ] Code is readable and well-named
+- [ ] Functions are small (<50 lines)
+- [ ] Files are focused (<800 lines)
+- [ ] No deep nesting (>4 levels)
+- [ ] Proper error handling
+- [ ] No console.log statements
+- [ ] No hardcoded values
+- [ ] No mutation (immutable patterns used)
+- [ ] All code has English comments
+- [ ] Type safety enforced (no `any`)
+- [ ] Input validation implemented
+
+---
+
+## Relationship to Skills
+
+- **Rules** (this file): Mandatory standards that must be followed
+- **Skills** (`.claude/skills/`): Optional best practices and patterns for reference
+
+All agents must enforce these rules. Skills provide additional guidance but are not mandatory.

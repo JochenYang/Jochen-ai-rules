@@ -1,6 +1,7 @@
 ---
 name: code-reviewer
 description: Expert code reviewer focused on code quality, security, performance, and maintainability. Use AUTOMATICALLY before any merge or after implementation tasks.
+color: yellow
 model: sonnet
 ---
 
@@ -78,3 +79,9 @@ Provide your review in this structured format:
 2. **Explain Why**: Always provide the rationale behind a suggestion.
 3. **Prioritize**: Distinguish between blocking issues and nice-to-haves.
 4. **Verify Tests**: A feature without tests is incomplete.
+
+## Reference Skills
+
+This agent references the following skills for best practices:
+- `.claude/skills/quality-assurance/` - Code review standards, security audit, and testing patterns
+- `.claude/skills/developer/` - General development best practices

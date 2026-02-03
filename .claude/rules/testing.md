@@ -1,5 +1,11 @@
 # Testing Guidelines
 
+**RULE TYPE**: Global mandatory testing standards that ALL code must follow.
+
+These are non-negotiable requirements. Code without tests is incomplete.
+
+---
+
 ## Minimum Test Coverage: 80%
 
 Test Types (ALL required):

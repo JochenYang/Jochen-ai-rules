@@ -1,5 +1,11 @@
 # Security Guidelines
 
+**RULE TYPE**: Global mandatory security standards that ALL code must follow.
+
+These are non-negotiable requirements. Security violations must be fixed immediately.
+
+---
+
 ## Mandatory Security Checks
 
 Before ANY commit:

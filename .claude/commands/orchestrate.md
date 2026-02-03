@@ -11,6 +11,11 @@ Sequential agent workflow for complex tasks. This command coordinates a chain of
 ### feature
 
 Full feature implementation workflow:
+`dev-planner` → `code-implementer` → `code-reviewer`
+
+### feature-tdd
+
+Test-driven feature implementation workflow:
 `dev-planner` → `tdd-guide` → `code-reviewer`
 
 ### bugfix
@@ -21,7 +26,7 @@ Deep bug investigation and resolution workflow:
 ### refactor
 
 Safe refactoring workflow:
-`dev-planner` → `code-reviewer` → `tdd-guide`
+`dev-planner` → `code-implementer` → `code-reviewer`
 
 ## Execution Pattern (INTERNAL)
 
@@ -58,13 +63,29 @@ Agents communicate via internal Handoff documents:
 [Suggested next steps]
 ```
 
+## Example: Feature Workflow Execution
+
+```bash
+/orchestrate feature "Add user profile editing"
+```
+
+1. **Dev Planner Agent**
+   - Analyze requirements and create implementation plan
+   - Output: `HANDOFF: dev-planner → code-implementer`
+2. **Code Implementer Agent**
+   - Transform plan into production-ready code
+   - Output: `HANDOFF: code-implementer → code-reviewer`
+3. **Code Reviewer Agent**
+   - Quality, security, and performance audit
+   - Output: Final Orchestration Report
+
 ## Example: Bugfix Workflow Execution
 
 ```bash
 /orchestrate bugfix "Fix race condition in Auth module"
 ```
 
-1. **Explorer Agent** (formerly bug-analyzer)
+1. **Explorer Agent**
    - Deep root cause analysis & Reproduction
    - Output: `HANDOFF: explorer → tdd-guide`
 2. **TDD Guide Agent**
@@ -127,22 +148,33 @@ Combine outputs into a single consolidated report.
 
 Located in `.claude/agents/`:
 
-- **dev-planner**: Architecture and high-level strategy.
-- **explorer**: Root cause analysis and deep debugging.
-- **tdd-guide**: Test-driven implementation specialist.
-- **code-reviewer**: Quality, security, and performance auditor.
+- **dev-planner**: Architecture and high-level strategy planning
+- **code-implementer**: Production-ready code implementation
+- **explorer**: Root cause analysis and deep debugging
+- **tdd-guide**: Test-driven implementation specialist
+- **code-reviewer**: Quality, security, and performance auditor
+- **bug-analyzer**: Bug investigation and analysis
+- **story-generator**: User story generation from requirements
+- **ui-sketcher**: UI/UX design and prototyping
 
 ## Arguments
 
 $ARGUMENTS:
 
-- `feature <description>` - Roadmap -> TDD Implementation -> Review
-- `bugfix <description>` - Deep Exploration -> Fix -> Review
-- `refactor <description>` - Planning -> Audit -> Implementation
-- `custom <agents> <description>` - Custom sequence of agents (e.g. "explorer,code-reviewer")
+- `feature <description>` - Planning → Code Implementation → Review
+- `feature-tdd <description>` - Planning → TDD Implementation → Review
+- `bugfix <description>` - Deep Exploration → TDD Fix → Review
+- `refactor <description>` - Planning → Code Implementation → Review
+- `custom <agents> <description>` - Custom sequence of agents (e.g. "dev-planner,code-implementer,code-reviewer")
 
 ## Tips
 
-1. **Handoffs are mandatory**: Ensure state is passed between agents.
-2. **Planner first**: For multi-file changes, always start with `dev-planner`.
-3. **Exploration depth**: Use `explorer` instead of `bug-analyzer` for complex issues.
+1. **Handoffs are mandatory**: Ensure state is passed between agents
+2. **Planner first**: For multi-file changes, always start with `dev-planner`
+3. **Choose the right workflow**: 
+   - Use `feature` for standard implementation
+   - Use `feature-tdd` when test coverage is critical
+   - Use `bugfix` for debugging and fixing issues
+4. **Code implementer vs TDD guide**: 
+   - `code-implementer` for general feature development
+   - `tdd-guide` for test-first development or bug fixes

@@ -1,6 +1,7 @@
 ---
 name: bug-analyzer
 description: Expert debugger specialized in deep code execution flow analysis and root cause investigation. Use PROACTIVELY when users report bugs, crashes, or unexpected behavior.
+color: red
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet
 ---
@@ -59,3 +60,9 @@ When you finish your analysis, you MUST provide a structured report for the next
 - If multiple causes are suspected, isolate and verify each one.
 - Check for race conditions and asynchronous timing issues.
 - Reference `.claude/skills/tdd-workflow/` for standard verification steps.
+
+## Reference Skills
+
+This agent references the following skills for best practices:
+- `.claude/skills/tdd-workflow/` - Test-driven debugging and verification
+- `.claude/skills/quality-assurance/` - Bug analysis and testing patterns

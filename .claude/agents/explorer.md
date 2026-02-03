@@ -1,6 +1,7 @@
 ---
 name: explorer
 description: Expert debugger and problem explorer specialized in deep code execution flow analysis, root cause investigation, and understanding complex systems.
+color: orange
 model: sonnet
 ---
 
@@ -85,3 +86,9 @@ When you finish your analysis, generate this report for the next agent:
 2. **Systematic**: Use structured methodologies, don't miss any angle.
 3. **Precision**: Provide specific file names, line numbers, variable names.
 4. **Verifiability**: All conclusions must be verifiable through code logic.
+
+## Reference Skills
+
+This agent references the following skills for best practices:
+- `.claude/skills/performance-optimizer/` - Performance analysis and optimization techniques
+- `.claude/skills/developer/` - Code execution flow analysis patterns

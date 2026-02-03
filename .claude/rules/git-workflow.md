@@ -1,5 +1,11 @@
 # Git Workflow
 
+**RULE TYPE**: Global mandatory Git standards that ALL commits and branches must follow.
+
+These are non-negotiable requirements for version control.
+
+---
+
 ## Commit Message Format
 
 ```
@@ -7,16 +13,16 @@
 ```
 
 ### Types
-| Type | Description | Example |
-|------|-------------|---------|
-| feat | New feature | `feat(auth): add JWT token validation` |
-| fix | Bug fix | `fix(ui): resolve button hover state` |
+| Type     | Description        | Example                                     |
+|----------|--------------------|---------------------------------------------|
+| feat     | New feature        | `feat(auth): add JWT token validation`      |
+| fix      | Bug fix            | `fix(ui): resolve button hover state`       |
 | refactor | Code restructuring | `refactor(api): simplify response handling` |
-| docs | Documentation | `docs(readme): add installation guide` |
-| style | Formatting | `style(format): run prettier on utils` |
-| test | Tests | `test(auth): add login validation tests` |
-| chore | Maintenance | `chore(deps): update npm dependencies` |
-| perf | Performance | `perf(db): optimize query performance` |
+| docs     | Documentation      | `docs(readme): add installation guide`      |
+| style    | Formatting         | `style(format): run prettier on utils`      |
+| test     | Tests              | `test(auth): add login validation tests`    |
+| chore    | Maintenance        | `chore(deps): update npm dependencies`      |
+| perf     | Performance        | `perf(db): optimize query performance`      |
 
 ### Rules
 - **Language**: English only (no Chinese or pinyin)

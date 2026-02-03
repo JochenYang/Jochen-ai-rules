@@ -1,5 +1,5 @@
 ---
-description: Analyze and fix build errors. Run build, parse errors, and implement fixes.
+description: Analyze and fix build errors. Run build, parse errors, and implement fixes. Can invoke explorer agent for complex issues.
 ---
 
 # Build Fix Command
@@ -22,16 +22,18 @@ Analyze and fix build/compilation errors.
 4. **Implement fixes** - Fix the identified issues
 5. **Verify fix** - Run build again to confirm success
 
+**For complex build issues**, this command may invoke the **explorer** agent (`.claude/agents/explorer.md`) to perform deep analysis.
+
 ## Common Build Errors
 
-| Error Type | Solution |
-|------------|----------|
-| TypeScript type errors | Add types or fix type mismatches |
-| Import errors | Fix import paths or install dependencies |
-| Missing dependencies | Run npm install / pnpm install |
-| Linting errors | Fix linting issues or update eslint config |
-| Circular dependencies | Refactor to break cycles |
-| Missing exports | Add or fix exports |
+| Error Type             | Solution                                   |
+|------------------------|--------------------------------------------|
+| TypeScript type errors | Add types or fix type mismatches           |
+| Import errors          | Fix import paths or install dependencies   |
+| Missing dependencies   | Run npm install / pnpm install             |
+| Linting errors         | Fix linting issues or update eslint config |
+| Circular dependencies  | Refactor to break cycles                   |
+| Missing exports        | Add or fix exports                         |
 
 ## Workflow
 
@@ -49,3 +51,14 @@ Analyze and fix build/compilation errors.
 - Fix multiple similar errors together
 - Add tests to prevent regressions
 - Commit fixes in logical batches
+
+## Related Commands
+
+- `/tdd` - Add tests to prevent future build breaks
+- `/review` - Review fixes before committing
+- `/orchestrate bugfix` - Full workflow for complex build issues
+
+## Related Agents
+
+- `.claude/agents/explorer.md` - For deep root cause analysis
+- `.claude/agents/code-implementer.md` - For implementing fixes
