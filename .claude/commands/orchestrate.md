@@ -21,7 +21,7 @@ Test-driven feature implementation workflow:
 ### bugfix
 
 Deep bug investigation and resolution workflow:
-`explorer` → `tdd-guide` → `code-reviewer`
+`bug-analyzer` → `tdd-guide` → `code-reviewer`
 
 ### refactor
 
@@ -85,9 +85,9 @@ Agents communicate via internal Handoff documents:
 /orchestrate bugfix "Fix race condition in Auth module"
 ```
 
-1. **Explorer Agent**
+1. **Bug Analyzer Agent**
    - Deep root cause analysis & Reproduction
-   - Output: `HANDOFF: explorer → tdd-guide`
+   - Output: `HANDOFF: bug-analyzer → tdd-guide`
 2. **TDD Guide Agent**
    - Reads analysis & Writes test case to fail first
    - Implements fix
@@ -137,7 +137,7 @@ For independent checks, run agents in parallel:
 Run simultaneously:
 
 - code-reviewer (Quality)
-- explorer (Deep Analysis)
+- bug-analyzer (Deep Analysis)
 
 ### Merge Results
 
@@ -150,10 +150,9 @@ Located in `.claude/agents/`:
 
 - **dev-planner**: Architecture and high-level strategy planning
 - **code-implementer**: Production-ready code implementation
-- **explorer**: Root cause analysis and deep debugging
+- **bug-analyzer**: Bug investigation, root cause analysis, and code exploration
 - **tdd-guide**: Test-driven implementation specialist
 - **code-reviewer**: Quality, security, and performance auditor
-- **bug-analyzer**: Bug investigation and analysis
 - **story-generator**: User story generation from requirements
 - **ui-sketcher**: UI/UX design and prototyping
 
@@ -178,3 +177,4 @@ $ARGUMENTS:
 4. **Code implementer vs TDD guide**: 
    - `code-implementer` for general feature development
    - `tdd-guide` for test-first development or bug fixes
+5. **Bug analysis**: `bug-analyzer` provides deep execution flow analysis for complex bugs

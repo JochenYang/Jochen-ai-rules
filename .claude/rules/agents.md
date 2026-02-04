@@ -34,19 +34,12 @@ All agents must follow these rules when deciding which specialized agent to invo
 - **Output**: Quality report with prioritized improvement suggestions
 - **Skills**: quality-assurance, developer
 
-### explorer (Deep Analysis)
-- **Color**: Orange 🟠
-- **Description**: Root cause analysis and deep debugging expert
-- **Trigger**: Complex bugs, performance issues, system behavior investigation
-- **Output**: Execution flow analysis and root cause identification
-- **Skills**: performance-optimizer, developer
-
-### bug-analyzer (Bug Investigation)
+### bug-analyzer (Bug Investigation & Code Exploration)
 - **Color**: Red 🔴
-- **Description**: Bug diagnosis and analysis specialist
-- **Trigger**: Bug reports, error logs, crashes
-- **Output**: Root cause analysis and fix strategy
-- **Skills**: tdd-workflow, quality-assurance
+- **Description**: Bug diagnosis, root cause analysis, and code exploration specialist
+- **Trigger**: Bug reports, error logs, crashes, or need to understand complex code
+- **Output**: Execution flow analysis, root cause identification, and fix strategy
+- **Skills**: tdd-workflow, quality-assurance, performance-optimizer, developer
 
 ### story-generator (Requirements)
 - **Color**: Cyan 🔷
@@ -78,7 +71,7 @@ dev-planner → tdd-guide → code-reviewer
 ### Bug Fix
 ```
 /orchestrate bugfix <description>
-explorer → tdd-guide → code-reviewer
+bug-analyzer → tdd-guide → code-reviewer
 ```
 
 ### Refactoring
@@ -101,7 +94,7 @@ After significant implementation work:
 
 ### 3. Error Handling
 When user provides error logs or mentions crashes:
-- **Action**: Call `explorer` or `bug-analyzer` for analysis
+- **Action**: Call `bug-analyzer` for deep analysis
 
 ### 4. Test Coverage Needs
 When implementing critical features or fixing bugs:
