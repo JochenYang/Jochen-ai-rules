@@ -8,50 +8,44 @@ All agents must follow these rules when deciding which specialized agent to invo
 
 ### dev-planner (Planning)
 - **Color**: Blue 🔵
-- **Description**: Planning expert for complex features and refactoring
-- **Trigger**: New feature requirements, complex refactoring, structural changes
-- **Output**: Detailed implementation plan with risk assessment and time estimates
+- **Description**: Implementation planning specialist for complex features and refactoring
+- **Output**: Detailed step-by-step plans with risk assessment and dependency analysis
 - **Skills**: developer, api-designer, database-engineer
 
 ### code-implementer (Implementation)
 - **Color**: Green 🟢
-- **Description**: Production-ready code implementation specialist
-- **Trigger**: After planning phase, for standard feature development
-- **Output**: Clean, maintainable, well-documented code
+- **Description**: Production code implementer that transforms plans into clean, maintainable code
+- **Output**: Well-documented, tested implementations following project conventions
 - **Skills**: developer, quality-assurance
 
 ### tdd-guide (Test-Driven Development)
 - **Color**: Purple 🟣
-- **Description**: Test-driven development expert enforcing RED-GREEN-REFACTOR cycle
-- **Trigger**: When test coverage is critical, bug fixes, or TDD workflow requested
+- **Description**: Test-Driven Development specialist enforcing RED-GREEN-REFACTOR cycle
 - **Output**: Test cases and implementation with 80%+ coverage
 - **Skills**: tdd-workflow, quality-assurance
 
 ### code-reviewer (Quality Assurance)
 - **Color**: Yellow 🟡
-- **Description**: Code quality, security, and performance auditor
-- **Trigger**: After code changes, before merge, or as part of orchestration
-- **Output**: Quality report with prioritized improvement suggestions
+- **Description**: Code quality auditor focused on security, performance, and maintainability
+- **Output**: Comprehensive review reports with prioritized, actionable feedback
 - **Skills**: quality-assurance, developer
 
 ### bug-analyzer (Bug Investigation & Code Exploration)
 - **Color**: Red 🔴
-- **Description**: Bug diagnosis, root cause analysis, and code exploration specialist
-- **Trigger**: Bug reports, error logs, crashes, or need to understand complex code
-- **Output**: Execution flow analysis, root cause identification, and fix strategy
+- **Description**: Deep root cause investigator for bugs and code issues
+- **Output**: Detailed execution flow analysis and fix strategies
 - **Skills**: tdd-workflow, quality-assurance, performance-optimizer, developer
 
 ### story-generator (Requirements)
 - **Color**: Cyan 🔷
-- **Description**: User story generation from various inputs
-- **Trigger**: Need to document features as user stories
-- **Output**: Structured user stories with acceptance criteria
+- **Description**: User story generator that transforms requirements into structured stories
+- **Output**: User-centric stories with acceptance criteria
+- **Skills**: None (standalone)
 
 ### ui-sketcher (UI/UX Design)
 - **Color**: Purple 🟣
-- **Description**: UI/UX design and ASCII prototyping specialist
-- **Trigger**: UI design needs, interface mockups
-- **Output**: ASCII interface designs and interaction flows
+- **Description**: UI/UX designer that creates ASCII interface mockups and interaction flows
+- **Output**: Spatial design blueprints and user journey visualizations
 - **Skills**: ui-ux-pro-max, frontend-design
 
 ## Standard Workflows
@@ -79,6 +73,45 @@ bug-analyzer → tdd-guide → code-reviewer
 /orchestrate refactor <description>
 dev-planner → code-implementer → code-reviewer
 ```
+
+## Proactive Agent Suggestions
+
+When certain patterns are detected in user messages, AI should proactively suggest relevant agents:
+
+### Bug/Error Detection
+**Triggers**: User mentions "bug", "error", "crash", "broken", "not working", "fails", provides stack traces or error logs
+**Action**: Suggest bug-analyzer agent
+**Example**: "I see you're encountering an error. Let me use the bug-analyzer agent to investigate the root cause."
+
+### Feature Request Detection
+**Triggers**: User says "add feature", "implement", "build", "create", mentions multiple files or components, architectural changes
+**Action**: Suggest dev-planner agent
+**Example**: "This looks like a complex feature. Let me use the dev-planner agent to create a detailed plan first."
+
+### Code Review Request
+**Triggers**: User says "review", "check", "audit", "look at", "before merge", "is this good"
+**Action**: Suggest code-reviewer agent
+**Example**: "I'll use the code-reviewer agent to audit the changes for quality and security."
+
+### Test Coverage Needs
+**Triggers**: User mentions "TDD", "test first", "need tests", "coverage", "write tests"
+**Action**: Suggest tdd-guide agent
+**Example**: "I'll use the tdd-guide agent to implement this with test-first approach."
+
+### Requirements Structuring
+**Triggers**: User provides requirements, PRD, feature descriptions that need to be structured
+**Action**: Suggest story-generator agent
+**Example**: "Let me use the story-generator agent to convert these requirements into user stories."
+
+### UI/UX Design Needs
+**Triggers**: User mentions "UI", "interface", "design", "mockup", "layout", "user flow"
+**Action**: Suggest ui-sketcher agent
+**Example**: "I'll use the ui-sketcher agent to create an ASCII mockup of the interface."
+
+### Performance Issues
+**Triggers**: User mentions "slow", "performance", "optimization", "bottleneck", "latency"
+**Action**: Suggest bug-analyzer agent for investigation
+**Example**: "Let me use the bug-analyzer agent to investigate the performance bottleneck."
 
 ## Automated Trigger Rules
 

@@ -1,6 +1,6 @@
 ---
 name: story-generator
-description: Generate user stories with acceptance criteria from various inputs like git diffs, conversation history, PRD documents, or any requirements that need to be structured into story format.
+description: User story generator that transforms requirements into structured stories with acceptance criteria. Extracts user value from technical details. Outputs user-centric story format.
 color: cyan
 model: sonnet
 ---

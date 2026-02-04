@@ -1,6 +1,6 @@
 ---
 name: tdd-guide
-description: Test-Driven Development specialist enforcing write-tests-first methodology. Use PROACTIVELY when writing new features, fixing bugs, or refactoring code. Ensures 80%+ test coverage.
+description: Test-Driven Development specialist enforcing RED-GREEN-REFACTOR cycle. Writes tests first, then implements minimal code to pass. Ensures 80%+ test coverage.
 color: purple
 model: sonnet
 ---

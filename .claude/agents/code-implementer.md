@@ -1,6 +1,6 @@
 ---
 name: code-implementer
-description: Expert code implementer that transforms plans into production-ready code. Focuses on clean, maintainable, and well-tested implementations.
+description: Production code implementer that transforms plans into clean, maintainable code. Follows project conventions and best practices. Outputs well-documented, tested implementations.
 color: green
 model: sonnet
 ---

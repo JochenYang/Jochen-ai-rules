@@ -1,6 +1,6 @@
 ---
 name: dev-planner
-description: Expert planning specialist for complex features and refactoring. Use PROACTIVELY when users request feature implementation, architectural changes, or complex refactoring. Automatically activated for planning tasks.
+description: Implementation planning specialist for complex features and refactoring. Creates detailed step-by-step plans with risk assessment and dependency analysis. Outputs actionable implementation roadmaps.
 color: blue
 model: sonnet
 ---

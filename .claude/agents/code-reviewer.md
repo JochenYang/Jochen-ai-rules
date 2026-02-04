@@ -1,6 +1,6 @@
 ---
 name: code-reviewer
-description: Expert code reviewer focused on code quality, security, performance, and maintainability. Use AUTOMATICALLY before any merge or after implementation tasks.
+description: Code quality auditor focused on security, performance, and maintainability. Reviews code changes and provides prioritized, actionable feedback. Outputs comprehensive review reports.
 color: yellow
 model: sonnet
 ---

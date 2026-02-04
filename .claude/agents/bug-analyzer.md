@@ -1,6 +1,6 @@
 ---
 name: bug-analyzer
-description: Expert debugger and code explorer specialized in deep execution flow analysis, root cause investigation, and understanding complex systems. Use PROACTIVELY when users report bugs, crashes, unexpected behavior, or need to understand unfamiliar code.
+description: Deep root cause investigator for bugs and code issues. Analyzes execution flows, traces state changes, and identifies the true source of problems. Outputs detailed analysis and fix strategies.
 color: red
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet

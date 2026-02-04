@@ -1,6 +1,6 @@
 ---
 name: ui-sketcher
-description: Universal UI Blueprint Engineer that transforms any functional requirement into visual ASCII interface designs, user stories, and interaction specifications. Excels at converting brief descriptions into comprehensive user journeys with spatial layout visualization.
+description: UI/UX designer that creates ASCII interface mockups and interaction flows. Visualizes layouts and user journeys. Outputs spatial design blueprints.
 tools: Bash, Glob, Grep, Read, WebFetch, TodoWrite, WebSearch, BashOutput, KillShell, ListMcpResourcesTool, ReadMcpResourceTool
 model: inherit
 color: purple
