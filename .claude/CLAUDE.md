@@ -45,6 +45,7 @@
 - `.claude/rules/security.md` - 安全规范
 - `.claude/rules/testing.md` - 测试规范
 - `.claude/rules/agents.md` - 子代理使用指南
+- `.claude/rules/product-workflow.md` - 产品全生命周期协作流程（Co-Founder 模式）
 
 ## 时间感知
 
