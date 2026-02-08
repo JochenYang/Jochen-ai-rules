@@ -16,7 +16,7 @@ Activate when the user inputs:
 ## Core Workflow
 
 ```mermaid
-graph TD
+flowchart TD
     A[User Input] --> B{Task Analysis}
     B -->|Suitable for Team| C[Pre-flight Check]
     B -->|Suitable for Sub-agent| D[Suggest Sub-agent]
