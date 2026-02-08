@@ -32,6 +32,11 @@ Deep bug investigation and resolution workflow:
 Safe refactoring workflow:
 `dev-planner` → `code-implementer` → `code-reviewer` ↺ (Loop if changes needed)
 
+### ui-design
+
+Full cycle UI/UX optimization and implementation workflow:
+`story-generator` → `ui-sketcher` → `dev-planner` → `code-implementer` → `code-reviewer` ↺ (Loop if changes needed)
+
 ## Review Feedback Loop (MANDATORY)
 
 This is the most critical part of the orchestration. Follow these rules with ZERO exceptions.
@@ -39,6 +44,7 @@ This is the most critical part of the orchestration. Follow these rules with ZER
 ### Step 1: Parse Reviewer Output
 
 After invoking `code-reviewer`, extract the `Recommendation` field from its output. It will be one of:
+
 - **SHIP** → Workflow complete. Proceed to Final Report.
 - **NEEDS WORK** → Issues found. MUST enter repair loop.
 - **BLOCKED** → Critical issues. MUST enter repair loop.
@@ -46,48 +52,49 @@ After invoking `code-reviewer`, extract the `Recommendation` field from its outp
 ### Step 2: Repair Loop (when NOT SHIP)
 
 ┌─────────────────────────────────────────────────┐
-│            REPAIR LOOP STATE MACHINE             │
-│                                                  │
-│  code-reviewer returns NEEDS WORK or BLOCKED     │
-│         │                                        │
-│         ▼                                        │
-│  ┌──────────────────────────┐                    │
-│  │ Identify repair agent:   │                    │
-│  │  - feature/refactor →    │                    │
-│  │      code-implementer    │                    │
-│  │  - feature-tdd/bugfix →  │                    │
-│  │      tdd-guide           │                    │
-│  └──────────┬───────────────┘                    │
-│             │                                    │
-│             ▼                                    │
-│  ┌──────────────────────────┐                    │
-│  │ INVOKE repair agent with │                    │
-│  │ Review Report as context │◄──────┐            │
-│  └──────────┬───────────────┘       │            │
-│             │                       │            │
-│             ▼                       │            │
-│  ┌──────────────────────────┐       │            │
-│  │ Collect HANDOFF from     │       │            │
-│  │ repair agent             │       │            │
-│  └──────────┬───────────────┘       │            │
-│             │                       │            │
-│             ▼                       │            │
-│  ┌──────────────────────────┐       │            │
-│  │ INVOKE code-reviewer     │       │            │
-│  │ with new HANDOFF         │       │            │
-│  └──────────┬───────────────┘       │            │
-│             │                       │            │
-│             ▼                       │            │
-│  ┌──────────────────────────┐       │            │
-│  │ Recommendation = SHIP?   │       │            │
-│  │  YES → Exit loop ────────┼──►EXIT│            │
-│  │  NO  → Loop again ───────┼───┘   │            │
-│  └──────────────────────────┘       │            │
-│                                      │            │
-│  Max iterations: 3                   │            │
-│  If max reached → Report BLOCKED     │            │
+│ REPAIR LOOP STATE MACHINE │
+│ │
+│ code-reviewer returns NEEDS WORK or BLOCKED │
+│ │ │
+│ ▼ │
+│ ┌──────────────────────────┐ │
+│ │ Identify repair agent: │ │
+│ │ - feature/refactor → │ │
+│ │ code-implementer │ │
+│ │ - feature-tdd/bugfix → │ │
+│ │ tdd-guide │ │
+│ └──────────┬───────────────┘ │
+│ │ │
+│ ▼ │
+│ ┌──────────────────────────┐ │
+│ │ INVOKE repair agent with │ │
+│ │ Review Report as context │◄──────┐ │
+│ └──────────┬───────────────┘ │ │
+│ │ │ │
+│ ▼ │ │
+│ ┌──────────────────────────┐ │ │
+│ │ Collect HANDOFF from │ │ │
+│ │ repair agent │ │ │
+│ └──────────┬───────────────┘ │ │
+│ │ │ │
+│ ▼ │ │
+│ ┌──────────────────────────┐ │ │
+│ │ INVOKE code-reviewer │ │ │
+│ │ with new HANDOFF │ │ │
+│ └──────────┬───────────────┘ │ │
+│ │ │ │
+│ ▼ │ │
+│ ┌──────────────────────────┐ │ │
+│ │ Recommendation = SHIP? │ │ │
+│ │ YES → Exit loop ────────┼──►EXIT│ │
+│ │ NO → Loop again ───────┼───┘ │ │
+│ └──────────────────────────┘ │ │
+│ │ │
+│ Max iterations: 3 │ │
+│ If max reached → Report BLOCKED │ │
 └─────────────────────────────────────────────────┘
-```
+
+````
 
 ### Repair Loop Rules
 
@@ -113,7 +120,7 @@ When passing review feedback back to the repair agent, use this format:
 
 ### Severity Breakdown
 - Critical: [count and list]
-- Major: [count and list]  
+- Major: [count and list]
 - Minor: [count and list]
 
 ### Files Requiring Changes
@@ -194,7 +201,7 @@ Agents communicate via internal Handoff documents:
 ### Recommendations
 
 [Suggested next steps]
-```
+````
 
 ## Example: Feature Workflow Execution
 
@@ -233,6 +240,23 @@ Agents communicate via internal Handoff documents:
    - If NEEDS WORK → **Invoke tdd-guide** with Repair Handoff, then re-review
    - If BLOCKED → **Invoke tdd-guide** with Repair Handoff, then re-review
 
+## Example: UI Design Workflow Execution
+
+```bash
+/orchestrate ui-design "Optimize the navigation sidebar for better accessibility"
+```
+
+1. **Story Generator Agent**
+   - Extract user value and acceptance criteria
+2. **UI Sketcher Agent**
+   - Design ASCII prototype of the new sidebar
+3. **Dev Planner Agent**
+   - Create technical implementation plan
+4. **Code Implementer Agent**
+   - Implement the CSS/HTML changes
+5. **Code Reviewer Agent**
+   - Verify design fidelity and code quality
+
 ## Final Report Format
 
 ```markdown
@@ -265,7 +289,7 @@ Review Iterations: [N] (1 = passed first time, 2+ = required repairs)
 ## REVIEW HISTORY
 
 | Iteration | Recommendation | Issues Found | Issues Fixed |
-|-----------|----------------|--------------|--------------|
+| --------- | -------------- | ------------ | ------------ |
 | 1         | NEEDS WORK     | 3 critical   | -            |
 | 2         | SHIP           | 0            | 3            |
 
@@ -311,6 +335,7 @@ $ARGUMENTS:
 - `feature-tdd <description>` - Planning → TDD Implementation → Review
 - `bugfix <description>` - Deep Exploration → TDD Fix → Review
 - `refactor <description>` - Planning → Code Implementation → Review
+- `ui-design <description>` - Story Generation → UI Prototyping → Planning → Implementation → Review
 - `custom <agents> <description>` - Custom sequence of agents (e.g. "dev-planner,code-implementer,code-reviewer")
 
 ## Tips
