@@ -1,205 +1,313 @@
 ---
 name: agent-teams
-description: Intelligently analyze tasks, design roles, and orchestrate Agent Teams for complex work. Integrates best practices, prevents misuse, and guides the full lifecycle.
+description: Autonomous workflow to analyze tasks and create Agent Teams for parallel collaboration. Auto-invoked when user requests team-based work.
 ---
 
 # Agent Teams Orchestrator
 
-## Trigger Conditions
+## Activation
 
-Activate when the user inputs:
+This skill is **automatically invoked** when:
 
-- **Explicit commands**: "build team", "create team", "agent team", "parallel review"
-- **Implicit needs**: "parallel processing", "multi-role collaboration", "comprehensive review", "brainstorming"
-- **Complex scenarios**: Large-scale refactoring, cross-stack feature development, deep debugging of unknown root causes, technical solution comparison
+- User explicitly requests: "use agent-teams to...", "create a team for...", "parallel review..."
+- User describes complex multi-dimensional tasks requiring coordination
 
-## Core Workflow
+## Execution Workflow
 
-```mermaid
-flowchart TD
-    A[User Input] --> B{Task Analysis}
-    B -->|Suitable for Team| C[Pre-flight Check]
-    B -->|Suitable for Sub-agent| D[Suggest Sub-agent]
-    B -->|Simple Task| E[Suggest Single Session]
-    C --> F[Role & Prompt Design]
-    F --> G[Generate Start Command]
-    G --> H[Monitor & Wrap-up]
-```
+When this skill is activated, follow this procedure:
 
-## Step 1: Task Analysis & Decision
+### Step 1: Analyze Task Requirements
 
-| Dimension         | Recommend Agent Teams           | Recommend Sub-agents             | Recommend Single Session  |
-| :---------------- | :------------------------------ | :------------------------------- | :------------------------ |
-| **Collaboration** | High (Debate/Review needed)     | Low (Independent parallel tasks) | None                      |
-| **Complexity**    | Cross-domain (FE+BE+Sec)        | Repetitive (Generate 10 tests)   | Linear (A -> B -> C)      |
-| **Context**       | Strong (Full project context)   | Weak (Specific files only)       | Strong                    |
-| **Scenario**      | Architecture, Debugging, Review | Batch tests, Doc search          | Small features, Bug fixes |
+Evaluate the task against these criteria:
 
-## Step 2: Pre-flight Check
+| Criterion                    | Team Needed     | Sub-agent OK  | Single Session |
+| ---------------------------- | --------------- | ------------- | -------------- |
+| **Parallel work**            | ✅ Yes          | ✅ Yes        | ❌ No          |
+| **Inter-agent coordination** | ✅ Required     | ❌ Not needed | ❌ Not needed  |
+| **Multiple perspectives**    | ✅ Yes          | ⚠️ Maybe      | ❌ No          |
+| **Shared context**           | ✅ Full project | ⚠️ Partial    | ✅ Full        |
 
-Before generating commands, **MUST** check/remind:
+**Decision Logic**:
 
-1.  **Environment Variable**: Must set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
-2.  **Display Mode**:
-    - **Windows**: Default `in-process` (Best compatibility). Use `Shift+Up/Down` to switch teammates.
-    - **Mac/Linux (with tmux)**: Recommend `tmux` split pane. Use `Ctrl+B` to switch panes.
-3.  **Limitations**:
-    - **No Session Resume**: `/resume` **does NOT** restore teammates. Save Review/Debug results to files immediately.
-    - **Token Cost**: Each teammate is an independent session. Cost = Teammate Count × Task Volume.
-    - **File Conflicts**: Ensure teammates edit different files or work sequentially.
+- If parallel + coordination needed → **Create Agent Team**
+- If parallel but independent → **Use Subagents**
+- If sequential or simple → **Single Session**
 
-## Step 3: Role Design Templates
+### Step 2: Design Team Structure
 
-Select the best template based on task type and **generate specific `Spawn` commands**. Roles are defined using **Engineering Best Practices**.
+**Important: Start with Research**
 
-### Template A: Comprehensive Code Review
+Agent teams work best when they start with:
 
-**Use Case**: PR Review, Security Audit, Performance Optimization
+- Research and investigation
+- Review and analysis
+- Evaluation and comparison
+
+**Then** move to implementation if needed. Avoid jumping straight to coding in parallel.
+
+Based on task type, select appropriate template as a starting point (adapt to your specific context):
+
+#### Template A: Code Review
+
+**Trigger**: "review", "audit", "check security/performance"
 **Roles**:
 
-1.  **Security Auditor**:
-    - **Responsibility**: Audit code based on OWASP Top 10 standards.
-    - **Focus**: SQL Injection, XSS, IDOR, Sensitive Data Exposure, Dependency Vulnerabilities.
-2.  **Performance Engineer**:
-    - **Responsibility**: Analyze time/space complexity and resource consumption.
-    - **Focus**: N+1 Queries, Missing Indexes, Memory Leaks, I/O in Loops, Bundle Size.
-3.  **Maintainability Expert**:
-    - **Responsibility**: Ensure adherence to SOLID principles and team standards.
-    - **Focus**: Naming Conventions, DRY, Decoupling, Error Handling Strategies, Readability.
-4.  **QA Specialist**:
-    - **Responsibility**: Verify test coverage and edge cases.
-    - **Focus**: Unit Test Completeness, Boundary Conditions (Null/Empty/Max), Race Condition Risks.
+- `security_auditor`: OWASP Top 10, injection, auth/authz, dependencies
+- `performance_engineer`: Complexity, queries, memory, bundle size
+- `maintainability_expert`: SOLID, DRY, naming, error handling
+- `qa_specialist`: Test coverage, edge cases, race conditions
 
-### Template B: End-to-End Feature Development
+#### Template B: Feature Development (Complexity-Based)
 
-**Use Case**: Full-stack Feature, Module Refactoring
-**Roles**:
+**Trigger**: "build", "implement", "develop feature"
 
-1.  **System Architect**:
-    - **Responsibility**: Define system boundaries and data flow.
-    - **Focus**: API Contracts (OpenAPI/GraphQL), Database Models, Service Communication, Error Propagation.
-2.  **Frontend Specialist**:
-    - **Responsibility**: Implement UI and interaction logic.
-    - **Focus**: Component Reusability, State Management, Responsive Layout, A11y (WCAG), User Feedback (Loading/Error).
-3.  **Backend Specialist**:
-    - **Responsibility**: Implement core business logic and persistence.
-    - **Focus**: Idempotency, Transaction Consistency, Data Validation, Authorization (AuthZ).
-4.  **Test Engineer**:
-    - **Responsibility**: Build the testing safety net concurrently.
-    - **Focus**: Acceptance Criteria (AC) Verification, Integration Scenarios, Test Fixtures.
+**Selection Criteria**:
 
-### Template C: Deep Debugging
-
-**Use Case**: Hard-to-reproduce Bugs, System Crashes, Race Conditions
-**Roles**:
-
-1.  **Log Analyst**:
-    - **Responsibility**: Reconstruct the scene from logs.
-    - **Focus**: Trace ID Tracking, Timeline Reconstruction, Stack Trace Analysis, Pattern Recognition.
-2.  **Code Auditor**:
-    - **Responsibility**: Static analysis of code logic.
-    - **Focus**: State Inconsistency, Unhandled Promises, Unreleased Resources, Lock/Deadlock Risks.
-3.  **Reproduction Lead**:
-    - **Responsibility**: Build minimal reproduction cases.
-    - **Focus**: Variable Isolation, Environment Simulation, Automated Reproduction Scripts.
-
-### Template D: Research & Spike
-
-**Use Case**: Solution Comparison, Prototype Exploration
-**Roles**:
-
-1.  **Solution A Advocate**:
-    - **Responsibility**: Deep dive into the potential of Solution A.
-    - **Focus**: Best Practices Implementation, Performance Limits, Ecosystem Support, Success Stories.
-2.  **Solution B Advocate**:
-    - **Responsibility**: Deep dive into the potential of Solution B.
-    - **Focus**: Same as above (as a competitor to A).
-3.  **Decision Synthesizer**:
-    - **Responsibility**: Produce an objective decision report.
-    - **Focus**: Weighted Scoring Matrix, Long-term Maintenance Cost, Skill Gap Analysis, Migration Risk.
-
-## Step 4: Runtime Guidance Examples
-
-### Launch Command (Copy to Claude Code)
-
-Do not just show the template, **generate executable Prompts directly**:
-
-**Format Example**:
-
-```markdown
-# Launch [Task Type] Team
-
-Please execute the following steps:
-
-1. Ensure `export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` is set.
-2. Use the team mode managed by me (Lead).
-
-Please create the following Teammates:
-
-- **Spawn [Role A]**: "[Specific Prompt: Your goal is... Focus on... Output format...]"
-- **Spawn [Role B]**: "[Specific Prompt: Your goal is... Focus on... Output format...]"
-- ...
-
-**Collaboration Rules**:
-
-- Lead (Me) will assign initial tasks.
-- Upon completion, use the `Ask` tool to notify me.
-- [Role A] and [Role B] need to cross-check code during [Phase X].
-```
-
-### Control Cheatsheet
-
-Include this cheatsheet in the analysis report:
-
-| Action        | Command Example                    | Description                         |
-| :------------ | :--------------------------------- | :---------------------------------- |
-| **Create**    | `Spawn a researcher teammate...`   | Start a new teammate                |
-| **Talk**      | `Ask the researcher to check...`   | Send message to teammate            |
-| **Broadcast** | `Broadcast "Stop current task"...` | Send to everyone                    |
-| **Wait**      | `Wait for teammates to finish`     | Block until tasks done (Important!) |
-| **Cleanup**   | `Clean up the team`                | **MUST execute after task**         |
-
-## Step 5: Execution Monitoring Checklist
-
-Include this checklist in the output:
-
-- [ ] **Env Var Check**: Is `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` set?
-- [ ] **File Lock**: Confirm teammates are not editing the same file concurrently.
-- [ ] **Progress Sync**: Check teammate status every 10-15 mins (`Shift+Up/Down`).
-- [ ] **Result Summary**: Before finishing, order the Lead to "Summarize all findings into report.md".
-- [ ] **Resource Cleanup**: Confirm `Clean up the team` execution.
+- **Simple** (3-4 roles): Single-page feature, CRUD operations, simple UI
+- **Standard** (6 roles): Multi-component feature, API integration, moderate complexity
+- **Complex** (8 roles): Full-stack module, database design, deployment requirements
 
 ---
 
-## Best Practices
+**B1: Simple Feature (3-4 roles)**
 
-1.  **Task Granularity**: Tasks shouldn't be too small (high coordination cost) or too large (loss of focus). Optimal granularity is "development of a standalone module" or "a specific verification experiment".
-2.  **Explicit Context**: Define context clearly when spawning. Don't just say "Help me code".
-    - _Bad_: "Spawn a dev."
-    - _Good_: "Spawn a frontend dev to implement the login page using React and Tailwind, matching the design in details.md."
-3.  **Use Wait**: After assigning tasks, use `Wait for teammates to finish` to pause the Lead, preventing hallucinations or premature completion while teammates work.
+Use when: Single page, basic CRUD, simple UI components
 
-## Output Example
+- `fullstack_developer`: End-to-end implementation (frontend + backend + basic tests)
+- `ui_reviewer`: UI/UX validation, interaction flows, visual consistency
+- `code_reviewer`: Code quality, best practices, basic security
 
-> **Analysis Result**: Detected intent for parallel code review.
->
-> **Recommend**: Agent Teams (Code Review Template)
-> **Reason**: Involves Security, Performance, and Logic aspects; parallel review offers highest efficiency.
->
-> ---
->
-> **Execution Steps**:
->
-> 1.  Ensure environment variable is set (PowerShell):
->     `$env:CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS="1"`
-> 2.  **Copy the following command to launch the team**:
->     ```text
->     Create an agent team for code review.
->     Spawn a security_expert to "Review src/auth for vulnerabilities, focusing on JWT handling and SQL injection."
->     Spawn a performance_expert to "Analyze database queries in src/api for N+1 problems and missing indexes."
->     Spawn a test_expert to "Check if all new logic in the PR has corresponding unit tests."
->     Tell them to report their findings to me when done.
->     Wait for teammates to finish.
->     ```
-> 3.  **Monitor**: Use `Shift+Up` / `Shift+Down` to switch views.
-> 4.  **Wrap-up**: After review, input `Clean up the team`.
+**Coordination**: Developer implements → UI reviewer validates → Code reviewer ensures quality
+
+---
+
+**B2: Standard Feature (6 roles)**
+
+Use when: Multi-component feature, API integration, cross-layer work
+
+- `system_architect`: API contracts, data models, service boundaries, error propagation
+- `frontend_specialist`: Components, state management, responsive layout, accessibility
+- `backend_specialist`: Business logic, data validation, transactions, authorization
+- `ui_quality_reviewer`: UI/UX validation, interaction flows, visual consistency, usability testing
+- `integration_tester`: Cross-layer integration, API contracts, data flow validation, E2E scenarios
+- `code_reviewer`: Code quality, best practices, security basics, performance patterns
+
+**Coordination**: Architect defines contracts → Frontend/Backend implement → UI reviewer validates UX → Integration tester verifies end-to-end → Code reviewer ensures quality → Consolidate findings
+
+---
+
+**B3: Complex Feature (8 roles)**
+
+Use when: Full-stack module, database design, deployment, high complexity
+
+- `system_architect`: API contracts, data models, service boundaries, error propagation
+- `database_engineer`: Schema design, indexing strategy, migration scripts, query optimization
+- `frontend_specialist`: Components, state management, responsive layout, accessibility
+- `backend_specialist`: Business logic, data validation, transactions, authorization
+- `ui_quality_reviewer`: UI/UX validation, interaction flows, visual consistency, usability testing
+- `integration_tester`: Cross-layer integration, API contracts, data flow validation, E2E scenarios
+- `code_reviewer`: Code quality, best practices, security basics, performance patterns
+- `devops_engineer`: Docker configuration, CI/CD pipeline, monitoring setup, deployment strategy
+
+**Coordination**: Architect + DB engineer define foundation → Frontend/Backend implement → UI reviewer validates UX → Integration tester verifies end-to-end → Code reviewer ensures quality → DevOps prepares deployment → Consolidate all findings
+
+#### Template C: Debugging
+
+**Trigger**: "investigate bug", "find root cause", "why is X failing"
+**Roles**:
+
+- `log_analyst`: Trace reconstruction, timeline, patterns
+- `code_auditor`: Static analysis, state consistency
+- `reproduction_lead`: Minimal repro, environment simulation
+
+#### Template D: Research
+
+**Trigger**: "compare solutions", "evaluate options", "which is better"
+**Roles**:
+
+- `solution_a_advocate`: Deep dive into option A
+- `solution_b_advocate`: Deep dive into option B
+- `decision_synthesizer`: Objective comparison, scoring
+
+### Step 3: Execute Team Creation
+
+**Execute this pattern directly** (do not output as text):
+
+```text
+[Brief analysis: Why team is needed]
+
+Create an agent team to [objective].
+
+Spawn [N] teammates:
+- [role_name]: "[Goal]. Focus: [key areas]. Output: [deliverable format]."
+- [role_name]: "[Goal]. Focus: [key areas]. Output: [deliverable format]."
+...
+
+Coordination:
+- [How teammates will collaborate]
+- [Cross-check/review requirements]
+- [Consolidation method]
+
+Wait for teammates to finish.
+```
+
+**Execution Example** (you call these, not output them):
+
+```text
+This task requires parallel security, performance, and maintainability review. Creating a code review team.
+
+Create an agent team to review PR #142.
+
+Spawn three reviewers:
+- security_auditor: "Audit src/auth for vulnerabilities. Focus: JWT handling, SQL injection, IDOR, sensitive data. Output: Security findings with severity ratings."
+- performance_engineer: "Analyze src/api queries. Focus: N+1 problems, missing indexes, inefficient algorithms. Output: Optimization recommendations."
+- maintainability_expert: "Review code quality. Focus: SOLID violations, naming issues, error handling gaps. Output: Refactoring suggestions."
+
+Coordination:
+- Each reviewer works independently on their domain
+- Security and performance experts cross-check each other's recommendations
+- All findings consolidated into review_report.md
+
+Wait for teammates to finish.
+```
+
+### Step 4: Monitor & Coordinate
+
+After team creation:
+
+1. **Assign tasks** to specific teammates using `Ask [teammate]`
+2. **Broadcast** general updates to all teammates
+3. **Wait** for completion before proceeding
+4. **Consolidate** results into a summary document
+5. **Clean up** the team when done
+
+## Role Definition Standards
+
+When defining roles, always include:
+
+- **Clear goal**: What this teammate should accomplish
+- **Focus areas**: Specific aspects to examine (3-5 items)
+- **Output format**: How to deliver results (report, spec, diagram, etc.)
+
+**Good Example**:
+
+```
+security_auditor: "Audit authentication flow for vulnerabilities. Focus: Token storage, session management, CSRF protection, password hashing, rate limiting. Output: Security assessment with CVSS scores."
+```
+
+**Bad Example**:
+
+```
+security_guy: "Check security stuff"
+```
+
+## Coordination Patterns
+
+### Pattern 1: Independent → Cross-Check
+
+```text
+Have them work independently for [time], then:
+- [Role A] reviews [Role B]'s work for [specific concern]
+- [Role B] reviews [Role A]'s work for [specific concern]
+- Consolidate into [output]
+```
+
+### Pattern 2: Competing Hypotheses
+
+```text
+Each teammate investigates a different hypothesis:
+- [Hypothesis 1]: [Description]
+- [Hypothesis 2]: [Description]
+- [Hypothesis 3]: [Description]
+
+Have them debate and try to disprove each other's theories.
+Converge on the most likely root cause.
+```
+
+### Pattern 3: Sequential Handoff
+
+```text
+Phase 1: [Role A] produces [deliverable]
+Phase 2: [Role B] uses [deliverable] to create [next deliverable]
+Phase 3: [Role C] validates both and produces [final output]
+```
+
+## Task Assignment Modes
+
+**Mode 1: Lead Assigns**
+Lead explicitly assigns tasks to specific teammates using `Ask [teammate]`.
+Use when tasks require specific expertise or sequencing.
+
+**Mode 2: Self-Claiming**
+Teammates automatically pick up unassigned, unblocked tasks from the shared task list.
+Use when tasks are well-defined and independent.
+
+## Optional Team Controls
+
+**Plan Approval**: Require teammates to get approval before making changes.
+
+- Use for high-risk modifications (database schema, auth logic, etc.)
+- Example: "Spawn an architect teammate to refactor the authentication module. Require plan approval before they make any changes."
+
+**Delegate Mode**: Allow teammates to work more autonomously with less lead oversight.
+
+- Use when teammates have clear, independent objectives
+- Reduces coordination overhead
+
+## Communication Commands
+
+| Command                        | When to Use                | Example                                                   |
+| ------------------------------ | -------------------------- | --------------------------------------------------------- |
+| `Ask [teammate]`               | Direct a specific teammate | `Ask security_auditor to verify the token rotation logic` |
+| `Broadcast`                    | Message all teammates      | `Broadcast "Prioritize the payment module"`               |
+| `Wait for teammates to finish` | After assigning all tasks  | Always use before consolidating results                   |
+| `Clean up the team`            | Work is complete           | **Mandatory** at the end                                  |
+
+## Critical Reminders
+
+- **No session resume**: `/resume` doesn't restore teammates → Save results to files
+- **File conflicts**: Assign different files to different teammates
+- **Token cost**: Each teammate = separate session → Keep team size minimal
+- **Always wait**: Don't proceed until teammates finish
+- **Always cleanup**: Terminate team when done
+
+## Quick Decision Tree
+
+```
+User requests team-based work
+    ↓
+Analyze: Parallel + Coordination needed?
+    ↓ Yes
+Select template (Review/Feature/Debug/Research)
+    ↓
+Execute team creation
+    ↓
+Monitor → Consolidate → Cleanup
+```
+
+## Example: Full Workflow
+
+**User Input**: "Use agent-teams to design a new payment processing module with security and performance in mind."
+
+**AI Response**:
+
+```text
+This requires parallel expertise in architecture, security, and performance. Creating a feature development team.
+
+Create an agent team to design payment processing module.
+
+Spawn three specialists:
+- system_architect: "Design payment module architecture. Focus: API contracts, data flow, service boundaries, error handling, idempotency. Output: Architecture diagram + API spec."
+- security_auditor: "Design security controls. Focus: PCI-DSS compliance, encryption at rest/transit, tokenization, audit logging, fraud detection hooks. Output: Security design doc."
+- performance_engineer: "Design for scale. Focus: Transaction throughput, database indexing, caching strategy, async processing, monitoring. Output: Performance requirements doc."
+
+Coordination:
+- All work independently for 20 minutes
+- Security auditor reviews architecture for vulnerabilities
+- Performance engineer validates architecture for bottlenecks
+- Architect consolidates all feedback into final design spec
+
+Wait for teammates to finish.
+```
+
+---
