@@ -9,12 +9,14 @@ description: Create agent teams for parallel collaboration. Triggers on keywords
 
 **YOU MUST use Claude Code's native agent teams feature to create teammates.**
 
-- **DO**: Directly spawn teammates as described in this skill
+- **DO**: Use natural language to ask Claude to create an agent team
+- **DO**: Define clear roles and tasks for teammates
+- **DO**: Wait for teammates to finish and synthesize results
 - **DO NOT**: Use `bash` or `subprocess` to create parallel agents
 - **DO NOT**: Simulate teams by running multiple shell commands
 - **DO NOT**: Use `claude` CLI commands in bash to fake parallelism
 
-The agent teams feature is a NATIVE capability of Claude Code. You spawn teammates by directly stating your intent to create them in your response. The platform handles the rest.
+The agent teams feature is an **experimental native capability** of Claude Code. It must be enabled via environment variable `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`.
 
 ## Activation
 
@@ -27,16 +29,18 @@ This skill is **automatically invoked** when:
 
 ### Step 1: Analyze Task Requirements
 
-| Criterion                    | Agent Team      | Single Session |
-| ---------------------------- | --------------- | -------------- |
-| **Parallel work needed**     | ✅ Yes          | ❌ No          |
-| **Multiple perspectives**    | ✅ Yes          | ❌ No          |
-| **Inter-agent coordination** | ✅ Required     | ❌ Not needed  |
-| **Shared context**           | ✅ Full project | ✅ Full        |
+| Criterion                    | Agent Team      | Single Session | Subagents   |
+| ---------------------------- | --------------- | -------------- | ----------- |
+| **Parallel work needed**     | ✅ Yes          | ❌ No          | ✅ Yes      |
+| **Multiple perspectives**    | ✅ Yes          | ❌ No          | ❌ No       |
+| **Inter-agent coordination** | ✅ Required     | ❌ Not needed  | ❌ Limited  |
+| **Teammates communicate**    | ✅ Directly     | ❌ N/A         | ❌ Via lead |
+| **Shared context**           | ✅ Full project | ✅ Full        | ✅ Full     |
 
 **Decision Logic**:
 
-- Parallel + coordination needed → **Create Agent Team**
+- Parallel + coordination + teammates need to communicate → **Create Agent Team**
+- Parallel but only need results back → **Use Subagents**
 - Sequential or simple → **Single Session** (do NOT create a team)
 
 ### Step 2: Design Team Structure
@@ -138,26 +142,30 @@ Use when: Full-stack module, database design, deployment, high complexity
 - `solution_b_advocate`: Deep dive into option B
 - `decision_synthesizer`: Objective comparison, scoring
 
-### Step 3: Spawn the Team
+### Step 3: Create the Agent Team
 
-**You are the lead agent.** To create the team, directly state in your response what teammates to spawn, their roles, goals, and how they coordinate. The Claude Code platform will interpret this and create the teammates natively.
+**You are the user proxy.** To create the team, you must use natural language to ask Claude to create an agent team. Claude will then:
 
-**Required format — use this EXACTLY:**
+1. Create a shared task list
+2. Spawn teammates as separate Claude Code instances
+3. Set up the mailbox for inter-agent communication
 
+**Required format — use this EXACTLY when requesting the team:**
+
+```
 Create an agent team to [objective].
 
 Spawn [N] teammates:
+- [role_name]: [Goal sentence]. Focus: [key areas]. Output: [deliverable format].
+- [role_name]: [Goal sentence]. Focus: [key areas]. Output: [deliverable format].
 
-[role_name]: "[Goal sentence]. Focus: [key areas]. Output: [deliverable format]."
-[role_name]: "[Goal sentence]. Focus: [key areas]. Output: [deliverable format]."
-...
 Coordination:
+- [How teammates collaborate]
+- [Cross-check requirements]
+- [Consolidation method]
 
-[How teammates collaborate]
-[Cross-check requirements]
-[Consolidation method]
-
-Wait for teammates to finish. (Place this command at the end of your response to block until finished)
+Wait for teammates to finish.
+```
 
 **Each role definition MUST include:**
 
@@ -166,30 +174,30 @@ Wait for teammates to finish. (Place this command at the end of your response to
 - **Output format**: How to deliver results (report, spec, code file, etc.)
 
 **Good role definition**:  
-security_auditor: "Audit authentication flow for vulnerabilities. Focus: Token storage, session management, CSRF protection, password hashing, rate limiting. Output: Security assessment with CVSS scores in security_report.md."
+`security_auditor`: "Audit authentication flow for vulnerabilities. Focus: Token storage, session management, CSRF protection, password hashing, rate limiting. Output: Security assessment with CVSS scores in security_report.md."
 
 **Bad role definition**:  
-security*guy: "Check security stuff"*
+`security_guy`: "Check security stuff"
 
 ### Step 4: Coordinate the Team
 
-As lead agent, you manage the team using these native commands:
+Once the team is created, Claude (as team lead) manages coordination. You can influence coordination by telling Claude:
 
-| Command                        | When to Use                   | Example                                                                                               |
-| ------------------------------ | ----------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `Ask [teammate]`               | Direct a specific teammate    | `Ask security_auditor to verify the token rotation logic`                                             |
-| `Broadcast`                    | Message all teammates at once | `Broadcast "Prioritize the payment module"`                                                           |
-| `Wait for teammates to finish` | To initiate the blocking wait | ALWAYS end your spawn/assign message with this command. **DO NOT repeat it once teammates are done.** |
-| `Clean up the team`            | Work is complete              | **Mandatory** at the end of every team session                                                        |
+| Command                        | When to Use                   | Example                                                   |
+| ------------------------------ | ----------------------------- | --------------------------------------------------------- |
+| `Ask [teammate]`               | Direct a specific teammate    | `Ask security_auditor to verify the token rotation logic` |
+| `Broadcast`                    | Message all teammates at once | `Broadcast "Prioritize the payment module"`               |
+| `Wait for teammates to finish` | To initiate the blocking wait | ALWAYS include this in your initial request               |
+| `Clean up the team`            | Work is complete              | **Mandatory** at the end of every team session            |
 
 **Task Assignment Modes:**
 
-- **Lead Assigns**: You explicitly assign tasks to specific teammates using `Ask [teammate]`. Use for tasks requiring specific expertise or sequencing.
+- **Lead Assigns**: Claude explicitly assigns tasks to specific teammates using `Ask [teammate]`. Use for tasks requiring specific expertise or sequencing.
 - **Self-Claiming**: Teammates automatically pick up unassigned, unblocked tasks. Use when tasks are well-defined and independent.
 
 **Optional Controls:**
 
-- **Plan Approval**: Require teammates to get your approval before making changes. Use for high-risk modifications (database schema, auth logic, etc.).
+- **Plan Approval**: Require teammates to get approval before making changes. Use for high-risk modifications (database schema, auth logic, etc.).
 - **Delegate Mode**: Allow teammates to work more autonomously. Use when teammates have clear, independent objectives.
 
 ### Step 5: Consolidate & Cleanup
@@ -208,16 +216,20 @@ After all teammates finish:
 
 Have them work independently, then:
 
+```
 [Role A] reviews [Role B]'s work for [specific concern]
 [Role B] reviews [Role A]'s work for [specific concern]
 Consolidate into [output file]
+```
 
 ### Pattern 2: Competing Hypotheses
 
 Each teammate investigates a different hypothesis:
 
+```
 Have them debate and try to disprove each other's theories.
 Converge on the most likely root cause.
+```
 
 ### Pattern 3: Sequential Handoff
 
@@ -227,25 +239,30 @@ Phase 3: [Role C] validates both and produces [final output]
 
 ## Critical Reminders
 
-- **No redundant Waiting**: Once teammates finish and you resume, **move directly to consolidation/reporting**. Never output "Wait for teammates to finish." as your first message after resumption.
+- **No redundant Waiting**: Once teammates finish and Claude resumes, **move directly to consolidation/reporting**. Never output "Wait for teammates to finish." as your first message after resumption.
 - **Mandatory Cleanup**: Always terminate the team with `Clean up the team` once consolidation is complete to release platform resources.
 - **Save state to files**: Teammates should write their outputs to files so results survive session end
+- **Environment Check**: Agent teams require `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`. If not set, Claude will fall back to subagents or single session.
 
 ## Quick Decision Tree
 
+```
 User requests team-based work
 ↓
 Can this be done in a single session? → Yes → Do it yourself, no team needed
 ↓ No
+Do teammates need to communicate directly? → No → Use subagents
+↓ Yes
 Analyze: How many parallel perspectives needed?
 ↓
 Select template (Review / Feature / Debug / Research)
 ↓
 Determine complexity → Choose role count (3-8)
 ↓
-Spawn team using native agent teams (NOT bash)
+Request agent team using natural language (NOT bash/subprocess)
 ↓
 Coordinate → Wait → Consolidate → Cleanup
+```
 
 ## Full Example
 
@@ -253,7 +270,8 @@ Coordinate → Wait → Consolidate → Cleanup
 
 **Expected AI Response**:
 
-This requires parallel expertise in security and performance analysis. I'll create a review team.
+```
+I'll create an agent team to review the authentication module in parallel.
 
 Create an agent team to review the authentication module.
 
@@ -270,4 +288,35 @@ Coordination:
 - Performance engineer validates security suggestions won't create bottlenecks
 - All findings consolidated into auth_review_summary.md
 
-Wait for teammates to finish.
+```
+
+## Troubleshooting
+
+### Agent teams not working?
+
+1. **Check environment variable**: Ensure `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` is set
+2. **Check display mode**: Use `teammateMode` in settings.json if needed (`"in-process"` or `"tmux"`)
+3. **Verify teammates spawned**: In in-process mode, use Shift+Up/Down to cycle through teammates
+4. **Check for errors**: Teammates may stop on errors; check their output directly
+
+### Fallback to subagents
+
+If agent teams are not available, Claude may automatically fall back to subagents. To force agent teams:
+
+- Explicitly request "Create an agent team" (not "use subagents")
+- Ensure environment variable is set
+- Monitor for the team creation confirmation
+
+## Key Differences: Agent Teams vs Subagents
+
+| Aspect            | Agent Teams                             | Subagents                               |
+| ----------------- | --------------------------------------- | --------------------------------------- |
+| **Communication** | Teammates message each other directly   | Report back to main agent only          |
+| **Coordination**  | Shared task list with self-coordination | Main agent manages all work             |
+| **Context**       | Fully independent sessions              | Spawned within main session             |
+| **Best for**      | Complex work requiring discussion       | Focused tasks where only result matters |
+| **Token cost**    | Higher (separate instances)             | Lower (results summarized back)         |
+
+Use agent teams when teammates need to share findings, challenge each other, and coordinate on their own. Use subagents for quick, focused workers that report back.
+
+---
