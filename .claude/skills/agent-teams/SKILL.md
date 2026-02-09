@@ -156,7 +156,8 @@ Coordination:
 [How teammates collaborate]
 [Cross-check requirements]
 [Consolidation method]
-Wait for teammates to finish.
+
+Wait for teammates to finish. (Place this command at the end of your response to block until finished)
 
 **Each role definition MUST include:**
 
@@ -174,12 +175,12 @@ security*guy: "Check security stuff"*
 
 As lead agent, you manage the team using these native commands:
 
-| Command                        | When to Use                   | Example                                                   |
-| ------------------------------ | ----------------------------- | --------------------------------------------------------- |
-| `Ask [teammate]`               | Direct a specific teammate    | `Ask security_auditor to verify the token rotation logic` |
-| `Broadcast`                    | Message all teammates at once | `Broadcast "Prioritize the payment module"`               |
-| `Wait for teammates to finish` | After assigning all tasks     | Always use before consolidating results                   |
-| `Clean up the team`            | Work is complete              | **Mandatory** at the end of every team session            |
+| Command                        | When to Use                   | Example                                                                                               |
+| ------------------------------ | ----------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `Ask [teammate]`               | Direct a specific teammate    | `Ask security_auditor to verify the token rotation logic`                                             |
+| `Broadcast`                    | Message all teammates at once | `Broadcast "Prioritize the payment module"`                                                           |
+| `Wait for teammates to finish` | To initiate the blocking wait | ALWAYS end your spawn/assign message with this command. **DO NOT repeat it once teammates are done.** |
+| `Clean up the team`            | Work is complete              | **Mandatory** at the end of every team session                                                        |
 
 **Task Assignment Modes:**
 
@@ -226,12 +227,8 @@ Phase 3: [Role C] validates both and produces [final output]
 
 ## Critical Reminders
 
-- **NEVER use bash subprocesses** — always use native agent teams
-- **No session resume**: `/resume` doesn't restore teammates → Save all results to files
-- **File conflicts**: Assign different files to different teammates — never have two teammates edit the same file
-- **Token cost**: Each teammate = separate context window → Keep team size minimal (prefer fewer, more capable roles)
-- **Always wait**: Don't proceed until all teammates finish
-- **Always cleanup**: Terminate the team when done — no exceptions
+- **No redundant Waiting**: Once teammates finish and you resume, **move directly to consolidation/reporting**. Never output "Wait for teammates to finish." as your first message after resumption.
+- **Mandatory Cleanup**: Always terminate the team with `Clean up the team` once consolidation is complete to release platform resources.
 - **Save state to files**: Teammates should write their outputs to files so results survive session end
 
 ## Quick Decision Tree
