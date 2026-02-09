@@ -1,9 +1,20 @@
 ---
 name: agent-teams
-description: Autonomous workflow to analyze tasks and create Agent Teams for parallel collaboration. Auto-invoked when user requests team-based work.
+description: Create agent teams for parallel collaboration. Triggers on keywords like team, parallel, multi-agent, coordinate, collaborate, review team, multiple perspectives, agent-teams.
 ---
 
 # Agent Teams Orchestrator
+
+## Critical Rules
+
+**YOU MUST use Claude Code's native agent teams feature to create teammates.**
+
+- **DO**: Directly spawn teammates as described in this skill
+- **DO NOT**: Use `bash` or `subprocess` to create parallel agents
+- **DO NOT**: Simulate teams by running multiple shell commands
+- **DO NOT**: Use `claude` CLI commands in bash to fake parallelism
+
+The agent teams feature is a NATIVE capability of Claude Code. You spawn teammates by directly stating your intent to create them in your response. The platform handles the rest.
 
 ## Activation
 
@@ -14,24 +25,19 @@ This skill is **automatically invoked** when:
 
 ## Execution Workflow
 
-When this skill is activated, follow this procedure:
-
 ### Step 1: Analyze Task Requirements
 
-Evaluate the task against these criteria:
-
-| Criterion                    | Team Needed     | Sub-agent OK  | Single Session |
-| ---------------------------- | --------------- | ------------- | -------------- |
-| **Parallel work**            | ✅ Yes          | ✅ Yes        | ❌ No          |
-| **Inter-agent coordination** | ✅ Required     | ❌ Not needed | ❌ Not needed  |
-| **Multiple perspectives**    | ✅ Yes          | ⚠️ Maybe      | ❌ No          |
-| **Shared context**           | ✅ Full project | ⚠️ Partial    | ✅ Full        |
+| Criterion                    | Agent Team      | Single Session |
+| ---------------------------- | --------------- | -------------- |
+| **Parallel work needed**     | ✅ Yes          | ❌ No          |
+| **Multiple perspectives**    | ✅ Yes          | ❌ No          |
+| **Inter-agent coordination** | ✅ Required     | ❌ Not needed  |
+| **Shared context**           | ✅ Full project | ✅ Full        |
 
 **Decision Logic**:
 
-- If parallel + coordination needed → **Create Agent Team**
-- If parallel but independent → **Use Subagents**
-- If sequential or simple → **Single Session**
+- Parallel + coordination needed → **Create Agent Team**
+- Sequential or simple → **Single Session** (do NOT create a team)
 
 ### Step 2: Design Team Structure
 
@@ -50,6 +56,7 @@ Based on task type, select appropriate template as a starting point (adapt to yo
 #### Template A: Code Review
 
 **Trigger**: "review", "audit", "check security/performance"
+
 **Roles**:
 
 - `security_auditor`: OWASP Top 10, injection, auth/authz, dependencies
@@ -114,6 +121,7 @@ Use when: Full-stack module, database design, deployment, high complexity
 #### Template C: Debugging
 
 **Trigger**: "investigate bug", "find root cause", "why is X failing"
+
 **Roles**:
 
 - `log_analyst`: Trace reconstruction, timeline, patterns
@@ -123,191 +131,146 @@ Use when: Full-stack module, database design, deployment, high complexity
 #### Template D: Research
 
 **Trigger**: "compare solutions", "evaluate options", "which is better"
+
 **Roles**:
 
 - `solution_a_advocate`: Deep dive into option A
 - `solution_b_advocate`: Deep dive into option B
 - `decision_synthesizer`: Objective comparison, scoring
 
-### Step 3: Execute Team Creation
+### Step 3: Spawn the Team
 
-**Execute this pattern directly** (do not output as text):
+**You are the lead agent.** To create the team, directly state in your response what teammates to spawn, their roles, goals, and how they coordinate. The Claude Code platform will interpret this and create the teammates natively.
 
-```text
-[Brief analysis: Why team is needed]
+**Required format — use this EXACTLY:**
 
 Create an agent team to [objective].
 
 Spawn [N] teammates:
-- [role_name]: "[Goal]. Focus: [key areas]. Output: [deliverable format]."
-- [role_name]: "[Goal]. Focus: [key areas]. Output: [deliverable format]."
+
+[role_name]: "[Goal sentence]. Focus: [key areas]. Output: [deliverable format]."
+[role_name]: "[Goal sentence]. Focus: [key areas]. Output: [deliverable format]."
 ...
-
 Coordination:
-- [How teammates will collaborate]
-- [Cross-check/review requirements]
-- [Consolidation method]
 
+[How teammates collaborate]
+[Cross-check requirements]
+[Consolidation method]
 Wait for teammates to finish.
-```
 
-**Execution Example** (you call these, not output them):
+**Each role definition MUST include:**
 
-```text
-This task requires parallel security, performance, and maintainability review. Creating a code review team.
+- **Clear goal**: One sentence on what to accomplish
+- **Focus areas**: 3-5 specific aspects to examine
+- **Output format**: How to deliver results (report, spec, code file, etc.)
 
-Create an agent team to review PR #142.
+**Good role definition**:  
+security_auditor: "Audit authentication flow for vulnerabilities. Focus: Token storage, session management, CSRF protection, password hashing, rate limiting. Output: Security assessment with CVSS scores in security_report.md."
 
-Spawn three reviewers:
-- security_auditor: "Audit src/auth for vulnerabilities. Focus: JWT handling, SQL injection, IDOR, sensitive data. Output: Security findings with severity ratings."
-- performance_engineer: "Analyze src/api queries. Focus: N+1 problems, missing indexes, inefficient algorithms. Output: Optimization recommendations."
-- maintainability_expert: "Review code quality. Focus: SOLID violations, naming issues, error handling gaps. Output: Refactoring suggestions."
+**Bad role definition**:  
+security*guy: "Check security stuff"*
 
-Coordination:
-- Each reviewer works independently on their domain
-- Security and performance experts cross-check each other's recommendations
-- All findings consolidated into review_report.md
+### Step 4: Coordinate the Team
 
-Wait for teammates to finish.
-```
+As lead agent, you manage the team using these native commands:
 
-### Step 4: Monitor & Coordinate
+| Command                        | When to Use                   | Example                                                   |
+| ------------------------------ | ----------------------------- | --------------------------------------------------------- |
+| `Ask [teammate]`               | Direct a specific teammate    | `Ask security_auditor to verify the token rotation logic` |
+| `Broadcast`                    | Message all teammates at once | `Broadcast "Prioritize the payment module"`               |
+| `Wait for teammates to finish` | After assigning all tasks     | Always use before consolidating results                   |
+| `Clean up the team`            | Work is complete              | **Mandatory** at the end of every team session            |
 
-After team creation:
+**Task Assignment Modes:**
 
-1. **Assign tasks** to specific teammates using `Ask [teammate]`
-2. **Broadcast** general updates to all teammates
-3. **Wait** for completion before proceeding
-4. **Consolidate** results into a summary document
-5. **Clean up** the team when done
+- **Lead Assigns**: You explicitly assign tasks to specific teammates using `Ask [teammate]`. Use for tasks requiring specific expertise or sequencing.
+- **Self-Claiming**: Teammates automatically pick up unassigned, unblocked tasks. Use when tasks are well-defined and independent.
 
-## Role Definition Standards
+**Optional Controls:**
 
-When defining roles, always include:
+- **Plan Approval**: Require teammates to get your approval before making changes. Use for high-risk modifications (database schema, auth logic, etc.).
+- **Delegate Mode**: Allow teammates to work more autonomously. Use when teammates have clear, independent objectives.
 
-- **Clear goal**: What this teammate should accomplish
-- **Focus areas**: Specific aspects to examine (3-5 items)
-- **Output format**: How to deliver results (report, spec, diagram, etc.)
+### Step 5: Consolidate & Cleanup
 
-**Good Example**:
+After all teammates finish:
 
-```
-security_auditor: "Audit authentication flow for vulnerabilities. Focus: Token storage, session management, CSRF protection, password hashing, rate limiting. Output: Security assessment with CVSS scores."
-```
-
-**Bad Example**:
-
-```
-security_guy: "Check security stuff"
-```
+1. **Collect** all results and deliverables
+2. **Cross-reference** findings between teammates for conflicts or gaps
+3. **Synthesize** into a unified summary document
+4. **Report** to the user with key findings and recommendations
+5. **Clean up the team** — this is MANDATORY
 
 ## Coordination Patterns
 
 ### Pattern 1: Independent → Cross-Check
 
-```text
-Have them work independently for [time], then:
-- [Role A] reviews [Role B]'s work for [specific concern]
-- [Role B] reviews [Role A]'s work for [specific concern]
-- Consolidate into [output]
-```
+Have them work independently, then:
+
+[Role A] reviews [Role B]'s work for [specific concern]
+[Role B] reviews [Role A]'s work for [specific concern]
+Consolidate into [output file]
 
 ### Pattern 2: Competing Hypotheses
 
-```text
 Each teammate investigates a different hypothesis:
-- [Hypothesis 1]: [Description]
-- [Hypothesis 2]: [Description]
-- [Hypothesis 3]: [Description]
 
 Have them debate and try to disprove each other's theories.
 Converge on the most likely root cause.
-```
 
 ### Pattern 3: Sequential Handoff
 
-```text
 Phase 1: [Role A] produces [deliverable]
 Phase 2: [Role B] uses [deliverable] to create [next deliverable]
 Phase 3: [Role C] validates both and produces [final output]
-```
-
-## Task Assignment Modes
-
-**Mode 1: Lead Assigns**
-Lead explicitly assigns tasks to specific teammates using `Ask [teammate]`.
-Use when tasks require specific expertise or sequencing.
-
-**Mode 2: Self-Claiming**
-Teammates automatically pick up unassigned, unblocked tasks from the shared task list.
-Use when tasks are well-defined and independent.
-
-## Optional Team Controls
-
-**Plan Approval**: Require teammates to get approval before making changes.
-
-- Use for high-risk modifications (database schema, auth logic, etc.)
-- Example: "Spawn an architect teammate to refactor the authentication module. Require plan approval before they make any changes."
-
-**Delegate Mode**: Allow teammates to work more autonomously with less lead oversight.
-
-- Use when teammates have clear, independent objectives
-- Reduces coordination overhead
-
-## Communication Commands
-
-| Command                        | When to Use                | Example                                                   |
-| ------------------------------ | -------------------------- | --------------------------------------------------------- |
-| `Ask [teammate]`               | Direct a specific teammate | `Ask security_auditor to verify the token rotation logic` |
-| `Broadcast`                    | Message all teammates      | `Broadcast "Prioritize the payment module"`               |
-| `Wait for teammates to finish` | After assigning all tasks  | Always use before consolidating results                   |
-| `Clean up the team`            | Work is complete           | **Mandatory** at the end                                  |
 
 ## Critical Reminders
 
-- **No session resume**: `/resume` doesn't restore teammates → Save results to files
-- **File conflicts**: Assign different files to different teammates
-- **Token cost**: Each teammate = separate session → Keep team size minimal
-- **Always wait**: Don't proceed until teammates finish
-- **Always cleanup**: Terminate team when done
+- **NEVER use bash subprocesses** — always use native agent teams
+- **No session resume**: `/resume` doesn't restore teammates → Save all results to files
+- **File conflicts**: Assign different files to different teammates — never have two teammates edit the same file
+- **Token cost**: Each teammate = separate context window → Keep team size minimal (prefer fewer, more capable roles)
+- **Always wait**: Don't proceed until all teammates finish
+- **Always cleanup**: Terminate the team when done — no exceptions
+- **Save state to files**: Teammates should write their outputs to files so results survive session end
 
 ## Quick Decision Tree
 
-```
 User requests team-based work
-    ↓
-Analyze: Parallel + Coordination needed?
-    ↓ Yes
-Select template (Review/Feature/Debug/Research)
-    ↓
-Execute team creation
-    ↓
-Monitor → Consolidate → Cleanup
-```
+↓
+Can this be done in a single session? → Yes → Do it yourself, no team needed
+↓ No
+Analyze: How many parallel perspectives needed?
+↓
+Select template (Review / Feature / Debug / Research)
+↓
+Determine complexity → Choose role count (3-8)
+↓
+Spawn team using native agent teams (NOT bash)
+↓
+Coordinate → Wait → Consolidate → Cleanup
 
-## Example: Full Workflow
+## Full Example
 
-**User Input**: "Use agent-teams to design a new payment processing module with security and performance in mind."
+**User Input**: "Use agent-teams to review the authentication module for security and performance issues."
 
-**AI Response**:
+**Expected AI Response**:
 
-```text
-This requires parallel expertise in architecture, security, and performance. Creating a feature development team.
+This requires parallel expertise in security and performance analysis. I'll create a review team.
 
-Create an agent team to design payment processing module.
+Create an agent team to review the authentication module.
 
-Spawn three specialists:
-- system_architect: "Design payment module architecture. Focus: API contracts, data flow, service boundaries, error handling, idempotency. Output: Architecture diagram + API spec."
-- security_auditor: "Design security controls. Focus: PCI-DSS compliance, encryption at rest/transit, tokenization, audit logging, fraud detection hooks. Output: Security design doc."
-- performance_engineer: "Design for scale. Focus: Transaction throughput, database indexing, caching strategy, async processing, monitoring. Output: Performance requirements doc."
+Spawn three reviewers:
+
+- security_auditor: "Audit src/auth/ for security vulnerabilities. Focus: JWT handling, password hashing, session management, CSRF protection, rate limiting. Output: Security findings with severity ratings in security_review.md."
+- performance_engineer: "Analyze src/auth/ for performance issues. Focus: N+1 queries, missing indexes, token validation overhead, caching opportunities, connection pooling. Output: Performance recommendations in performance_review.md."
+- maintainability_expert: "Review src/auth/ for code quality. Focus: SOLID violations, error handling gaps, naming consistency, test coverage, documentation. Output: Refactoring suggestions in maintainability_review.md."
 
 Coordination:
-- All work independently for 20 minutes
-- Security auditor reviews architecture for vulnerabilities
-- Performance engineer validates architecture for bottlenecks
-- Architect consolidates all feedback into final design spec
+
+- Each reviewer works independently on their domain
+- Security auditor cross-checks performance recommendations for security implications
+- Performance engineer validates security suggestions won't create bottlenecks
+- All findings consolidated into auth_review_summary.md
 
 Wait for teammates to finish.
-```
-
----
