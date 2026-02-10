@@ -7,316 +7,251 @@ description: Create agent teams for parallel collaboration. Triggers on keywords
 
 ## Critical Rules
 
-**YOU MUST use Claude Code's native agent teams feature to create teammates.**
+**Use Claude Code's NATIVE agent teams feature.** Agent teams are a first-class capability built into Claude Code — do NOT simulate them with bash subprocesses or CLI commands.
 
-- **DO**: Use natural language to ask Claude to create an agent team
-- **DO**: Define clear roles and tasks for teammates
-- **DO**: Wait for teammates to finish and synthesize results
-- **DO NOT**: Use `bash` or `subprocess` to create parallel agents
-- **DO NOT**: Simulate teams by running multiple shell commands
-- **DO NOT**: Use `claude` CLI commands in bash to fake parallelism
+- **DO**: Directly describe the team you want to create in natural language. The platform spawns teammates natively.
+- **DO NOT**: Use `bash`, `subprocess`, or `claude` CLI to create parallel agents.
+- **DO NOT**: Simulate teams by running multiple shell commands.
 
-The agent teams feature is an **experimental native capability** of Claude Code. It must be enabled via environment variable `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`.
+## When to Use Agent Teams vs Subagents vs Single Session
 
-## Activation
+Agent teams add coordination overhead and use significantly more tokens. Choose wisely:
 
-This skill is **automatically invoked** when:
+| Scenario                                                      | Use                | Why                                                |
+| ------------------------------------------------------------- | ------------------ | -------------------------------------------------- |
+| Teammates need to **share findings and challenge each other** | **Agent Teams**    | Peer-to-peer messaging, shared task list           |
+| Quick, focused workers that **report back independently**     | **Subagents**      | Lower overhead, no inter-agent coordination needed |
+| Sequential tasks, same-file edits, many dependencies          | **Single Session** | No parallelism benefit                             |
 
-- User explicitly requests: "use agent-teams to...", "create a team for...", "parallel review..."
-- User describes complex multi-dimensional tasks requiring coordination
+**Key difference**: Subagents can only report back to the parent. Agent team teammates message each other directly, self-claim tasks, and self-coordinate.
+
+**Decision rule**: If workers need to communicate with each other → Agent Teams. If not → Subagents or Single Session.
+
+## How Agent Teams Work
+
+- **Team lead**: Your main session. Coordinates work, assigns tasks, synthesizes results.
+- **Teammates**: Separate Claude Code instances, each with its own context window. They can read/write files, run commands, and message other teammates and the lead.
+- **Shared task list**: Central work items with dependency tracking. Tasks auto-unblock when dependencies finish. Teammates self-claim available tasks.
+- **Mailbox**: Inter-agent messaging. Lead ↔ teammates, teammate ↔ teammate.
+
+**Critical**: Teammates do NOT inherit the lead's conversation history. Whatever context they need, the lead must provide in the spawn prompt. Be generous with initial briefing.
 
 ## Execution Workflow
 
-### Step 1: Analyze Task Requirements
+### Step 1: Assess the Task
 
-| Criterion                    | Agent Team      | Single Session | Subagents   |
-| ---------------------------- | --------------- | -------------- | ----------- |
-| **Parallel work needed**     | ✅ Yes          | ❌ No          | ✅ Yes      |
-| **Multiple perspectives**    | ✅ Yes          | ❌ No          | ❌ No       |
-| **Inter-agent coordination** | ✅ Required     | ❌ Not needed  | ❌ Limited  |
-| **Teammates communicate**    | ✅ Directly     | ❌ N/A         | ❌ Via lead |
-| **Shared context**           | ✅ Full project | ✅ Full        | ✅ Full     |
+Before creating a team, ask:
 
-**Decision Logic**:
+1. Can this be done in a single session? → Do it yourself.
+2. Does it benefit from parallel work? → Continue.
+3. Do workers need to communicate with each other? → Agent Teams. If not → Subagents.
+4. Are the subtasks naturally independent (different files/modules)? → Good fit for teams.
 
-- Parallel + coordination + teammates need to communicate → **Create Agent Team**
-- Parallel but only need results back → **Use Subagents**
-- Sequential or simple → **Single Session** (do NOT create a team)
+**Best use cases for agent teams**:
 
-### Step 2: Design Team Structure
+- Multi-perspective code review (security + performance + maintainability)
+- Cross-layer coordination (frontend + backend + tests, each owned by a different teammate)
+- Competing hypotheses / research from different angles
+- Data-parallel work (each teammate handles a segment)
+- Large feature development with naturally separable components
 
-**Important: Start with Research**
+**Poor fit**:
 
-Agent teams work best when they start with:
+- Sequential tasks with strong dependencies
+- Multiple teammates editing the same file (causes conflicts)
+- Simple tasks a single session handles fine
 
-- Research and investigation
-- Review and analysis
-- Evaluation and comparison
+### Step 2: Design the Team
 
-**Then** move to implementation if needed. Avoid jumping straight to coding in parallel.
+**Start with research, then implement.** Agent teams work best when they begin with investigation, review, and analysis — then move to implementation if needed.
 
-Based on task type, select appropriate template as a starting point (adapt to your specific context):
+**Principles from the C compiler project**:
 
-#### Template A: Code Review
+1. **Task decomposition is everything**: Break work into modules that can be independently developed and tested. Each teammate should own distinct files/directories.
+2. **Write clear, high-quality acceptance criteria**: Agents self-orient from scratch with no prior context. Tests and clear specs keep them on track without human oversight.
+3. **Minimize team size**: Each teammate = separate context window = more tokens. Use the fewest teammates that cover the work.
+4. **Avoid file conflicts**: Assign different files/directories to different teammates. Never have two teammates edit the same file.
+5. **Provide rich context in spawn prompts**: Include specific file paths, relevant standards, expected output format. Vague prompts produce vague results.
 
-**Trigger**: "review", "audit", "check security/performance"
+**Select the right team structure based on task type:**
 
-**Roles**:
+#### For Code Review / Audit
 
-- `security_auditor`: OWASP Top 10, injection, auth/authz, dependencies
-- `performance_engineer`: Complexity, queries, memory, bundle size
-- `maintainability_expert`: SOLID, DRY, naming, error handling
-- `qa_specialist`: Test coverage, edge cases, race conditions
+Roles (3-4 teammates):
 
-#### Template B: Feature Development (Complexity-Based)
+- `security_auditor`: OWASP Top 10, injection, auth/authz, dependency vulnerabilities
+- `performance_engineer`: Complexity, N+1 queries, memory, caching, bundle size
+- `maintainability_expert`: SOLID, DRY, naming, error handling, test coverage
+- `qa_specialist` (optional): Edge cases, race conditions, error paths
 
-**Trigger**: "build", "implement", "develop feature"
+Coordination: Work independently → cross-check each other's findings → consolidate into single report.
 
-**Selection Criteria**:
+#### For Feature Development
 
-- **Simple** (3-4 roles): Single-page feature, CRUD operations, simple UI
-- **Standard** (6 roles): Multi-component feature, API integration, moderate complexity
-- **Complex** (8 roles): Full-stack module, database design, deployment requirements
+Scale roles by complexity:
 
----
+**Simple (3 roles)**: Single-page, basic CRUD
 
-**B1: Simple Feature (3-4 roles)**
+- `fullstack_developer`: End-to-end implementation
+- `ui_reviewer`: UX validation, interaction flows
+- `code_reviewer`: Quality, best practices, security
 
-Use when: Single page, basic CRUD, simple UI components
+**Standard (4-6 roles)**: Multi-component, API integration
 
-- `fullstack_developer`: End-to-end implementation (frontend + backend + basic tests)
-- `ui_reviewer`: UI/UX validation, interaction flows, visual consistency
-- `code_reviewer`: Code quality, best practices, basic security
+- `system_architect`: API contracts, data models, service boundaries
+- `frontend_specialist`: Components, state management, accessibility
+- `backend_specialist`: Business logic, validation, authorization
+- `integration_tester`: Cross-layer verification, E2E scenarios
+- `code_reviewer`: Quality, patterns, security
 
-**Coordination**: Developer implements → UI reviewer validates → Code reviewer ensures quality
+**Complex (6-8 roles)**: Full-stack module, database design, deployment
 
----
+- Add `database_engineer`, `devops_engineer` to Standard roles
 
-**B2: Standard Feature (6 roles)**
+Coordination: Architect defines contracts → Specialists implement in parallel → Testers verify → Reviewer ensures quality → Consolidate.
 
-Use when: Multi-component feature, API integration, cross-layer work
+#### For Debugging / Investigation
 
-- `system_architect`: API contracts, data models, service boundaries, error propagation
-- `frontend_specialist`: Components, state management, responsive layout, accessibility
-- `backend_specialist`: Business logic, data validation, transactions, authorization
-- `ui_quality_reviewer`: UI/UX validation, interaction flows, visual consistency, usability testing
-- `integration_tester`: Cross-layer integration, API contracts, data flow validation, E2E scenarios
-- `code_reviewer`: Code quality, best practices, security basics, performance patterns
-
-**Coordination**: Architect defines contracts → Frontend/Backend implement → UI reviewer validates UX → Integration tester verifies end-to-end → Code reviewer ensures quality → Consolidate findings
-
----
-
-**B3: Complex Feature (8 roles)**
-
-Use when: Full-stack module, database design, deployment, high complexity
-
-- `system_architect`: API contracts, data models, service boundaries, error propagation
-- `database_engineer`: Schema design, indexing strategy, migration scripts, query optimization
-- `frontend_specialist`: Components, state management, responsive layout, accessibility
-- `backend_specialist`: Business logic, data validation, transactions, authorization
-- `ui_quality_reviewer`: UI/UX validation, interaction flows, visual consistency, usability testing
-- `integration_tester`: Cross-layer integration, API contracts, data flow validation, E2E scenarios
-- `code_reviewer`: Code quality, best practices, security basics, performance patterns
-- `devops_engineer`: Docker configuration, CI/CD pipeline, monitoring setup, deployment strategy
-
-**Coordination**: Architect + DB engineer define foundation → Frontend/Backend implement → UI reviewer validates UX → Integration tester verifies end-to-end → Code reviewer ensures quality → DevOps prepares deployment → Consolidate all findings
-
-#### Template C: Debugging
-
-**Trigger**: "investigate bug", "find root cause", "why is X failing"
-
-**Roles**:
+Roles (2-3 teammates):
 
 - `log_analyst`: Trace reconstruction, timeline, patterns
-- `code_auditor`: Static analysis, state consistency
+- `code_auditor`: Static analysis, state consistency, root cause hypotheses
 - `reproduction_lead`: Minimal repro, environment simulation
 
-#### Template D: Research
+Coordination: Each investigates a different hypothesis → debate and disprove → converge on root cause.
 
-**Trigger**: "compare solutions", "evaluate options", "which is better"
+#### For Research / Evaluation
 
-**Roles**:
+Roles (2-3 teammates):
 
-- `solution_a_advocate`: Deep dive into option A
-- `solution_b_advocate`: Deep dive into option B
-- `decision_synthesizer`: Objective comparison, scoring
+- `advocate_a`: Deep dive into option A — strengths, weaknesses, real-world examples
+- `advocate_b`: Deep dive into option B
+- `synthesizer`: Objective comparison, scoring matrix, recommendation
 
-### Step 3: Create the Agent Team
+Coordination: Advocates research independently → challenge each other's conclusions → synthesizer produces final analysis.
 
-**You are the user proxy.** To create the team, you must use natural language to ask Claude to create an agent team. Claude will then:
+### Step 3: Create the Team
 
-1. Create a shared task list
-2. Spawn teammates as separate Claude Code instances
-3. Set up the mailbox for inter-agent communication
+**Tell Claude what you want in natural language. Be specific about roles and scope.**
 
-**Required format — use this EXACTLY when requesting the team:**
+Use this pattern:
 
 ```
+[Brief analysis of why a team is needed]
+
 Create an agent team to [objective].
 
 Spawn [N] teammates:
-- [role_name]: [Goal sentence]. Focus: [key areas]. Output: [deliverable format].
-- [role_name]: [Goal sentence]. Focus: [key areas]. Output: [deliverable format].
+- [role_name]: "[Goal sentence]. Focus: [specific areas with file paths if applicable]. Output: [deliverable file/format]."
+- [role_name]: "[Goal sentence]. Focus: [specific areas]. Output: [deliverable file/format]."
+...
 
 Coordination:
-- [How teammates collaborate]
-- [Cross-check requirements]
-- [Consolidation method]
+- [How teammates collaborate and cross-check]
+- [File ownership: who writes where]
+- [How results are consolidated]
 
 Wait for teammates to finish.
 ```
 
-**Each role definition MUST include:**
+**Role definition quality matters:**
 
-- **Clear goal**: One sentence on what to accomplish
-- **Focus areas**: 3-5 specific aspects to examine
-- **Output format**: How to deliver results (report, spec, code file, etc.)
+Good:
 
-**Good role definition**:  
-`security_auditor`: "Audit authentication flow for vulnerabilities. Focus: Token storage, session management, CSRF protection, password hashing, rate limiting. Output: Security assessment with CVSS scores in security_report.md."
+```
+security_auditor: "Audit src/auth/ for security vulnerabilities. Focus: JWT token storage in src/auth/token.ts, session management in src/auth/session.ts, CSRF protection, password hashing, rate limiting. Output: security_review.md with findings sorted by CVSS severity."
+```
 
-**Bad role definition**:  
-`security_guy`: "Check security stuff"
+Bad:
+
+```
+security_guy: "Check security stuff"
+```
 
 ### Step 4: Coordinate the Team
 
-Once the team is created, Claude (as team lead) manages coordination. You can influence coordination by telling Claude:
+As lead agent, manage using:
 
-| Command                        | When to Use                   | Example                                                   |
-| ------------------------------ | ----------------------------- | --------------------------------------------------------- |
-| `Ask [teammate]`               | Direct a specific teammate    | `Ask security_auditor to verify the token rotation logic` |
-| `Broadcast`                    | Message all teammates at once | `Broadcast "Prioritize the payment module"`               |
-| `Wait for teammates to finish` | To initiate the blocking wait | ALWAYS include this in your initial request               |
-| `Clean up the team`            | Work is complete              | **Mandatory** at the end of every team session            |
+| Action            | How                            | When                                   |
+| ----------------- | ------------------------------ | -------------------------------------- |
+| Direct a teammate | `Ask [teammate]`               | Assign specific work or ask for status |
+| Message all       | `Broadcast`                    | Share updates affecting everyone       |
+| Wait              | `Wait for teammates to finish` | Before consolidating results — always  |
+| Clean up          | `Clean up the team`            | When done — mandatory, no exceptions   |
 
-**Task Assignment Modes:**
+**Assignment modes**:
 
-- **Lead Assigns**: Claude explicitly assigns tasks to specific teammates using `Ask [teammate]`. Use for tasks requiring specific expertise or sequencing.
-- **Self-Claiming**: Teammates automatically pick up unassigned, unblocked tasks. Use when tasks are well-defined and independent.
+- **Lead assigns**: Explicitly assign tasks with `Ask [teammate]`. Use for sequenced or specialized work.
+- **Self-claiming**: Teammates auto-pick unblocked tasks from the shared list. Use for independent, well-defined tasks.
 
-**Optional Controls:**
+**Optional controls**:
 
-- **Plan Approval**: Require teammates to get approval before making changes. Use for high-risk modifications (database schema, auth logic, etc.).
-- **Delegate Mode**: Allow teammates to work more autonomously. Use when teammates have clear, independent objectives.
+- **Plan approval**: Require teammates to get approval before making changes. Use for high-risk modifications (database schema, auth logic).
+- **Delegate mode**: Teammates work more autonomously with less lead oversight. Use when objectives are clear and independent.
 
-### Step 5: Consolidate & Cleanup
+### Step 5: Consolidate & Clean Up
 
 After all teammates finish:
 
-1. **Collect** all results and deliverables
-2. **Cross-reference** findings between teammates for conflicts or gaps
-3. **Synthesize** into a unified summary document
+1. **Collect** all deliverables from output files
+2. **Cross-reference** findings between teammates — look for conflicts, gaps, and duplicates
+3. **Synthesize** into a unified summary
 4. **Report** to the user with key findings and recommendations
-5. **Clean up the team** — this is MANDATORY
+5. **Clean up the team** — MANDATORY
 
-## Coordination Patterns
+## Lessons from the C Compiler Project
 
-### Pattern 1: Independent → Cross-Check
+These patterns come from Anthropic's experiment where 16 agents built a 100,000-line C compiler:
 
-Have them work independently, then:
+1. **When tasks are naturally independent, parallelization is trivial**: Each agent picks a different failing test or module to work on. The shared task list handles coordination.
 
-```
-[Role A] reviews [Role B]'s work for [specific concern]
-[Role B] reviews [Role A]'s work for [specific concern]
-Consolidate into [output file]
-```
+2. **Giant monolithic tasks cause agents to get stuck**: Unlike hundreds of independent tests, a single massive task can't be parallelized. Break big deliverables into smaller, testable chunks.
 
-### Pattern 2: Competing Hypotheses
+3. **Tests are the primary coordination mechanism**: With high-quality tests, agents stay on track without human oversight. New commits can't break existing code if CI enforces it.
 
-Each teammate investigates a different hypothesis:
+4. **Agents have no prior context on each session**: Each agent starts fresh. Write clear README/CLAUDE.md files so agents can self-orient quickly. Include file paths, architecture notes, and conventions.
 
-```
-Have them debate and try to disprove each other's theories.
-Converge on the most likely root cause.
-```
+5. **Agents waste time without constraints**: Without guardrails, agents will spend hours running tests or exploring tangents. Provide fast feedback loops (quick test samples, clear progress indicators).
 
-### Pattern 3: Sequential Handoff
+6. **File-based coordination works**: Agents "lock" tasks by writing files. Git merge conflicts serve as tiebreakers. Save all results to files since session state doesn't persist.
 
-Phase 1: [Role A] produces [deliverable]
-Phase 2: [Role B] uses [deliverable] to create [next deliverable]
-Phase 3: [Role C] validates both and produces [final output]
+## Hooks for Agent Teams
+
+Use hooks to enforce rules automatically:
+
+- **TeammateIdle**: Runs when a teammate is about to go idle. Exit with code 2 to send feedback and keep them working.
+- **TaskCompleted**: Runs when a task is being marked complete. Exit with code 2 to prevent completion and send feedback (e.g., run additional validation).
 
 ## Critical Reminders
 
-- **No redundant Waiting**: Once teammates finish and Claude resumes, **move directly to consolidation/reporting**. Never output "Wait for teammates to finish." as your first message after resumption.
-- **Mandatory Cleanup**: Always terminate the team with `Clean up the team` once consolidation is complete to release platform resources.
-- **Save state to files**: Teammates should write their outputs to files so results survive session end
-- **Environment Check**: Agent teams require `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`. If not set, Claude will fall back to subagents or single session.
-
-## Quick Decision Tree
-
-```
-User requests team-based work
-↓
-Can this be done in a single session? → Yes → Do it yourself, no team needed
-↓ No
-Do teammates need to communicate directly? → No → Use subagents
-↓ Yes
-Analyze: How many parallel perspectives needed?
-↓
-Select template (Review / Feature / Debug / Research)
-↓
-Determine complexity → Choose role count (3-8)
-↓
-Request agent team using natural language (NOT bash/subprocess)
-↓
-Coordinate → Wait → Consolidate → Cleanup
-```
+- **No session resume**: `/resume` doesn't restore teammates → Always save results to files
+- **File conflicts**: Assign different files to different teammates — this is the biggest pitfall
+- **Token cost**: Each teammate = separate context window → Keep team size minimal
+- **Context**: Teammates don't inherit lead's conversation history → Provide full context in spawn prompts
+- **Always wait**: Don't consolidate until all teammates finish
+- **Always clean up**: Terminate the team when done — no exceptions
 
 ## Full Example
 
-**User Input**: "Use agent-teams to review the authentication module for security and performance issues."
+**User**: "Use agent-teams to review the authentication module for security, performance, and code quality."
 
-**Expected AI Response**:
+**Response**:
 
-```
-I'll create an agent team to review the authentication module in parallel.
+This task benefits from parallel specialized review — three independent perspectives on the same code, with cross-checking. Creating a review team.
 
 Create an agent team to review the authentication module.
 
 Spawn three reviewers:
 
-- security_auditor: "Audit src/auth/ for security vulnerabilities. Focus: JWT handling, password hashing, session management, CSRF protection, rate limiting. Output: Security findings with severity ratings in security_review.md."
-- performance_engineer: "Analyze src/auth/ for performance issues. Focus: N+1 queries, missing indexes, token validation overhead, caching opportunities, connection pooling. Output: Performance recommendations in performance_review.md."
-- maintainability_expert: "Review src/auth/ for code quality. Focus: SOLID violations, error handling gaps, naming consistency, test coverage, documentation. Output: Refactoring suggestions in maintainability_review.md."
+- security_auditor: "Audit src/auth/ for security vulnerabilities. Focus: JWT handling in src/auth/token.ts, password hashing in src/auth/crypto.ts, session management in src/auth/session.ts, CSRF protection, rate limiting. Output: Write findings with severity ratings to reviews/security_review.md."
+- performance_engineer: "Analyze src/auth/ for performance issues. Focus: N+1 queries in src/auth/queries.ts, token validation overhead, caching opportunities, connection pooling in src/auth/db.ts. Output: Write optimization recommendations to reviews/performance_review.md."
+- maintainability_expert: "Review src/auth/ for code quality issues. Focus: SOLID violations, error handling gaps, naming consistency, test coverage in tests/auth/. Output: Write refactoring suggestions to reviews/maintainability_review.md."
 
 Coordination:
 
-- Each reviewer works independently on their domain
+- Each reviewer works independently on their domain — no file conflicts since all write to separate output files
 - Security auditor cross-checks performance recommendations for security implications
 - Performance engineer validates security suggestions won't create bottlenecks
-- All findings consolidated into auth_review_summary.md
+- All findings consolidated into reviews/auth_review_summary.md
 
-```
-
-## Troubleshooting
-
-### Agent teams not working?
-
-1. **Check environment variable**: Ensure `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` is set
-2. **Check display mode**: Use `teammateMode` in settings.json if needed (`"in-process"` or `"tmux"`)
-3. **Verify teammates spawned**: In in-process mode, use Shift+Up/Down to cycle through teammates
-4. **Check for errors**: Teammates may stop on errors; check their output directly
-
-### Fallback to subagents
-
-If agent teams are not available, Claude may automatically fall back to subagents. To force agent teams:
-
-- Explicitly request "Create an agent team" (not "use subagents")
-- Ensure environment variable is set
-- Monitor for the team creation confirmation
-
-## Key Differences: Agent Teams vs Subagents
-
-| Aspect            | Agent Teams                             | Subagents                               |
-| ----------------- | --------------------------------------- | --------------------------------------- |
-| **Communication** | Teammates message each other directly   | Report back to main agent only          |
-| **Coordination**  | Shared task list with self-coordination | Main agent manages all work             |
-| **Context**       | Fully independent sessions              | Spawned within main session             |
-| **Best for**      | Complex work requiring discussion       | Focused tasks where only result matters |
-| **Token cost**    | Higher (separate instances)             | Lower (results summarized back)         |
-
-Use agent teams when teammates need to share findings, challenge each other, and coordinate on their own. Use subagents for quick, focused workers that report back.
-
----
+Wait for teammates to finish.
