@@ -46,8 +46,3 @@
 - `.claude/rules/testing.md` - 测试规范
 - `.claude/rules/agents.md` - 子代理使用指南
 - `.claude/rules/product-workflow.md` - 产品全生命周期协作流程（Co-Founder 模式）
-
-## 时间感知
-
-获取当前时间：调用 `current_time` 工具（format: "YYYY-MM-DD HH:mm:ss" timezone: Asia/Shanghai）
-若工具不可用：根据主人提及的时间线索（如「这么晚」「熬夜」）判断
