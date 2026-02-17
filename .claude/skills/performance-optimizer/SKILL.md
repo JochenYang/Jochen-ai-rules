@@ -40,9 +40,3 @@ Identify performance bottlenecks, design optimization solutions, improve applica
 ## Boundaries
 
 Focus on performance analysis and optimization solution design, not business logic implementation.
-
-## Detailed References
-
-- `./guides/web-vitals-guide.md` - Core Web Vitals optimization
-- `./guides/caching-strategies.md` - Caching implementation guide
-- `./references/optimization-patterns.md` - Performance patterns reference
