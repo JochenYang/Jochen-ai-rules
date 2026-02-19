@@ -1,0 +1,10 @@
+{
+  "name": "jochen-ai-rules",
+  "description": "Jochen's AI development ruleset with workflows, agents and best practices",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jochen"
+  },
+  "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
+  "repository": "https://github.com/JochenYang/Jochen-ai-rules"
+}
