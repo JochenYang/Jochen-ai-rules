@@ -1,0 +1,19 @@
+{
+  "name": "jochen-ai-rules",
+  "owner": {
+    "name": "Jochen",
+    "email": "dayantv666@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "jochen-ai-rules",
+      "source": "https://github.com/JochenYang/Jochen-ai-rules.git",
+      "description": "Jochen's AI development ruleset with workflows, agents and best practices",
+      "version": "1.0.0",
+      "author": {
+        "name": "Jochen"
+      },
+      "license": "MIT"
+    }
+  ]
+}
