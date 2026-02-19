@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -Command \"$file_path = '{{file_path}}'; if (Test-Path $file_path -PathType Leaf) { $dir = Split-Path $file_path -Parent; $project = $dir; while ($project -and -not (Test-Path (Join-Path $project 'package.json') -PathType Leaf)) { $project = Split-Path $project -Parent }; if ($project -and (Test-Path (Join-Path $project 'package.json') -PathType Leaf)) { try { npx prettier --write $file_path 2>$null | Out-Null } catch {} } }\""
+            "command": "powershell -File - << 'PSEOF'\n$file_path = '{{file_path}}'\nif (Test-Path $file_path -PathType Leaf) {\n    $dir = Split-Path $file_path -Parent\n    $project = $dir\n    while ($project -and -not (Test-Path (Join-Path $project 'package.json') -PathType Leaf)) {\n        $project = Split-Path $project -Parent\n    }\n    if ($project -and (Test-Path (Join-Path $project 'package.json') -PathType Leaf)) {\n        try { npx prettier --write $file_path 2>$null | Out-Null } catch {}\n    }\n}\nPSEOF"
           }
         ],
         "description": "Auto-format JS/TS files with Prettier after edits"
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -Command \"$file_path = '{{file_path}}'; $content = Get-Content $file_path -ErrorAction SilentlyContinue | Select-Object -First 5; if ($content -match 'console\\\\.log') { Write-Host '[Hook] WARNING: console.log found' -ForegroundColor Red; Select-String -Path $file_path -Pattern 'console\\\\.log' | ForEach-Object { Write-Host $_.Line -ForegroundColor DarkGray } }\""
+            "command": "powershell -File - << 'PSEOF'\n$file_path = '{{file_path}}'\n$content = Get-Content $file_path -ErrorAction SilentlyContinue | Select-Object -First 5\nif ($content -match 'console\\\\.log') {\n    Write-Host '[Hook] WARNING: console.log found' -ForegroundColor Red\n    Select-String -Path $file_path -Pattern 'console\\\\.log' | ForEach-Object { Write-Host $_.Line -ForegroundColor DarkGray }\n}\nPSEOF"
           }
         ],
         "description": "Warn about console.log statements after edits"
@@ -41,7 +41,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -Command \"$ErrorActionPreference = 'SilentlyContinue'; $git = (Get-Command git -ErrorAction SilentlyContinue).Source; if (-not $git) { exit 0 }; $modified = & $git diff --name-only 2>$null | Where-Object { $_ -match '\\\\.(ts|tsx|js|jsx)$' }; if ($modified) { $hasConsole = $false; foreach ($f in $modified) { if (Test-Path $f -PathType Leaf) { $content = Get-Content $f -ErrorAction SilentlyContinue; if ($content -match 'console\\\\.log') { Write-Host \\\"[Hook] WARNING: console.log in $f\\\" -ForegroundColor Red; $hasConsole = $true } } }; if ($hasConsole) { Write-Host '[Hook] Remove console.log before committing' -ForegroundColor Yellow } }; exit 0\""
+            "command": "powershell -File - << 'PSEOF'\n$ErrorActionPreference = 'SilentlyContinue'\n$git = (Get-Command git -ErrorAction SilentlyContinue).Source\nif (-not $git) { exit 0 }\n$modified = & $git diff --name-only 2>$null | Where-Object { $_ -match '\\.(ts|tsx|js|jsx)$' }\nif ($modified) {\n    $hasConsole = $false\n    foreach ($f in $modified) {\n        if (Test-Path $f -PathType Leaf) {\n            $content = Get-Content $f -ErrorAction SilentlyContinue\n            if ($content -match 'console\\\\.log') {\n                Write-Host \"[Hook] WARNING: console.log in $f\" -ForegroundColor Red\n                $hasConsole = $true\n            }\n        }\n    }\n    if ($hasConsole) {\n        Write-Host '[Hook] Remove console.log before committing' -ForegroundColor Yellow\n    }\n}\nexit 0\nPSEOF"
           }
         ],
         "description": "Final audit for console.log before session ends"

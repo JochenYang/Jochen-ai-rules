@@ -48,6 +48,18 @@ All agents must follow these rules when deciding which specialized agent to invo
 - **Output**: Spatial design blueprints and user journey visualizations
 - **Skills**: ui-ux-pro-max, frontend-design
 
+### security-reviewer (Security Audit)
+- **Color**: Red 🔴
+- **Description**: Deep security audit specialist following OWASP guidelines
+- **Output**: Comprehensive security reports with vulnerability details and remediation plans
+- **Skills**: quality-assurance (security-audit)
+
+### database-migration (Database Migration)
+- **Color**: Cyan 🔷
+- **Description**: Database migration specialist for schema changes and data migration
+- **Output**: Migration plans with validation scripts and rollback strategies
+- **Skills**: database-engineer
+
 ## Standard Workflows
 
 ### Feature Development (Standard)
