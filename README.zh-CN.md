@@ -1,19 +1,19 @@
-<p align="center">
+<div align="center">
 
 # **Jochen AI Rules**
 
-</p>
+<br>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Claude%20Code-插件-4A90D9?style=for-the-badge&logo=anthropic&logoColor=white" alt="Claude Code 插件">
-  <img src="https://img.shields.io/github/v/release/JochenYang/Jochen-ai-rules?style=for-the-badge" alt="版本">
-  <img src="https://img.shields.io/github/license/JochenYang/Jochen-ai-rules?style=for-the-badge" alt="许可证">
-  <img src="https://img.shields.io/github/stars/JochenYang/Jochen-ai-rules?style=for-the-badge" alt="Star">
-</p>
+[![Claude Code 插件](https://img.shields.io/badge/Claude%20Code-插件-4A90D9?style=for-the-badge&logo=anthropic&logoColor=white)](https://claude.com/claude-code)
+[![版本](https://img.shields.io/github/v/release/JochenYang/Jochen-ai-rules?style=for-the-badge)](https://github.com/JochenYang/Jochen-ai-rules/releases)
+[![许可证](https://img.shields.io/github/license/JochenYang/Jochen-ai-rules?style=for-the-badge)](LICENSE)
+[![Star](https://img.shields.io/github/stars/JochenYang/Jochen-ai-rules?style=for-the-badge)](https://github.com/JochenYang/Jochen-ai-rules/stargazers)
 
-<p align="center">
-  <a href="README.md">English</a>
-</p>
+<br>
+
+[English](README.md)
+
+</div>
 
 ---
 
