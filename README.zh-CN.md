@@ -1,8 +1,17 @@
 # Jochen AI Rules
 
-[![Claude Code 插件](https://img.shields.io/badge/Claude%20Code-插件-blue)](https://claude.com/claude-code)
+<p align="center">
+  <img src="https://img.shields.io/badge/Claude%20Code-插件-4A90D9?style=for-the-badge&logo=anthropic&logoColor=white" alt="Claude Code 插件">
+  <img src="https://img.shields.io/github/v/release/JochenYang/Jochen-ai-rules?style=for-the-badge" alt="版本">
+  <img src="https://img.shields.io/github/license/JochenYang/Jochen-ai-rules?style=for-the-badge" alt="许可证">
+  <img src="https://img.shields.io/github/stars/JochenYang/Jochen-ai-rules?style=for-the-badge" alt="Star">
+</p>
 
-个人 Claude Code 配置仓库，包含 skills、commands、agents、hooks 和规则。
+<p align="center">
+  <a href="README.md">English</a>
+</p>
+
+---
 
 ## 简介
 
@@ -12,6 +21,16 @@ Jochen AI Rules 是一个全面的 Claude Code 插件，提供：
 - **Agents**: 针对不同任务的专用 AI agents
 - **Skills**: 领域特定的知识和最佳实践
 - **Hooks**: 自动质量检查和格式化
+
+### 功能
+
+| 类别 | 数量 |
+|------|------|
+| Commands | 9 |
+| Agents | 9 |
+| Skills | 13+ |
+| 设计风格 | 50+ |
+| 配色方案 | 21 |
 
 ## 安装
 
@@ -62,7 +81,7 @@ claude --plugin-dir ./Jochen-ai-rules
 - **Developer**: 全栈开发工作流
 - **Database Engineer**: Schema 设计、查询优化、迁移
 - **API Designer**: REST、GraphQL、gRPC 设计
-- **Quality Assurance**: 测试、安全审计
+- **Quality Assurance**: 测试，安全审计
 - **Frontend Design**: 生产级 UI 创建
 - **UI/UX Pro Max**: 50+ 设计风格、21 种配色方案
 - **Remotion Best Practices**: React 视频创作
@@ -74,7 +93,7 @@ claude --plugin-dir ./Jochen-ai-rules
 
 ### UI/UX 设计能力
 
-- **50+ 设计风格**: 玻璃拟态、黏土拟态、极简主义、粗野主义、新拟态、Bento 栅格、暗色模式、拟物化、扁平化等
+- **50+ 设计风格**: 玻璃拟态、黏土拟态、极简主义，粗野主义、新拟态、Bento 栅格、暗色模式、拟物化、扁平化等
 - **21 种配色方案**: 适用于各种场景的完整色彩系统
 - **50 种字体搭配**: 不同场景的字体组合
 - **20 种图表类型**: 数据可视化选项
@@ -106,6 +125,12 @@ claude --plugin-dir ./Jochen-ai-rules
 └── rules/          # 编码规范和指南
 ```
 
+---
+
 ## 许可证
 
-MIT
+<p align="center">
+  <a href="LICENSE">查看许可证</a> •
+  <a href="https://github.com/JochenYang/Jochen-ai-rules">GitHub</a> •
+  <a href="https://github.com/JochenYang/Jochen-ai-rules/issues">问题反馈</a>
+</p>

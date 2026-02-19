@@ -1,8 +1,17 @@
 # Jochen AI Rules
 
-[![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-blue)](https://claude.com/claude-code)
+<p align="center">
+  <img src="https://img.shields.io/badge/Claude%20Code-Plugin-4A90D9?style=for-the-badge&logo=anthropic&logoColor=white" alt="Claude Code Plugin">
+  <img src="https://img.shields.io/github/v/release/JochenYang/Jochen-ai-rules?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/github/license/JochenYang/Jochen-ai-rules?style=for-the-badge" alt="License">
+  <img src="https://img.shields.io/github/stars/JochenYang/Jochen-ai-rules?style=for-the-badge" alt="Stars">
+</p>
 
-Personal Claude Code configuration repository with skills, commands, agents, hooks, and rules.
+<p align="center">
+  <a href="README.zh-CN.md">中文</a>
+</p>
+
+---
 
 ## Overview
 
@@ -12,6 +21,16 @@ Jochen AI Rules is a comprehensive Claude Code plugin that provides:
 - **Agents**: Specialized AI agents for different tasks
 - **Skills**: Domain-specific knowledge and best practices
 - **Hooks**: Automated quality checks and formatting
+
+### Features
+
+| Category | Count |
+|----------|-------|
+| Commands | 9 |
+| Agents | 9 |
+| Skills | 13+ |
+| Design Styles | 50+ |
+| Color Palettes | 21 |
 
 ## Installation
 
@@ -106,6 +125,12 @@ Or install from GitHub after publishing:
 └── rules/          # Coding standards and guidelines
 ```
 
+---
+
 ## License
 
-MIT
+<p align="center">
+  <a href="LICENSE">View License</a> •
+  <a href="https://github.com/JochenYang/Jochen-ai-rules">GitHub</a> •
+  <a href="https://github.com/JochenYang/Jochen-ai-rules/issues">Issues</a>
+</p>
