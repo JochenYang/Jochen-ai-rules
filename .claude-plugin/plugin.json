@@ -2,8 +2,20 @@
   "name": "jochen-ai-rules",
   "description": "Jochen's AI development ruleset with workflows, agents and best practices",
   "version": "1.0.0",
+  "license": "MIT",
+  "keywords": [
+    "claude",
+    "claude-code",
+    "ai",
+    "development",
+    "workflow",
+    "agents",
+    "best-practices",
+    "rules"
+  ],
   "author": {
-    "name": "Jochen"
+    "name": "Jochen",
+    "url": "https://github.com/JochenYang"
   },
   "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
   "repository": "https://github.com/JochenYang/Jochen-ai-rules"
