@@ -1,4 +1,8 @@
-# Jochen AI Rules
+<p align="center">
+
+# **Jochen AI Rules**
+
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Claude%20Code-插件-4A90D9?style=for-the-badge&logo=anthropic&logoColor=white" alt="Claude Code 插件">
@@ -24,13 +28,13 @@ Jochen AI Rules 是一个全面的 Claude Code 插件，提供：
 
 ### 功能
 
-| 类别 | 数量 |
-|------|------|
-| Commands | 9 |
-| Agents | 9 |
-| Skills | 13+ |
-| 设计风格 | 50+ |
-| 配色方案 | 21 |
+| 类别     | 数量 |
+| -------- | ---- |
+| Commands | 9    |
+| Agents   | 9    |
+| Skills   | 13+  |
+| 设计风格 | 50+  |
+| 配色方案 | 21   |
 
 ## 安装
 
@@ -50,31 +54,31 @@ claude --plugin-dir ./Jochen-ai-rules
 
 ## 命令 (Commands)
 
-| 命令 | 说明 |
-|------|------|
-| `/plan` | 创建带风险评估的实施计划 |
-| `/orchestrate` | 编排多 agent 工作流 |
-| `/commit` | 创建符合规范的提交信息 |
-| `/review` | 代码审查和质量审计 |
-| `/tdd` | 测试驱动开发工作流 |
-| `/branch` | Git Worktree 管理 |
-| `/build-fix` | 修复构建错误 |
-| `/refactor-clean` | 清理死代码 |
-| `/learn` | 提取可复用模式 |
+| 命令              | 说明                     |
+| ----------------- | ------------------------ |
+| `/plan`           | 创建带风险评估的实施计划 |
+| `/orchestrate`    | 编排多 agent 工作流      |
+| `/commit`         | 创建符合规范的提交信息   |
+| `/review`         | 代码审查和质量审计       |
+| `/tdd`            | 测试驱动开发工作流       |
+| `/branch`         | Git Worktree 管理        |
+| `/build-fix`      | 修复构建错误             |
+| `/refactor-clean` | 清理死代码               |
+| `/learn`          | 提取可复用模式           |
 
 ## 智能体 (Agents)
 
-| Agent | 说明 |
-|-------|------|
-| `dev-planner` | 实施规划专家 |
-| `code-implementer` | 生产级代码实现 |
-| `tdd-guide` | 测试驱动开发 |
-| `code-reviewer` | 质量、安全、性能审计 |
-| `security-reviewer` | 深度 OWASP 安全审计 |
-| `database-migration` | 数据库迁移专家 |
-| `bug-analyzer` | Bug 调查和根因分析 |
-| `story-generator` | 用户故事生成 |
-| `ui-sketcher` | UI/UX 设计原型 |
+| Agent                | 说明                 |
+| -------------------- | -------------------- |
+| `dev-planner`        | 实施规划专家         |
+| `code-implementer`   | 生产级代码实现       |
+| `tdd-guide`          | 测试驱动开发         |
+| `code-reviewer`      | 质量、安全、性能审计 |
+| `security-reviewer`  | 深度 OWASP 安全审计  |
+| `database-migration` | 数据库迁移专家       |
+| `bug-analyzer`       | Bug 调查和根因分析   |
+| `story-generator`    | 用户故事生成         |
+| `ui-sketcher`        | UI/UX 设计原型       |
 
 ## 技能 (Skills)
 

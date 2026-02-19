@@ -1,4 +1,8 @@
-# Jochen AI Rules
+<p align="center">
+
+# **Jochen AI Rules**
+
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Claude%20Code-Plugin-4A90D9?style=for-the-badge&logo=anthropic&logoColor=white" alt="Claude Code Plugin">
