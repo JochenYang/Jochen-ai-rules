@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "jochen-ai-rules",
-      "source": "https://github.com/JochenYang/Jochen-ai-rules.git",
+      "source": ".",
       "description": "Jochen's AI development ruleset with workflows, agents and best practices",
       "version": "1.0.0",
       "author": {
