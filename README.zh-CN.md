@@ -38,18 +38,24 @@ Jochen AI Rules 是一个全面的 Claude Code 插件，提供：
 
 ## 安装
 
+### 方式一：从市场安装（推荐）
+
+```bash
+# 添加市场
+/plugin marketplace add JochenYang/Jochen-ai-rules
+
+# 安装插件
+/plugin install jochen-ai-rules
+```
+
+### 方式二：本地开发
+
 ```bash
 # 克隆仓库
 git clone https://github.com/JochenYang/Jochen-ai-rules.git
 
 # 作为本地插件加载
 claude --plugin-dir ./Jochen-ai-rules
-```
-
-或发布后从 GitHub 安装：
-
-```bash
-/plugin install jochen-ai-rules
 ```
 
 ## 命令 (Commands)

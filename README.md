@@ -38,18 +38,24 @@ Jochen AI Rules is a comprehensive Claude Code plugin that provides:
 
 ## Installation
 
+### Option 1: From Marketplace (Recommended)
+
+```bash
+# Add the marketplace
+/plugin marketplace add JochenYang/Jochen-ai-rules
+
+# Install the plugin
+/plugin install jochen-ai-rules
+```
+
+### Option 2: Local Development
+
 ```bash
 # Clone the repository
 git clone https://github.com/JochenYang/Jochen-ai-rules.git
 
 # Load as local plugin
 claude --plugin-dir ./Jochen-ai-rules
-```
-
-Or install from GitHub after publishing:
-
-```bash
-/plugin install jochen-ai-rules
 ```
 
 ## Commands
