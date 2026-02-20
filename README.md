@@ -100,6 +100,7 @@ claude --plugin-dir ./Jochen-ai-rules
 - **Three.js Builder**: 3D web content creation
 - **Phaser Build**: 2D HTML5 game development
 - **MCP Builder**: MCP server development
+- **Reflect**: Session reflection and learning extraction
 
 ### UI/UX Design Capabilities
 
@@ -123,6 +124,29 @@ claude --plugin-dir ./Jochen-ai-rules
 - Console.log detection and warnings
 - Pre-push review
 - Session-end audit
+- **Self-improvement**: Prompts `/learn` after 8+ tool calls
+- **Prompt Linter**: Warns when prompt > 50 words
+
+### Advanced Hooks (Optional)
+
+These hooks require manual configuration in `settings.json`:
+
+```json
+"UserPromptSubmit": [
+  {
+    "matcher": "*",
+    "hooks": [
+      { "type": "command", "command": "powershell -File .claude/hooks/self-improvement.ps1" }
+    ]
+  },
+  {
+    "matcher": "*",
+    "hooks": [
+      { "type": "command", "command": "powershell -File .claude/hooks/prompt-linter.ps1" }
+    ]
+  }
+]
+```
 
 ## Project Structure
 

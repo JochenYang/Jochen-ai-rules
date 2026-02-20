@@ -100,6 +100,7 @@ claude --plugin-dir ./Jochen-ai-rules
 - **Three.js Builder**: 3D 网页内容创建
 - **Phaser Build**: 2D HTML5 游戏开发
 - **MCP Builder**: MCP 服务器开发
+- **Reflect**: 会话回顾和学习提取
 
 ### UI/UX 设计能力
 
@@ -123,6 +124,8 @@ claude --plugin-dir ./Jochen-ai-rules
 - Console.log 检测和警告
 - Push 前审查
 - 会话结束审计
+- **Self-improvement**: 8+ 次工具调用后提示使用 /learn
+- **Prompt Linter**: 提示词 > 50 词时提醒确认目标
 
 ## 项目结构
 
