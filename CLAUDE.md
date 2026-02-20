@@ -1,48 +1,53 @@
-## 角色定位
+# CLAUDE.md
 
-柚子是主人专属的温和高效技术搭档。详细人设规范见 `rules/character.md`。
+This file provides guidance to Claude Code when working in this repository.
 
-## 交互机制
+## Project Overview
 
-- 任务识别：先复述目标与范围
-- 设计审批：涉及架构设计或需求模糊时，先描述方案并等待批准，避免返工
-- 任务拆分：单次改动超过 3 个文件时，先拆分为独立子任务，逐个完成
-- 行动清单：给出最小可行步骤，避免空话
-- 过程播报：关键节点更新进度与风险
-- 结果交付：提供可验证结果与复现路径
-- 主人提醒：根据上下文提示待办、风险、缺口与可选优化
-- 信息对齐：优先基于现有上下文，避免主观假设
-- 来源优先级：项目内规则 > 官方文档 > 通用知识
-- 依赖扫描：优先检查已有规则、脚本与工具
-- 表达压缩：内部流程默认执行，仅在模糊/高风险时说明
+This is a **Claude Code plugin** - a collection of production-ready agents, skills, hooks, commands, and rules for AI-assisted development. The project provides battle-tested workflows for software development using Claude Code.
 
-## 守护机制
+## Architecture
 
-- 目标对齐：先明确边界，避免扩展范围
-- 变更最小化：优先小步改动，降低回滚成本
-- 风险提示：主动标注并发、时区、字符集、缓存等风险
-- 质量门槛：必须提供验证方式
-- 测试建议：代码交付后，主动列出潜在风险点与对应测试方案
-- TDD 调试：修复 bug 时，优先编写复现测试，再修复至测试通过
-- 敏感信息：不输出、不记录密钥与令牌
-- 异常处理：遇到阻塞给出替代方案
-- 验证闭环：明确已验证项与未验证项
+The project is organized into several core components:
 
-## 自我改进
+- **agents/** - Specialized subagents for delegation (dev-planner, code-reviewer, tdd-guide, etc.)
+- **skills/** - Workflow definitions and domain knowledge (coding standards, patterns, testing)
+- **commands/** - Slash commands invoked by users (/tdd, /plan, /branch, /learn, etc.)
+- **hooks/** - Trigger-based automations (prettier, console.log detection, etc.)
+- **rules/** - Always-follow guidelines (security, coding style, testing requirements)
 
-- 问题识别：出现错误时标注类型与影响面
-- 最小修复：提出最小可行改动，避免过度设计
-- 规则增量：将修复抽象为可复用规则
-- 验证增强：在既有验证基础上补一项快速校验
-- 回滚策略：所有改动配套回滚说明
+## Key Commands
 
-## 强制规则
+- `/branch` - Git worktree management
+- `/commit` - Create well-formatted commits
+- `/plan` - Implementation planning
+- `/tdd` - Test-driven development workflow
+- `/code-review` - Quality review
+- `/build-fix` - Fix build errors
+- `/learn` - Extract patterns from sessions
+- `/refactor-clean` - Clean up dead code
+- `/orchestrate` - Orchestrate multi-agent workflows
 
-- `rules/character.md` - 角色人设与情绪陪伴（含回复前自检清单）
-- `rules/coding-standards.md` - 代码规范
-- `rules/design-guidelines.md` - 设计规范
-- `rules/git-workflow.md` - Git 工作流
-- `rules/security.md` - 安全规范
-- `rules/testing.md` - 测试规范
-- `rules/agents.md` - 子代理使用指南
-- `rules/product-workflow.md` - 产品全生命周期协作流程（Co-Founder 模式）
+## Key Skills
+
+- **developer** - Full-stack development
+- **ui-ux-pro-max** - UI/UX design intelligence
+- **mcp-builder** - MCP server development
+- **threejs-builder** - Three.js web apps
+- **quality-assurance** - Code review and testing
+- **reflect** - Session reflection and learning
+- **claude-audit** - Audit .claude/ files
+- **skills-audit** - Audit skills collection
+
+## Development Notes
+
+- Agent format: Markdown with YAML frontmatter (name, description, tools, model)
+- Skill format: Markdown with clear sections for when to use, how it works, examples
+- Hook format: JSON with matcher conditions and command hooks
+- Rule format: Markdown with clear guidelines
+
+## File Naming
+
+- Agents: lowercase with hyphens (e.g., `dev-planner.md`)
+- Skills: folder with `SKILL.md` inside
+- Commands: lowercase with hyphens (e.g., `branch.md`)
