@@ -102,6 +102,7 @@ claude --plugin-dir ./Jochen-ai-rules
 - **MCP Builder**: MCP server development
 - **Reflect**: Session reflection and learning extraction
 - **Claude Audit**: Audit .claude/ files for redundant instructions, verbose phrasing, and memory candidates
+- **Skills Audit**: List all skills with line counts, find overlapping scopes and optimization opportunities
 
 ### UI/UX Design Capabilities
 

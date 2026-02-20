@@ -102,6 +102,7 @@ claude --plugin-dir ./Jochen-ai-rules
 - **MCP Builder**: MCP 服务器开发
 - **Reflect**: 会话回顾和学习提取
 - **Claude Audit**: 审计 .claude/ 文件，检测冗余指令、冗长表述和可移至 memory 的内容
+- **Skills Audit**: 列出所有技能及其行数，检测重复作用域和优化机会
 
 ### UI/UX 设计能力
 
