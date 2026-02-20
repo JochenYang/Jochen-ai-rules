@@ -159,13 +159,6 @@ Use for independent analyses of the same state:
 code-reviewer (Quality) + performance-optimizer (Speed)
 ```
 
-## Proactive Agent Suggestions
-
-When a specialized agent is relevant but not called, proactively suggest it:
-
-> [!TIP]
-> This task involves complex architectural changes. I recommend using the **dev-planner** agent to create a detailed plan before we start implementing. Would you like to proceed with `/plan` or `/orchestrate feature`?
-
 ## Handoff Protocol
 
 When passing control between agents, provide structured handoff:

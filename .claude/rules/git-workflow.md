@@ -74,7 +74,6 @@ Closes: #123
 ## Before Commit Checklist
 
 - [ ] No hardcoded secrets
-- [ ] No console.log statements
 - [ ] Tests pass
 - [ ] Code formatted
 - [ ] No linting errors

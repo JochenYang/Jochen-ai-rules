@@ -101,6 +101,7 @@ claude --plugin-dir ./Jochen-ai-rules
 - **Phaser Build**: 2D HTML5 游戏开发
 - **MCP Builder**: MCP 服务器开发
 - **Reflect**: 会话回顾和学习提取
+- **Claude Audit**: 审计 .claude/ 文件，检测冗余指令、冗长表述和可移至 memory 的内容
 
 ### UI/UX 设计能力
 
