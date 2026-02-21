@@ -1,3 +1,8 @@
+---
+argument-hint: <create|list|cleanup|switch|current> [arguments]
+description: Git Worktree management - create isolated feature branches, list worktrees, cleanup completed features
+---
+
 # Branch Command
 
 Git Worktree management for isolated feature development. Creates separate working directories to avoid polluting the main branch.
