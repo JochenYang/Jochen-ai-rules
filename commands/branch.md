@@ -1,28 +1,31 @@
 ---
-argument-hint: <create|list|cleanup|switch|current> [arguments]
-description: Git Worktree management - create isolated feature branches, list worktrees, cleanup completed features
+argument-hint: <create|list|cleanup|switch|current> [<feature-name>] [-b|--base <branch>] [-f|--force]
+description: Git Worktree management - create isolated worktrees, install deps, run tests, list worktrees, cleanup completed features
 ---
 
 # Branch Command
 
-Git Worktree management for isolated feature development. Creates separate working directories to avoid polluting the main branch.
+Git Worktree management for isolated feature development. Creates separate working directories to avoid polluting the main branch, then enters the worktree and sets up the project.
 
 ## Usage
 
 `/branch [action] [arguments]`
 
-## Project Name Detection
+## argument-hint Format
 
-The command automatically detects the project name to use for worktree directories:
-
-1. **From package.json** (if exists): Uses the `name` field
-2. **From git remote URL**: Extracts repo name (e.g., `my-awesome-project` from `https://github.com/user/my-awesome-project.git`)
+```
+/branch create <feature-name> [-b <base-branch>]
+/branch list
+/branch cleanup <name> [-f]
+/branch switch <name>
+/branch current
+```
 
 ## Actions
 
 ### create
 
-Create a new worktree for a feature branch:
+Create a new worktree for a feature branch and enter it:
 
 ```
 /branch create <feature-description>
@@ -40,13 +43,66 @@ Create a new worktree for a feature branch:
 /branch create refactor-api -b main
 ```
 
-**What it does:**
-1. Detects project name automatically
-2. Converts feature description to slug format
-3. Creates a new branch named `feat/<slugified-name>`
-4. Creates a worktree at `../<project-name>-<slugified-name>/`
-5. Checks out the new branch in that worktree
-6. Provides instructions for entering the new worktree
+**Enhanced Workflow (following Superpowers pattern):**
+
+1. **Check existing worktree directory:**
+```bash
+ls -d ../.worktrees 2>/dev/null || ls -d ../worktrees 2>/dev/null
+```
+
+2. **Verify directory is gitignored:**
+```bash
+git check-ignore -q ../worktrees 2>/dev/null || git check-ignore -q ../.worktrees 2>/dev/null
+```
+If NOT ignored, add to .gitignore first.
+
+3. **Detect project name** (from package.json or git remote)
+
+4. **Create worktree:**
+```bash
+git worktree add "<worktree-path>" -b "feat/<feature-name>"
+```
+
+5. **Enter the worktree:**
+```bash
+cd "<worktree-path>"
+```
+
+6. **Run project setup** (auto-detect):
+```bash
+# Node.js
+if [ -f package.json ]; then npm install; fi
+
+# Python
+if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+if [ -f pyproject.toml ]; then poetry install; fi
+
+# Rust
+if [ -f Cargo.toml ]; then cargo build; fi
+
+# Go
+if [ -f go.mod ]; then go mod download; fi
+```
+
+7. **Verify clean baseline** (run tests):
+```bash
+# Node.js
+npm test
+
+# Python
+pytest
+
+# Rust
+cargo test
+```
+
+8. **Report status:**
+```
+✓ Worktree ready at <path>
+✓ Dependencies installed
+✓ Tests passing (<N> tests)
+Ready to implement <feature-name>
+```
 
 **Smart Naming:**
 - Input: `添加用户通知功能` → Branch: `feat/add-user-notification`
@@ -78,10 +134,26 @@ Remove a worktree:
 **Options:**
 - `-f, --force` - Force cleanup even if branch has uncommitted changes
 
-**What it does:**
-1. Removes the worktree directory
-2. Deletes the branch (unless it has uncommitted changes)
-3. Cleans up git reference
+**Enhanced Workflow:**
+
+1. **Check if worktree is clean:**
+```bash
+git status --porcelain
+```
+
+2. **Warn if dirty** (unless --force)
+
+3. **Remove worktree:**
+```bash
+git worktree remove <worktree-path>
+git branch -d <branch-name>
+```
+
+4. **Report:**
+```
+✓ Removed worktree <name>
+✓ Deleted branch <branch-name>
+```
 
 ### switch
 
@@ -92,7 +164,13 @@ Switch to a worktree:
 /branch switch <feature-name>
 ```
 
-Navigates to the worktree directory and provides guidance.
+**Enhanced Workflow:**
+
+1. Check worktree exists
+2. cd into the worktree
+3. Run `npm install` if needed
+4. Run tests to verify baseline
+5. Report ready
 
 ### current
 
@@ -112,9 +190,9 @@ Displays:
 ```
 parent-directory/
 ├── project-name/                    # Main worktree (original repo)
-├── project-name-add-feature1/       # Feature worktree 1
-├── project-name-add-feature2/       # Feature worktree 2
-└── project-name-fix-bug/          # Bugfix worktree
+├── worktrees/
+│   ├── project-name-add-feature1/  # Feature worktree 1
+│   └── project-name-add-feature2/  # Feature worktree 2
 ```
 
 ## Best Practices
@@ -122,7 +200,8 @@ parent-directory/
 1. **One feature = One worktree**: Keep each feature isolated
 2. **Descriptive names**: Use `add-user-auth` not `feature1`
 3. **Clean up after merge**: Use `/branch cleanup` after PR is merged
-4. **Commit Design Docs**: If using design docs, commit them to preserve history
+4. **Verify tests pass**: Always verify baseline before starting work
+5. **Check gitignore**: Ensure worktree directory is ignored
 
 ## Example Workflow
 
@@ -130,20 +209,34 @@ parent-directory/
 # Start a new feature (supports Chinese)
 /branch create 添加用户通知功能
 
-# Or in English
-/branch create add user profile
+# Workflow:
+# 1. Check existing worktrees directory
+# 2. Verify is gitignored
+# 3. Create worktree
+# 4. Enter directory
+# 5. Run npm install
+# 6. Run npm test
+# 7. Report ready
 
-# In the new worktree, use normal commands:
-/plan add user profile feature
+# Output:
+# ✓ Worktree ready at ../myproject-notification
+# ✓ Dependencies installed
+# ✓ Tests passing (42 tests)
+# Ready to implement notification feature
+
+# Now in worktree - proceed with development:
+/plan add notification feature
 ... implement ...
-/commit "feat: add user profile feature"
+/commit "feat: add notification feature"
 
 # After PR is merged, clean up
-/branch cleanup add-user-profile
+/branch cleanup notification
 ```
 
 ## Safety Features
 
+- **Gitignore verification**: Ensures worktree directory is ignored before creating
+- **Test baseline verification**: Runs tests to ensure clean starting point
 - **No accidental main branch deletion**: Cannot delete main/master branch
 - **Uncommitted changes warning**: Warns before cleaning up dirty worktrees
 - **Path validation**: Checks that worktree path doesn't already exist
@@ -153,8 +246,8 @@ parent-directory/
 
 $ARGUMENTS:
 
-- `create <description>` - Create new worktree with feature branch (supports Chinese/English)
+- `create <description>` - Create new worktree with feature branch (supports Chinese/English), installs deps, runs tests
 - `list` - List all worktrees
 - `cleanup <name>` - Remove a worktree and branch
-- `switch <name>` - Show how to switch to a worktree
+- `switch <name>` - Enter a worktree, install deps, verify tests
 - `current` - Show current worktree info
