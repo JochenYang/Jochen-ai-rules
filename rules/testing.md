@@ -2,13 +2,24 @@
 
 **RULE TYPE**: Global mandatory testing standards that ALL code must follow.
 
-These are non-negotiable requirements. Code without tests is incomplete.
+These are non-negotiable requirements. Code without tests is incomplete. Never mark a task complete without proving it works.
+
+---
+
+## Verification Before Done (CRITICAL)
+
+Never say "Finished" without providing proof. Proving it works is part of the task.
+
+- **Evidence**: Run tests, check logs, and provide terminal snippets as proof.
+- **Diff Behavior**: When relevant, demonstrate the difference between the original behavior and the new behavior.
+- **Professional Standard**: Ask yourself: "Would a staff engineer approve this verification?"
 
 ---
 
 ## Minimum Test Coverage: 80%
 
 Test Types (ALL required):
+
 1. **Unit Tests** - Individual functions, utilities, components
 2. **Integration Tests** - API endpoints, database operations
 3. **E2E Tests** - Critical user flows (Playwright)
@@ -16,6 +27,7 @@ Test Types (ALL required):
 ## Test-Driven Development
 
 MANDATORY workflow for new features:
+
 1. Write test first (RED)
 2. Run test - it should FAIL
 3. Write minimal implementation (GREEN)
@@ -26,30 +38,30 @@ MANDATORY workflow for new features:
 ## Test Structure (AAA Pattern)
 
 ```typescript
-test('calculates similarity correctly', () => {
+test("calculates similarity correctly", () => {
   // Arrange
-  const vector1 = [1, 0, 0]
-  const vector2 = [0, 1, 0]
+  const vector1 = [1, 0, 0];
+  const vector2 = [0, 1, 0];
 
   // Act
-  const similarity = calculateCosineSimilarity(vector1, vector2)
+  const similarity = calculateCosineSimilarity(vector1, vector2);
 
   // Assert
-  expect(similarity).toBe(0)
-})
+  expect(similarity).toBe(0);
+});
 ```
 
 ## Test Naming
 
 ```typescript
 // GOOD: Descriptive test names
-test('returns empty array when no markets match query', () => { })
-test('throws error when OpenAI API key is missing', () => { })
-test('falls back to substring search when Redis unavailable', () => { })
+test("returns empty array when no markets match query", () => {});
+test("throws error when OpenAI API key is missing", () => {});
+test("falls back to substring search when Redis unavailable", () => {});
 
 // BAD: Vague test names
-test('works', () => { })
-test('test search', () => { })
+test("works", () => {});
+test("test search", () => {});
 ```
 
 ## Coverage Requirements

@@ -11,6 +11,7 @@ These are non-negotiable requirements. Skills provide optional best practices; R
 All code must include English comments:
 
 ### Functions/Methods
+
 ```typescript
 /**
  * Calculates the total price including tax and discounts
@@ -22,7 +23,7 @@ All code must include English comments:
 function calculateTotalPrice(
   basePrice: number,
   taxRate: number,
-  discountPercent: number
+  discountPercent: number,
 ): number {
   // Calculate discount amount first
   const discountAmount = basePrice * discountPercent;
@@ -38,6 +39,7 @@ function calculateTotalPrice(
 ```
 
 ### Complex Logic
+
 ```typescript
 // Use exponential backoff to avoid overwhelming the API during outages
 // Maximum delay capped at 30 seconds to prevent excessive waiting
@@ -48,6 +50,7 @@ const delay = Math.min(1000 * Math.pow(2, retryCount), 30000);
 ```
 
 ### Key Decisions
+
 ```typescript
 // Deliberately using mutation here for performance with large arrays
 // Spread operator would create copy overhead on each iteration
@@ -55,13 +58,14 @@ items.push(newItem);
 ```
 
 ### When NOT to Comment
+
 ```typescript
 // BAD: Stating the obvious
 // Increment counter by 1
-count++
+count++;
 
 // Set name to user's name
-name = user.name
+name = user.name;
 
 // GOOD: Explain WHY, not WHAT
 // Reset buffer to prevent memory leak from accumulated data
@@ -77,23 +81,23 @@ ALWAYS create new objects, NEVER mutate:
 ```typescript
 // WRONG: Mutation
 function updateUser(user, name) {
-  user.name = name  // MUTATION!
-  return user
+  user.name = name; // MUTATION!
+  return user;
 }
 
 // CORRECT: Immutability
 function updateUser(user, name) {
   return {
     ...user,
-    name
-  }
+    name,
+  };
 }
 
 // WRONG: Array mutation
-items.push(newItem)
+items.push(newItem);
 
 // CORRECT: Create new array
-const updatedItems = [...items, newItem]
+const updatedItems = [...items, newItem];
 ```
 
 ---
@@ -106,16 +110,16 @@ ALWAYS handle errors comprehensively:
 // GOOD
 async function fetchData(url: string) {
   try {
-    const response = await fetch(url)
+    const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
-    return await response.json()
+    return await response.json();
   } catch (error) {
-    console.error('Fetch failed:', error)
-    throw new Error('Failed to fetch data')
+    console.error("Fetch failed:", error);
+    throw new Error("Failed to fetch data");
   }
 }
 ```
@@ -129,18 +133,18 @@ NEVER use `any`:
 ```typescript
 // BAD
 function getData(id: any): any {
-  return database.query(id)
+  return database.query(id);
 }
 
 // GOOD
 interface User {
-  id: string
-  name: string
-  email: string
+  id: string;
+  name: string;
+  email: string;
 }
 
 function getUser(id: string): Promise<User | null> {
-  return database.users.find(id)
+  return database.users.find(id);
 }
 ```
 
@@ -151,21 +155,40 @@ function getUser(id: string): Promise<User | null> {
 ALWAYS validate user input:
 
 ```typescript
-import { z } from 'zod'
+import { z } from "zod";
 
 const schema = z.object({
   email: z.string().email(),
-  age: z.number().int().min(0).max(150)
-})
+  age: z.number().int().min(0).max(150),
+});
 
-const validated = schema.parse(input)
+const validated = schema.parse(input);
 ```
+
+---
+
+## Core Engineering Principles
+
+- **Simplicity First**: Every line of modification should have a clear and minimal necessity, avoiding over-engineering.
+- **Minimal Impact**: Changes should be precisely targeted, modifying only what is necessary to minimize side effects on the existing system.
+- **Demand Elegance**: For non-trivial changes, pause and ask: "Is there a more elegant way?" If a fix feels hacky, stop. Knowing everything you know now, implement the elegant solution.
+
+---
+
+## Autonomous Bug Fixing (CRITICAL)
+
+When given a bug report or error:
+
+- **Zero Hand-holding**: Locate the root cause using logs, failing tests, or stack traces and fix it directly.
+- **Proof**: Provide evidence that the fix works (test results or log snippets).
+- **Self-Correction**: Go fix failing CI tests and logs without being told how.
 
 ---
 
 ## File Organization
 
 MANY SMALL FILES > FEW LARGE FILES:
+
 - High cohesion, low coupling
 - 200-400 lines typical, 800 max
 - Extract utilities from large components
@@ -176,6 +199,7 @@ MANY SMALL FILES > FEW LARGE FILES:
 ## Code Quality Checklist
 
 Before marking work complete:
+
 - [ ] Code is readable and well-named
 - [ ] Functions are small (<50 lines)
 - [ ] Files are focused (<800 lines)
