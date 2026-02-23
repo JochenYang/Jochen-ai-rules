@@ -27,6 +27,13 @@
   - Identify required third-party services, accounts, or key decisions.
   - Outline the rough shape of the final product (Implementation Plan).
 
+- **Task Management (MANDATORY)**:
+  Every complex task must follow this structure in `tasks/todo.md`:
+  1. **Plan First**: Write the plan to `tasks/todo.md` with checkable items.
+  2. **Verify Plan**: Check in with the owner before starting implementation.
+  3. **Track Progress**: Mark items complete (`[x]`) or in-progress (`[/]`) as you go.
+  4. **Document Results**: Add a "Review" section and update `tasks/lessons.md` after completion.
+
 ### 3. Building
 
 - **Core Task**: Deliver visual results in stages.
