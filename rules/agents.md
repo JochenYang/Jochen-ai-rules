@@ -46,7 +46,7 @@ All agents must follow these rules when deciding which specialized agent to invo
 - **Color**: Cyan 🔷
 - **Description**: User story generator that transforms requirements into structured stories
 - **Output**: User-centric stories with acceptance criteria
-- **Skills**: None (standalone)
+- **Skills**: product-manager
 
 ### ui-sketcher (UI/UX Design)
 
@@ -67,7 +67,21 @@ All agents must follow these rules when deciding which specialized agent to invo
 - **Color**: Cyan 🔷
 - **Description**: Database migration specialist for schema changes and data migration
 - **Output**: Migration plans with validation scripts and rollback strategies
-- **Skills**: database-engineer
+- **Skills**: database-engineer, quality-assurance, developer
+
+### performance-optimizer (Performance Engineering)
+
+- **Color**: Orange 🟠
+- **Description**: Performance bottleneck identification and optimization across full stack (DB queries, backend, frontend Core Web Vitals)
+- **Output**: Profiling reports with prioritized optimization plans and measurable targets
+- **Skills**: performance-optimizer, database-engineer, developer, quality-assurance
+
+### devops-engineer (CI/CD & Infrastructure)
+
+- **Color**: Teal 🟩
+- **Description**: CI/CD pipeline design, containerization, and infrastructure management specialist
+- **Output**: Dockerfile, docker-compose, pipeline YAML, K8s configs, monitoring setup
+- **Skills**: devops-engineer, developer, quality-assurance
 
 ## Standard Workflows
 
@@ -97,6 +111,20 @@ bug-analyzer → tdd-guide → code-reviewer
 ```
 /orchestrate refactor <description>
 dev-planner → code-implementer → code-reviewer
+```
+
+### Security-Sensitive Feature
+
+```
+/orchestrate secure-feature <description>
+dev-planner → code-implementer → security-reviewer → code-reviewer
+```
+
+### Database Schema Feature
+
+```
+/orchestrate db-feature <description>
+dev-planner → database-migration → code-implementer → code-reviewer
 ```
 
 ## Proactive Agent Suggestions
@@ -141,9 +169,27 @@ When certain patterns are detected in user messages, AI should proactively sugge
 
 ### Performance Issues
 
-**Triggers**: User mentions "slow", "performance", "optimization", "bottleneck", "latency"
-**Action**: Suggest bug-analyzer agent for investigation
-**Example**: "Let me use the bug-analyzer agent to investigate the performance bottleneck."
+**Triggers**: User mentions "slow", "performance", "optimization", "bottleneck", "latency", "Core Web Vitals", "LCP", "FID", "N+1"
+**Action**: Suggest `performance-optimizer` agent for profiling-first investigation
+**Example**: "Let me use the performance-optimizer agent to profile and identify the bottleneck with real data before making any changes."
+
+### Security Sensitive Detection
+
+**Triggers**: User mentions "auth", "login", "JWT", "token", "permission", "RBAC", "payment", "encrypt", "PII", "sensitive data", "API key", "secret"
+**Action**: Suggest using `/orchestrate secure-feature` or adding `security-reviewer` to workflow
+**Example**: "This touches authentication/security. I recommend using the `secure-feature` workflow to include a dedicated OWASP security audit."
+
+### Database Schema Change Detection
+
+**Triggers**: User mentions "new table", "add column", "schema change", "migration", "ALTER TABLE", "foreign key", "index", "database refactor"
+**Action**: Suggest using `/orchestrate db-feature` to include database-migration agent
+**Example**: "This involves schema changes. I recommend using the `db-feature` workflow to ensure a proper migration plan with rollback strategy."
+
+### DevOps / Deploy Detection
+
+**Triggers**: User mentions "deploy", "CI/CD", "Docker", "Dockerfile", "Kubernetes", "pipeline", "GitHub Actions", "container", "production", "staging", "infra", "monitoring"
+**Action**: Suggest `devops-engineer` agent
+**Example**: "This is an infrastructure/deployment concern. I'll use the devops-engineer agent to design the CI/CD pipeline and container setup."
 
 ## Orchestration Standards
 
@@ -188,6 +234,18 @@ When user provides error logs or mentions crashes:
 When implementing critical features or fixing bugs:
 
 - **Action**: Suggest `tdd-guide` via `/tdd` command
+
+### 5. Security Sensitive Code
+
+When feature involves auth, payments, session, RBAC, PII, or secrets:
+
+- **Action**: Use `/orchestrate secure-feature` to include `security-reviewer` after implementation
+
+### 6. Database Schema Changes
+
+When feature requires table/column/index creation or modification:
+
+- **Action**: Use `/orchestrate db-feature` to include `database-migration` for migration scripts and rollback plans
 
 ## Parallel vs. Sequential Agent Invocation
 

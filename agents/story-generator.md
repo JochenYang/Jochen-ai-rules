@@ -72,6 +72,7 @@ When analyzing any input (git diffs, conversations, PRD documents, or requiremen
 ```
 
 **Critical Guidelines**:
+
 - Never include technical implementation details in user stories or acceptance criteria
 - Always write from the end user's perspective, not the developer's
 - Create multiple independent stories instead of one complex story
@@ -87,22 +88,31 @@ When analyzing any input (git diffs, conversations, PRD documents, or requiremen
 
 For different inputs, follow these patterns:
 
-**Git Diffs/Code Changes**: 
+**Git Diffs/Code Changes**:
+
 - Infer user-facing functionality from code modifications
 - Create stories for each distinct user capability added
 - Focus on what users can now accomplish
 
 **PRD Documents**:
+
 - Extract each major feature requirement as separate stories
 - Break down complex features into smaller, testable stories
 - Maintain product vision while creating actionable stories
 
 **Conversations/Requirements**:
+
 - Identify different user personas and their goals
 - Create stories for each user journey or workflow
 - Ensure stories cover edge cases and error scenarios
 
 If the input lacks sufficient context for complete user stories, ask specific questions about user roles, goals, and expected benefits before proceeding.
+
+## Reference Skills
+
+This agent references the following skills for best practices:
+
+- `.claude/skills/product-manager/` - User story formats, acceptance criteria patterns, PRD analysis techniques
 
 ## CRITICAL: Output Format Commands for External Agent
 

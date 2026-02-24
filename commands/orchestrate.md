@@ -37,6 +37,34 @@ Safe refactoring workflow:
 Full cycle UI/UX optimization and implementation workflow:
 `story-generator` → `ui-sketcher` → `dev-planner` → `code-implementer` → `code-reviewer` ↺ (Loop if changes needed)
 
+### secure-feature
+
+Security-hardened feature implementation workflow (for auth, payment, RBAC, sensitive data):
+`dev-planner` → `code-implementer` → `security-reviewer` → `code-reviewer` ↺ (Loop if changes needed)
+
+> **When to use**: Any feature touching authentication, authorization, payments, session management, API keys, PII/sensitive data, or RBAC.
+
+### db-feature
+
+Database schema change + feature implementation workflow:
+`dev-planner` → `database-migration` → `code-implementer` → `code-reviewer` ↺ (Loop if changes needed)
+
+> **When to use**: Any feature that requires new tables, schema alterations, index changes, or cross-database migrations.
+
+### performance-audit
+
+Performance profiling and optimization workflow:
+`performance-optimizer` → `code-implementer` → `code-reviewer` ↺ (Loop if changes needed)
+
+> **When to use**: Diagnosed performance complaints — slow endpoints, high latency, poor Core Web Vitals, N+1 queries, memory leaks.
+
+### deploy
+
+CI/CD pipeline and infrastructure setup workflow:
+`dev-planner` → `devops-engineer` → `code-reviewer` ↺ (Loop if changes needed)
+
+> **When to use**: Setting up or updating Dockerfile, GitHub Actions, Kubernetes configs, monitoring, or deployment pipelines.
+
 ## Review Feedback Loop (MANDATORY)
 
 This is the most critical part of the orchestration. Follow these rules with ZERO exceptions.
@@ -326,6 +354,10 @@ Located in `.claude/agents/`:
 - **code-reviewer**: Quality, security, and performance auditor
 - **story-generator**: User story generation from requirements
 - **ui-sketcher**: UI/UX design and prototyping
+- **security-reviewer**: OWASP-based deep security audit (used in `secure-feature` workflow)
+- **database-migration**: Schema change & data migration specialist (used in `db-feature` workflow)
+- **performance-optimizer**: Full-stack performance profiling and optimization (used in `performance-audit` workflow)
+- **devops-engineer**: CI/CD, Docker, Kubernetes, and infrastructure setup (used in `deploy` workflow)
 
 ## Arguments
 
@@ -336,6 +368,10 @@ $ARGUMENTS:
 - `bugfix <description>` - Deep Exploration → TDD Fix → Review
 - `refactor <description>` - Planning → Code Implementation → Review
 - `ui-design <description>` - Story Generation → UI Prototyping → Planning → Implementation → Review
+- `secure-feature <description>` - Planning → Implementation → Security Audit → Review (for auth/payment/RBAC/PII)
+- `db-feature <description>` - Planning → DB Migration → Implementation → Review (for schema changes)
+- `performance-audit <description>` - Profiling → Optimization Implementation → Review (for performance issues)
+- `deploy <description>` - Planning → DevOps Setup → Review (for CI/CD, Docker, K8s, infrastructure)
 - `custom <agents> <description>` - Custom sequence of agents (e.g. "dev-planner,code-implementer,code-reviewer")
 
 ## Tips

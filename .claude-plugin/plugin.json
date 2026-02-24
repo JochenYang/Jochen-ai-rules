@@ -1,6 +1,6 @@
 {
   "name": "jochen-ai-rules",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Complete collection of agents, skills, hooks, commands, and rules for AI-assisted development",
   "author": {
     "name": "Jochen",
@@ -32,6 +32,8 @@
     "./agents/story-generator.md",
     "./agents/ui-sketcher.md",
     "./agents/security-reviewer.md",
-    "./agents/database-migration.md"
+    "./agents/database-migration.md",
+    "./agents/performance-optimizer.md",
+    "./agents/devops-engineer.md"
   ]
 }
