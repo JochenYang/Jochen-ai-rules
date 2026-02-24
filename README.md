@@ -28,13 +28,13 @@ Jochen AI Rules is a comprehensive Claude Code plugin that provides:
 
 ### Features
 
-| Category | Count |
-|----------|-------|
-| Commands | 9 |
-| Agents | 9 |
-| Skills | 13+ |
-| Design Styles | 50+ |
-| Color Palettes | 21 |
+| Category       | Count |
+| -------------- | ----- |
+| Commands       | 9     |
+| Agents         | 9     |
+| Skills         | 13+   |
+| Design Styles  | 50+   |
+| Color Palettes | 21    |
 
 ## Installation
 
@@ -60,31 +60,31 @@ claude --plugin-dir ./Jochen-ai-rules
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| `/plan` | Create implementation plans with risk assessment |
-| `/orchestrate` | Orchestrate multi-agent workflows |
-| `/commit` | Create conventional commits |
-| `/review` | Code review with quality audit |
-| `/tdd` | Test-driven development workflow |
-| `/branch` | Git worktree management |
-| `/build-fix` | Fix build errors |
-| `/refactor-clean` | Clean up dead code |
-| `/learn` | Extract reusable patterns |
+| Command           | Description                                      |
+| ----------------- | ------------------------------------------------ |
+| `/plan`           | Create implementation plans with risk assessment |
+| `/orchestrate`    | Orchestrate multi-agent workflows                |
+| `/commit`         | Create conventional commits                      |
+| `/review`         | Code review with quality audit                   |
+| `/tdd`            | Test-driven development workflow                 |
+| `/branch`         | Git worktree management                          |
+| `/build-fix`      | Fix build errors                                 |
+| `/refactor-clean` | Clean up dead code                               |
+| `/learn`          | Extract reusable patterns                        |
 
 ## Agents
 
-| Agent | Description |
-|-------|-------------|
-| `dev-planner` | Implementation planning specialist |
-| `code-implementer` | Production code implementation |
-| `tdd-guide` | Test-driven development |
-| `code-reviewer` | Quality, security, performance audit |
-| `security-reviewer` | Deep OWASP security audit |
-| `database-migration` | Schema and data migration |
-| `bug-analyzer` | Bug investigation and root cause analysis |
-| `story-generator` | User story generation |
-| `ui-sketcher` | UI/UX design prototyping |
+| Agent                | Description                               |
+| -------------------- | ----------------------------------------- |
+| `dev-planner`        | Implementation planning specialist        |
+| `code-implementer`   | Production code implementation            |
+| `tdd-guide`          | Test-driven development                   |
+| `code-reviewer`      | Quality, security, performance audit      |
+| `security-reviewer`  | Deep OWASP security audit                 |
+| `database-migration` | Schema and data migration                 |
+| `bug-analyzer`       | Bug investigation and root cause analysis |
+| `story-generator`    | User story generation                     |
+| `ui-sketcher`        | UI/UX design prototyping                  |
 
 ## Skills
 
@@ -138,13 +138,13 @@ These hooks require manual configuration in `settings.json`:
   {
     "matcher": "*",
     "hooks": [
-      { "type": "command", "command": "powershell -File .claude/hooks/self-improvement.ps1" }
+      { "type": "command", "command": "powershell -File hooks/self-improvement.ps1" }
     ]
   },
   {
     "matcher": "*",
     "hooks": [
-      { "type": "command", "command": "powershell -File .claude/hooks/prompt-linter.ps1" }
+      { "type": "command", "command": "powershell -File hooks/prompt-linter.ps1" }
     ]
   }
 ]

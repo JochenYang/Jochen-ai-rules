@@ -1,6 +1,6 @@
 {
   "name": "jochen-ai-rules",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Complete collection of agents, skills, hooks, commands, and rules for AI-assisted development",
   "author": {
     "name": "Jochen",
@@ -23,6 +23,7 @@
     "best-practices"
   ],
   "skills": ["./skills/", "./commands/"],
+  "hooks": ["./hooks/hooks.json"],
   "agents": [
     "./agents/dev-planner.md",
     "./agents/code-implementer.md",
