@@ -33,8 +33,7 @@ Look for:
 
 ## Output Format
 
-Create a memory file at `~/.claude/projects/[project-encoded-path]/memory/[pattern-name].md`
-(Claude Code's auto memory directory for the current project):
+Topic file at `~/.claude/projects/[project-encoded-path]/memory/[pattern-name].md`:
 
 ```markdown
 # [Descriptive Pattern Name]
@@ -55,17 +54,29 @@ Create a memory file at `~/.claude/projects/[project-encoded-path]/memory/[patte
 [Trigger conditions - what should activate this skill]
 ```
 
+`MEMORY.md` entry to add/update under the appropriate section:
+
+```markdown
+- [pattern-name].md — [one-line summary of what it covers]
+```
+
 ## Process
 
 1. Review the session for extractable patterns
 2. Identify the most valuable/reusable insight
-3. Draft the skill file
-4. Ask user to confirm before saving
-5. Save to the current project's memory directory (`~/.claude/projects/.../memory/`)
+3. **Read existing `MEMORY.md`** in the project's memory directory (if it exists):
+   - Understand what topics Claude Code's auto memory has already recorded
+   - Check if the new pattern overlaps with or extends an existing topic file
+4. Decide: **merge into an existing topic file** or **create a new one**
+   - Merge: append the pattern to the relevant existing file
+   - New: create `[pattern-name].md` with the format above
+5. **Update `MEMORY.md` index**: add or update the entry pointing to the topic file; if `MEMORY.md` does not exist yet, create it and add the new entry
+6. Show the user a summary of changes and ask for confirmation before writing
 
 ## Notes
 
 - Don't extract trivial fixes (typos, simple syntax errors)
 - Don't extract one-time issues (specific API outages, etc.)
 - Focus on patterns that will save time in future sessions
-- Keep skills focused - one pattern per skill
+- Keep topic files focused — one theme per file, multiple patterns per theme is fine
+- `MEMORY.md` is auto-loaded (first 200 lines); topic files are loaded on demand — keep the index concise
