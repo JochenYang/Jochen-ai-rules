@@ -42,7 +42,19 @@ if ($transcriptPath -and (Test-Path $transcriptPath -PathType Leaf)) {
     exit 0
 }
 
-if ($toolCallCount -ge 8) {
+# Check if /learn was already used in this session
+$learnUsed = $false
+foreach ($msg in $transcript) {
+    if ($msg.role -eq 'user') {
+        $content = $msg.content
+        $text = if ($content -is [string]) { $content }
+                elseif ($content -is [array]) { ($content | Where-Object { $_.type -eq 'text' } | ForEach-Object { $_.text }) -join '' }
+                else { '' }
+        if ($text -match '/learn') { $learnUsed = $true; break }
+    }
+}
+
+if ($toolCallCount -ge 8 -and -not $learnUsed) {
     $msg = "Session insight: This session used $toolCallCount tool calls. " +
            "Suggest mentioning /learn to the user so they can capture reusable patterns."
     $output = [ordered]@{ systemMessage = $msg } | ConvertTo-Json -Compress

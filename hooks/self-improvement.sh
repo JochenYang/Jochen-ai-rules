@@ -36,7 +36,25 @@ if transcript_path:
 else:
     sys.exit(0)
 
-if tool_count >= 8:
+# Check if /learn was already used in this session
+learn_used = False
+for msg in transcript:
+    if msg.get('role') == 'user':
+        content = msg.get('content', '')
+        if isinstance(content, str):
+            text = content
+        elif isinstance(content, list):
+            text = ' '.join(
+                item.get('text', '') for item in content
+                if isinstance(item, dict) and item.get('type') == 'text'
+            )
+        else:
+            text = ''
+        if '/learn' in text:
+            learn_used = True
+            break
+
+if tool_count >= 8 and not learn_used:
     msg = (
         f'Session insight: This session used {tool_count} tool calls. '
         'Suggest mentioning /learn to the user so they can capture reusable patterns.'
