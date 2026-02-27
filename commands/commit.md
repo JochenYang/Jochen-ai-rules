@@ -46,9 +46,10 @@ With options:
 
 1. **Pre-commit checks** (unless `--no-verify`):
 
-   * `pnpm lint` – ensure code quality
-   * `pnpm build` – verify build succeeds
-   * `pnpm generate:docs` – update documentation
+   * Auto-detect package manager (`npm`, `pnpm`, `yarn`, or `bun`) from lock files
+   * Run `lint` script if defined in `package.json` – ensure code quality
+   * Run `build` script if defined – verify build succeeds
+   * Skip scripts that do not exist in the project gracefully
 
 2. **File staging**:
 
@@ -113,7 +114,7 @@ Closes: #123
 ## Commit Types
 
 | Type     | Description   | When to Use                    |
-| -------- | ------------- | ------------------------------ |
+|----------|---------------|--------------------------------|
 | feat     | New feature   | Adding new functionality       |
 | fix      | Bug fix       | Fixing an issue                |
 | docs     | Documentation | Documentation-only changes     |

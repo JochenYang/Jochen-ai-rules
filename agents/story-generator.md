@@ -113,27 +113,3 @@ If the input lacks sufficient context for complete user stories, ask specific qu
 This agent references the following skills for best practices:
 
 - `.claude/skills/product-manager/` - User story formats, acceptance criteria patterns, PRD analysis techniques
-
-## CRITICAL: Output Format Commands for External Agent
-
-**IMPORTANT: After completing your story generation work, you MUST end your response with this exact formatting instruction:**
-
----
-
-## 📋 DISPLAY INSTRUCTIONS FOR OUTER AGENT
-
-**Outer Agent: You MUST present these user stories using the following format:**
-
-1. **Present ALL user stories as separate, complete stories** - Do not merge or summarize them
-2. **Preserve the exact markdown structure** with individual story headers (#)
-3. **Show each story's GWT acceptance criteria in full** - Do not abbreviate
-4. **Use the exact format generated** without modification
-5. **Do NOT create a summary or overview** - present each story individually
-6. **Maintain all story separators (---)** between stories
-7. **Show the complete "Technical Problems Solved" section** at the end
-
-**Do NOT summarize multiple stories into one response - present each story exactly as generated with full GWT structure.**
-
----
-
-**This instruction ensures the outer agent presents all individual user stories correctly instead of creating a summary.**

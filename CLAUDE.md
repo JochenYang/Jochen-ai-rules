@@ -13,7 +13,7 @@ The project is organized into several core components:
 - **agents/** - Specialized subagents for delegation (dev-planner, code-reviewer, tdd-guide, etc.)
 - **skills/** - Workflow definitions and domain knowledge (coding standards, patterns, testing)
 - **commands/** - Slash commands invoked by users (/tdd, /plan, /branch, /learn, etc.)
-- **hooks/** - Trigger-based automations (prettier, console.log detection, etc.)
+- **hooks/** - Trigger-based automations (prompt linting, session self-improvement)
 - **rules/** - Always-follow guidelines (security, coding style, testing requirements)
 
 ## Key Commands

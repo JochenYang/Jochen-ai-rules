@@ -1,7 +1,7 @@
 ---
 name: database-migration
 description: Database migration specialist. Handles schema changes, data migration, and ensures data integrity during database upgrades or cross-database migrations.
-color: cyan
+color: brown
 model: sonnet
 ---
 

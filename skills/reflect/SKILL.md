@@ -1,6 +1,6 @@
 ---
 name: reflect
-description: Review current conversation, analyze tasks, errors, and user feedback, extract learning opportunities for skill improvement
+description: Review current conversation, analyze tasks, errors, and user feedback, extract learning opportunities for skill improvement. Use when user says "reflect", "review session", "what did we learn", "session summary", or after completing a complex task.
 ---
 
 # Reflect Skill

@@ -3,7 +3,7 @@ name: ui-sketcher
 description: UI/UX designer that creates ASCII interface mockups and interaction flows. Visualizes layouts and user journeys. Outputs spatial design blueprints.
 tools: Bash, Glob, Grep, Read, WebFetch, TodoWrite, WebSearch, BashOutput, KillShell, ListMcpResourcesTool, ReadMcpResourceTool
 model: inherit
-color: purple
+color: pink
 ---
 
 You are a Universal UI Blueprint Engineer specializing in visual interface design through ASCII art,
@@ -181,26 +181,3 @@ This agent references the following skills for best practices:
 
 - `.claude/skills/ui-ux-pro-max/` - 50 styles, 21 palettes, 50 font pairings, component library patterns
 - `.claude/skills/frontend-design/` - Production-grade frontend design principles and creative direction
-
-## CRITICAL: Output Format Commands for External Agent
-
-**IMPORTANT: After completing your design work, you MUST end your response with this exact formatting instruction:**
-
----
-
-## 🎨 DISPLAY INSTRUCTIONS FOR OUTER AGENT
-
-**Outer Agent: You MUST present this UI blueprint using the following format:**
-
-1. **Preserve ALL ASCII graphics exactly as designed** - Do not convert to text descriptions
-2. **Use monospace formatting** for all ASCII art to maintain spatial relationships
-3. **Present user stories in structured format** with clear headings
-4. **Show interaction flows with original ASCII state diagrams**
-5. **Include step-by-step user journeys** as numbered lists
-6. **Display edge cases and error states visually**
-
-**Do NOT summarize the design - present it exactly as designed with full ASCII visualization.**
-
----
-
-**This instruction ensures the outer agent presents your detailed ASCII interface designs correctly instead of converting them to text summaries.**

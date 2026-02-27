@@ -52,9 +52,11 @@ const delay = Math.min(1000 * Math.pow(2, retryCount), 30000);
 ### Key Decisions
 
 ```typescript
-// Deliberately using mutation here for performance with large arrays
-// Spread operator would create copy overhead on each iteration
-items.push(newItem);
+// Deliberately mutating a LOCAL copy here for performance with large arrays.
+// Rule: NEVER mutate inputs/shared state. Local mutation on a fresh copy is allowed
+// in hot paths when documented.
+const updatedItems = [...items];
+updatedItems.push(newItem);
 ```
 
 ### When NOT to Comment
@@ -76,7 +78,10 @@ buffer = [];
 
 ## Immutability (CRITICAL)
 
-ALWAYS create new objects, NEVER mutate:
+Default rule: treat inputs as immutable. NEVER mutate function arguments or shared state.
+
+Exception: local mutation is allowed ONLY when you are mutating a fresh local copy (not shared),
+the mutation does not escape the function scope, and the reason is documented.
 
 ```typescript
 // WRONG: Mutation
@@ -98,6 +103,10 @@ items.push(newItem);
 
 // CORRECT: Create new array
 const updatedItems = [...items, newItem];
+
+// ALSO OK (exception): mutate a fresh local copy
+const updatedItems2 = [...items];
+updatedItems2.push(newItem);
 ```
 
 ---
@@ -207,7 +216,7 @@ Before marking work complete:
 - [ ] Proper error handling
 - [ ] No console.log statements
 - [ ] No hardcoded values
-- [ ] No mutation (immutable patterns used)
+- [ ] No mutation of inputs/shared state (immutability enforced)
 - [ ] All code has English comments
 - [ ] Type safety enforced (no `any`)
 - [ ] Input validation implemented

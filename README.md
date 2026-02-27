@@ -29,10 +29,10 @@ Jochen AI Rules is a comprehensive Claude Code plugin that provides:
 ### Features
 
 | Category       | Count |
-| -------------- | ----- |
+|----------------|-------|
 | Commands       | 9     |
-| Agents         | 9     |
-| Skills         | 13+   |
+| Agents         | 11    |
+| Skills         | 21    |
 | Design Styles  | 50+   |
 | Color Palettes | 21    |
 
@@ -58,10 +58,14 @@ git clone https://github.com/JochenYang/Jochen-ai-rules.git
 claude --plugin-dir ./Jochen-ai-rules
 ```
 
+> Note: Claude Code ultimately loads these files from your Claude configuration folder (typically under `.claude/`).
+> This repository keeps `agents/`, `commands/`, `hooks/`, `rules/`, `skills/` at the repo root for development,
+> but documentation may reference `.claude/...` paths because that is the runtime location.
+
 ## Commands
 
 | Command           | Description                                      |
-| ----------------- | ------------------------------------------------ |
+|-------------------|--------------------------------------------------|
 | `/plan`           | Create implementation plans with risk assessment |
 | `/orchestrate`    | Orchestrate multi-agent workflows                |
 | `/commit`         | Create conventional commits                      |
@@ -74,17 +78,19 @@ claude --plugin-dir ./Jochen-ai-rules
 
 ## Agents
 
-| Agent                | Description                               |
-| -------------------- | ----------------------------------------- |
-| `dev-planner`        | Implementation planning specialist        |
-| `code-implementer`   | Production code implementation            |
-| `tdd-guide`          | Test-driven development                   |
-| `code-reviewer`      | Quality, security, performance audit      |
-| `security-reviewer`  | Deep OWASP security audit                 |
-| `database-migration` | Schema and data migration                 |
-| `bug-analyzer`       | Bug investigation and root cause analysis |
-| `story-generator`    | User story generation                     |
-| `ui-sketcher`        | UI/UX design prototyping                  |
+| Agent                   | Description                                              |
+|-------------------------|----------------------------------------------------------|
+| `dev-planner`           | Implementation planning specialist                       |
+| `code-implementer`      | Production code implementation                           |
+| `tdd-guide`             | Test-driven development                                  |
+| `code-reviewer`         | Quality, security, performance audit                     |
+| `security-reviewer`     | Deep OWASP security audit                                |
+| `database-migration`    | Schema and data migration                                |
+| `bug-analyzer`          | Bug investigation and root cause analysis                |
+| `story-generator`       | User story generation                                    |
+| `ui-sketcher`           | UI/UX design prototyping                                 |
+| `performance-optimizer` | Performance bottleneck identification across full stack  |
+| `devops-engineer`       | CI/CD pipeline, Docker, Kubernetes, infrastructure setup |
 
 ## Skills
 
@@ -94,15 +100,21 @@ claude --plugin-dir ./Jochen-ai-rules
 - **Quality Assurance**: Testing, security auditing
 - **Frontend Design**: Production-grade UI creation
 - **UI/UX Pro Max**: 50+ design styles, 21 color palettes
-- **Remotion Best Practices**: Video creation in React
 - **Agent Teams**: Multi-agent collaboration
-- **Continuous Learning**: Session observation and pattern extraction
 - **Three.js Builder**: 3D web content creation
 - **Phaser Build**: 2D HTML5 game development
 - **MCP Builder**: MCP server development
 - **Reflect**: Session reflection and learning extraction
 - **Claude Audit**: Audit .claude/ files for redundant instructions, verbose phrasing, and memory candidates
 - **Skills Audit**: List all skills with line counts, find overlapping scopes and optimization opportunities
+- **Artifacts Builder**: Create interactive Claude artifacts (charts, UI prototypes, tools)
+- **DevOps Engineer**: CI/CD pipeline design, containerization, Kubernetes, monitoring setup
+- **Performance Optimizer**: Profiling-first performance analysis across full stack
+- **Product Manager**: Product requirements, user stories, roadmap planning
+- **Requirements Interview**: Structured requirements gathering through guided interviews
+- **TDD Workflow**: Test-driven development with RED-GREEN-REFACTOR cycle enforcement
+- **Vercel Deploy**: Next.js deployment, environment variables, edge functions
+- **Jochen Skill Creator**: Template and standards for creating new skills
 
 ### UI/UX Design Capabilities
 
@@ -122,43 +134,53 @@ claude --plugin-dir ./Jochen-ai-rules
 
 ## Hooks
 
-- Auto-format on edit (Prettier)
-- Console.log detection and warnings
-- Pre-push review
-- Session-end audit
-- **Self-improvement**: Prompts `/learn` after 8+ tool calls
-- **Prompt Linter**: Warns when prompt > 50 words
+Two production-ready hooks are included with platform-specific configurations:
 
-### Advanced Hooks (Optional)
+- **Self-improvement**: Prompts `/learn` after 8+ tool calls per session
+- **Prompt Linter**: Warns when prompt > 50 words and asks for goal confirmation
 
-These hooks require manual configuration in `settings.json`:
+### Setup
+
+Copy the `hooks` section from the appropriate file into your Claude settings:
+
+- **Windows**: use `hooks/hooks.windows.json` → `%APPDATA%\Claude\settings.json`
+- **Linux / macOS**: use `hooks/hooks.json` → `~/.claude/settings.json`
+
+**Windows** (`hooks/hooks.windows.json`):
 
 ```json
-"UserPromptSubmit": [
-  {
-    "matcher": "*",
-    "hooks": [
-      { "type": "command", "command": "powershell -File hooks/self-improvement.ps1" }
-    ]
-  },
-  {
-    "matcher": "*",
-    "hooks": [
-      { "type": "command", "command": "powershell -File hooks/prompt-linter.ps1" }
-    ]
+{
+  "hooks": {
+    "UserPromptSubmit": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "powershell -File hooks/prompt-linter.ps1" }] }],
+    "Stop":            [{ "matcher": "*", "hooks": [{ "type": "command", "command": "powershell -File hooks/self-improvement.ps1" }] }]
   }
-]
+}
+```
+
+**Linux / macOS** (`hooks/hooks.json`):
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "bash hooks/prompt-linter.sh" }] }],
+    "Stop":            [{ "matcher": "*", "hooks": [{ "type": "command", "command": "bash hooks/self-improvement.sh" }] }]
+  }
+}
 ```
 
 ## Project Structure
 
 ```
+Repo layout (this repository):
+agents/   commands/   hooks/   skills/   rules/
+
+Runtime layout (Claude config):
 .claude/
-├── agents/          # AI agent definitions
-├── commands/        # Slash commands
-├── hooks/          # Hook configurations
-├── skills/         # Domain-specific skills
-└── rules/          # Coding standards and guidelines
+├── agents/   # AI agent definitions
+├── commands/ # Slash commands
+├── hooks/    # Hook configurations
+├── skills/   # Domain-specific skills
+└── rules/    # Coding standards and guidelines
 ```
 
 ---

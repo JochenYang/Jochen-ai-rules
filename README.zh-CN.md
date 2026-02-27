@@ -29,10 +29,10 @@ Jochen AI Rules 是一个全面的 Claude Code 插件，提供：
 ### 功能
 
 | 类别     | 数量 |
-| -------- | ---- |
+|----------|------|
 | Commands | 9    |
-| Agents   | 9    |
-| Skills   | 13+  |
+| Agents   | 11   |
+| Skills   | 21   |
 | 设计风格 | 50+  |
 | 配色方案 | 21   |
 
@@ -58,10 +58,14 @@ git clone https://github.com/JochenYang/Jochen-ai-rules.git
 claude --plugin-dir ./Jochen-ai-rules
 ```
 
+> 说明：Claude Code 最终会从你的 Claude 配置目录（通常是 `.claude/`）加载这些文件。
+> 这个仓库为了便于开发，把 `agents/`、`commands/`、`hooks/`、`rules/`、`skills/` 放在仓库根目录；
+> 但文档里仍可能使用 `.claude/...` 路径，因为那是运行时的真实位置。
+
 ## 命令 (Commands)
 
 | 命令              | 说明                     |
-| ----------------- | ------------------------ |
+|-------------------|--------------------------|
 | `/plan`           | 创建带风险评估的实施计划 |
 | `/orchestrate`    | 编排多 agent 工作流      |
 | `/commit`         | 创建符合规范的提交信息   |
@@ -74,17 +78,19 @@ claude --plugin-dir ./Jochen-ai-rules
 
 ## 智能体 (Agents)
 
-| Agent                | 说明                 |
-| -------------------- | -------------------- |
-| `dev-planner`        | 实施规划专家         |
-| `code-implementer`   | 生产级代码实现       |
-| `tdd-guide`          | 测试驱动开发         |
-| `code-reviewer`      | 质量、安全、性能审计 |
-| `security-reviewer`  | 深度 OWASP 安全审计  |
-| `database-migration` | 数据库迁移专家       |
-| `bug-analyzer`       | Bug 调查和根因分析   |
-| `story-generator`    | 用户故事生成         |
-| `ui-sketcher`        | UI/UX 设计原型       |
+| Agent                   | 说明                                   |
+|-------------------------|----------------------------------------|
+| `dev-planner`           | 实施规划专家                           |
+| `code-implementer`      | 生产级代码实现                         |
+| `tdd-guide`             | 测试驱动开发                           |
+| `code-reviewer`         | 质量、安全、性能审计                     |
+| `security-reviewer`     | 深度 OWASP 安全审计                    |
+| `database-migration`    | 数据库迁移专家                         |
+| `bug-analyzer`          | Bug 调查和根因分析                     |
+| `story-generator`       | 用户故事生成                           |
+| `ui-sketcher`           | UI/UX 设计原型                         |
+| `performance-optimizer` | 全栈性能瓶颈识别与优化                 |
+| `devops-engineer`       | CI/CD、Docker、Kubernetes 与基础设施管理 |
 
 ## 技能 (Skills)
 
@@ -94,15 +100,21 @@ claude --plugin-dir ./Jochen-ai-rules
 - **Quality Assurance**: 测试，安全审计
 - **Frontend Design**: 生产级 UI 创建
 - **UI/UX Pro Max**: 50+ 设计风格、21 种配色方案
-- **Remotion Best Practices**: React 视频创作
 - **Agent Teams**: 多 agent 协作
-- **Continuous Learning**: 会话观察和模式提取
 - **Three.js Builder**: 3D 网页内容创建
 - **Phaser Build**: 2D HTML5 游戏开发
 - **MCP Builder**: MCP 服务器开发
 - **Reflect**: 会话回顾和学习提取
 - **Claude Audit**: 审计 .claude/ 文件，检测冗余指令、冗长表述和可移至 memory 的内容
 - **Skills Audit**: 列出所有技能及其行数，检测重复作用域和优化机会
+- **Artifacts Builder**: 创建交互式 Claude 构件（图表、UI 原型、工具）
+- **DevOps Engineer**: CI/CD 流水线设计、容器化、Kubernetes、监控配置
+- **Performance Optimizer**: 全栈性能剖析与优化（DB、后端、前端 Core Web Vitals）
+- **Product Manager**: 产品需求、用户故事、路线图规划
+- **Requirements Interview**: 通过结构化引导式问答收集需求
+- **TDD Workflow**: 测试驱动开发，强制执行 RED-GREEN-REFACTOR 循环
+- **Vercel Deploy**: Next.js 部署、环境变量管理、边缘函数
+- **Jochen Skill Creator**: 新技能创建的模板与标准规范
 
 ### UI/UX 设计能力
 
@@ -122,22 +134,53 @@ claude --plugin-dir ./Jochen-ai-rules
 
 ## 钩子 (Hooks)
 
-- 编辑时自动格式化 (Prettier)
-- Console.log 检测和警告
-- Push 前审查
-- 会话结束审计
-- **Self-improvement**: 8+ 次工具调用后提示使用 /learn
-- **Prompt Linter**: 提示词 > 50 词时提醒确认目标
+内置两个生产可用的钩子，提供跨平台配置：
+
+- **Self-improvement**：每次会话工具调用 8+ 次后，提示使用 `/learn` 总结模式
+- **Prompt Linter**：提示词超过 50 词时，提醒确认目标
+
+### 配置方式
+
+将对应文件中的 `hooks` 部分复制到 Claude 设置文件：
+
+- **Windows**：使用 `hooks/hooks.windows.json` → `%APPDATA%\Claude\settings.json`
+- **Linux / macOS**：使用 `hooks/hooks.json` → `~/.claude/settings.json`
+
+**Windows**（`hooks/hooks.windows.json`）：
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "powershell -File hooks/prompt-linter.ps1" }] }],
+    "Stop":            [{ "matcher": "*", "hooks": [{ "type": "command", "command": "powershell -File hooks/self-improvement.ps1" }] }]
+  }
+}
+```
+
+**Linux / macOS**（`hooks/hooks.json`）：
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "bash hooks/prompt-linter.sh" }] }],
+    "Stop":            [{ "matcher": "*", "hooks": [{ "type": "command", "command": "bash hooks/self-improvement.sh" }] }]
+  }
+}
+```
 
 ## 项目结构
 
 ```
+仓库结构（本仓库）：
+agents/   commands/   hooks/   skills/   rules/
+
+运行时结构（Claude 配置目录）：
 .claude/
-├── agents/          # AI agent 定义
-├── commands/       # 斜杠命令
-├── hooks/          # 钩子配置
-├── skills/         # 领域特定技能
-└── rules/          # 编码规范和指南
+├── agents/   # AI agent 定义
+├── commands/ # 斜杠命令
+├── hooks/    # 钩子配置
+├── skills/   # 领域特定技能
+└── rules/    # 编码规范和指南
 ```
 
 ---
