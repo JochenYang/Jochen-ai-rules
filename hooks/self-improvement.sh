@@ -18,41 +18,44 @@ if data.get('stop_hook_active', False):
 
 transcript_path = data.get('transcript_path', '')
 tool_count = 0
+learn_used = False
 
 if transcript_path:
     try:
         with open(transcript_path, 'r', encoding='utf-8') as f:
-            transcript = json.load(f)
-        for msg in transcript:
-            content = msg.get('content', [])
-            if isinstance(content, list):
-                tool_count += sum(
-                    1 for item in content
-                    if isinstance(item, dict) and item.get('type') == 'tool_use'
-                )
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    msg = json.loads(line)
+                except Exception:
+                    continue
+                
+                content = msg.get('content', [])
+                if isinstance(content, list):
+                    tool_count += sum(
+                        1 for item in content
+                        if isinstance(item, dict) and item.get('type') == 'tool_use'
+                    )
+                
+                if msg.get('role') == 'user':
+                    if isinstance(content, str):
+                        text = content
+                    elif isinstance(content, list):
+                        text = ' '.join(
+                            item.get('text', '') for item in content
+                            if isinstance(item, dict) and item.get('type') == 'text'
+                        )
+                    else:
+                        text = ''
+                    if '/learn' in text:
+                        learn_used = True
     except Exception:
-        # Transcript unreadable; fall back to always suggesting
+        # Transcript file missing or locked; fallback
         tool_count = 99
 else:
     sys.exit(0)
-
-# Check if /learn was already used in this session
-learn_used = False
-for msg in transcript:
-    if msg.get('role') == 'user':
-        content = msg.get('content', '')
-        if isinstance(content, str):
-            text = content
-        elif isinstance(content, list):
-            text = ' '.join(
-                item.get('text', '') for item in content
-                if isinstance(item, dict) and item.get('type') == 'text'
-            )
-        else:
-            text = ''
-        if '/learn' in text:
-            learn_used = True
-            break
 
 if tool_count >= 8 and not learn_used:
     msg = (

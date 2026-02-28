@@ -75,33 +75,58 @@ Before creating a team, ask:
 
 **Select the right team structure based on task type:**
 
+> **IMPORTANT**: Every team MUST include a `challenge_agent`. This role is not optional — it improves quality by challenging assumptions and finding blind spots that specialists miss.
+
 #### For Code Review / Audit
 
-Roles (3-4 teammates):
+Roles (4-5 teammates):
 
 - `security_auditor`: OWASP Top 10, injection, auth/authz, dependency vulnerabilities
 - `performance_engineer`: Complexity, N+1 queries, memory, caching, bundle size
 - `maintainability_expert`: SOLID, DRY, naming, error handling, test coverage
+- `challenge_agent`: Dedicated skeptic — challenges assumptions, finds blind spots, questions each reviewer's conclusions (REQUIRED in every team)
 - `qa_specialist` (optional): Edge cases, race conditions, error paths
 
-Coordination: Work independently → cross-check each other's findings → consolidate into single report.
+Coordination: Work independently → challenge_agent questions everyone's findings → cross-check each other's findings → consolidate into single report.
+
+#### The Challenge Agent Role
+
+The `challenge_agent` (or `devil_advisor`) is a dedicated skeptic that improves team quality:
+
+**Responsibilities:**
+- Question assumptions made by other teammates
+- Identify blind spots and edge cases others missed
+- Challenge design decisions from different angles
+- Act as a "red team" to stress-test conclusions
+
+**Why it matters:**
+- Specialists focus on their domain → miss cross-cutting concerns
+- A dedicated skeptic catches what everyone else overlooked
+- Forces explicit reasoning instead of implicit assumptions
+
+**Example prompt:**
+```
+challenge_agent: "Review all findings from security_auditor, performance_engineer, and maintainability_expert. Question their conclusions: What assumptions are they making? What edge cases did they miss? What would make this code fail in production? Output: challenges.md with ranked concerns by severity."
+```
 
 #### For Feature Development
 
 Scale roles by complexity:
 
-**Simple (3 roles)**: Single-page, basic CRUD
+**Simple (4 roles)**: Single-page, basic CRUD
 
 - `fullstack_developer`: End-to-end implementation
 - `ui_reviewer`: UX validation, interaction flows
+- `challenge_agent`: Challenges design decisions, identifies edge cases and risks (REQUIRED in every team)
 - `code_reviewer`: Quality, best practices, security
 
-**Standard (4-6 roles)**: Multi-component, API integration
+**Standard (5-6 roles)**: Multi-component, API integration
 
 - `system_architect`: API contracts, data models, service boundaries
 - `frontend_specialist`: Components, state management, accessibility
 - `backend_specialist`: Business logic, validation, authorization
 - `integration_tester`: Cross-layer verification, E2E scenarios
+- `challenge_agent`: Challenges design decisions, identifies edge cases and risks (REQUIRED in every team)
 - `code_reviewer`: Quality, patterns, security
 
 **Complex (6-8 roles)**: Full-stack module, database design, deployment
@@ -112,23 +137,25 @@ Coordination: Architect defines contracts → Specialists implement in parallel 
 
 #### For Debugging / Investigation
 
-Roles (2-3 teammates):
+Roles (3-4 teammates):
 
 - `log_analyst`: Trace reconstruction, timeline, patterns
 - `code_auditor`: Static analysis, state consistency, root cause hypotheses
 - `reproduction_lead`: Minimal repro, environment simulation
+- `challenge_agent`: Challenges each investigator's hypothesis, pushes for more evidence (REQUIRED in every team)
 
-Coordination: Each investigates a different hypothesis → debate and disprove → converge on root cause.
+Coordination: Each investigates a different hypothesis → challenge_agent questions conclusions → debate and disprove → converge on root cause.
 
 #### For Research / Evaluation
 
-Roles (2-3 teammates):
+Roles (3-4 teammates):
 
 - `advocate_a`: Deep dive into option A — strengths, weaknesses, real-world examples
 - `advocate_b`: Deep dive into option B
 - `synthesizer`: Objective comparison, scoring matrix, recommendation
+- `challenge_agent`: Challenges each advocate's reasoning, questions assumptions (REQUIRED in every team)
 
-Coordination: Advocates research independently → challenge each other's conclusions → synthesizer produces final analysis.
+Coordination: Advocates research independently → challenge_agent questions conclusions → synthesizer produces final analysis.
 
 ### Step 3: Create the Team
 

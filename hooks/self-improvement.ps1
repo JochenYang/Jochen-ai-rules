@@ -22,35 +22,32 @@ if ($hookData.stop_hook_active -eq $true) {
 
 # Count tool_use blocks in transcript to decide whether to suggest /learn
 $toolCallCount = 0
+$learnUsed = $false
 $transcriptPath = $hookData.transcript_path
 
-if ($transcriptPath -and (Test-Path $transcriptPath -PathType Leaf)) {
-    try {
-        $transcript = Get-Content $transcriptPath -Raw -Encoding UTF8 | ConvertFrom-Json
-        foreach ($msg in $transcript) {
-            $content = $msg.content
-            if ($content -is [array]) {
-                $toolCallCount += ($content | Where-Object { $_.type -eq 'tool_use' }).Count
-            }
-        }
-    } catch {
-        # Transcript unreadable; fall back to always suggesting /learn
-        $toolCallCount = 99
-    }
-} else {
+if (-not $transcriptPath -or -not (Test-Path $transcriptPath -PathType Leaf)) {
     # No transcript path; skip suggestion
     exit 0
 }
 
-# Check if /learn was already used in this session
-$learnUsed = $false
-foreach ($msg in $transcript) {
-    if ($msg.role -eq 'user') {
+$lines = Get-Content $transcriptPath -Encoding UTF8
+foreach ($line in $lines) {
+    if ([string]::IsNullOrWhiteSpace($line)) { continue }
+    try {
+        $msg = $line | ConvertFrom-Json
         $content = $msg.content
-        $text = if ($content -is [string]) { $content }
-                elseif ($content -is [array]) { ($content | Where-Object { $_.type -eq 'text' } | ForEach-Object { $_.text }) -join '' }
-                else { '' }
-        if ($text -match '/learn') { $learnUsed = $true; break }
+        if ($content -is [array]) {
+            $toolCallCount += ($content | Where-Object { $_.type -eq 'tool_use' }).Count
+        }
+        
+        if ($msg.role -eq 'user') {
+            $text = if ($content -is [string]) { $content }
+                    elseif ($content -is [array]) { ($content | Where-Object { $_.type -eq 'text' } | ForEach-Object { $_.text }) -join '' }
+                    else { '' }
+            if ($text -match '/learn') { $learnUsed = $true }
+        }
+    } catch {
+        continue
     }
 }
 
