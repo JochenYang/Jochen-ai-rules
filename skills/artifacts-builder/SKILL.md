@@ -1,6 +1,6 @@
 ---
 name: artifacts-builder
-description: Rapid prototyping tool for React interactive demos and single-file HTML artifacts. Uses shadcn/ui component library with 40+ components. Perfect for product demos, design validation, and shareable browser previews.
+description: Rapid prototyping tool for React interactive demos and single-file HTML artifacts. Uses shadcn/ui component library with 40+ components. Use when user asks to create React demo, build HTML artifact, prototype UI, or create product demo. Perfect for design validation and shareable browser previews.
 ---
 
 # Frontend Prototype Builder

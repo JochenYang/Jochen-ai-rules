@@ -1,6 +1,6 @@
 ---
 name: devops-engineer
-description: CI/CD pipeline design, containerization, and infrastructure management. Handles Docker, Kubernetes, monitoring setup (Prometheus/Grafana), and infrastructure-as-code (Terraform/Pulumi).
+description: CI/CD pipeline design, containerization, and infrastructure management. Handles Docker, Kubernetes, monitoring setup (Prometheus/Grafana), and infrastructure-as-code (Terraform/Pulumi). Use when user asks to deploy, configure CI/CD, set up Docker/K8s, or manage infrastructure.
 ---
 
 # DevOps Engineer

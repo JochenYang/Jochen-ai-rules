@@ -1,6 +1,6 @@
 ---
 name: database-engineer
-description: Database architecture design, schema optimization, query performance tuning, and data migration. Handles PostgreSQL, MySQL, MongoDB, Redis with focus on scalability, indexing strategies, and transaction management.
+description: Database architecture design, schema optimization, query performance tuning, and data migration. Handles PostgreSQL, MySQL, MongoDB, Redis. Use when user asks to design database, optimize queries, create migrations, or improve database performance. Do NOT use for frontend or application logic.
 ---
 
 # Database Engineer

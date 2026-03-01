@@ -1,6 +1,6 @@
 ---
 name: quality-assurance
-description: Comprehensive code quality assurance covering code review, testing strategies, and security auditing. Identifies bugs, vulnerabilities, performance issues, and maintainability problems. Implements unit/integration/E2E testing and provides actionable recommendations following OWASP and industry best practices.
+description: Comprehensive code quality assurance covering code review, testing strategies, and security auditing. Identifies bugs, vulnerabilities, performance issues, and maintainability problems. Use when user asks to review code, audit security, write tests, or improve code quality. Follows OWASP and industry best practices.
 ---
 
 # Quality Assurance Engineer

@@ -1,6 +1,6 @@
 ---
 name: developer
-description: Comprehensive full-stack development for web, mobile, and game projects. Handles frontend (React/Vue/Angular), backend (Node.js/Python/Go/Java), mobile (Flutter/React Native/Swift/Kotlin), and game development (Unity/Unreal/Godot). Covers architecture design, implementation, optimization, and deployment.
+description: Comprehensive full-stack development for web, mobile, and game projects. Handles frontend (React/Vue/Angular), backend (Node.js/Python/Go/Java), mobile (Flutter/React Native/Swift/Kotlin), and game development (Unity/Unreal/Godot). Use when user asks to build, create, develop, implement, debug, or fix any web, mobile, or game project. Do NOT use for design-only tasks (use frontend-design or ui-ux-pro-max instead).
 ---
 
 # Full-Stack Developer

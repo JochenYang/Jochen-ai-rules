@@ -1,6 +1,6 @@
 ---
 name: requirements-interview
-description: 使用 AskUserQuestionTool 深度访谈以产出开发计划，并同步生成 SPEC 与 PRD。
+description: Deep interview using AskUserQuestionTool to produce development plans, SPEC, and PRD. Use when user wants to discuss requirements, clarify needs, or plan features through Q&A. (Chinese description: 使用 AskUserQuestionTool 深度访谈以产出开发计划，并同步生成 SPEC 与 PRD。)
 ---
 
 # 需求深访与开发计划

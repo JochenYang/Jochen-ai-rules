@@ -1,6 +1,6 @@
 ---
 name: agent-teams
-description: Create agent teams for parallel collaboration. Triggers on keywords like team, parallel, multi-agent, coordinate, collaborate, review team, multiple perspectives, agent-teams.
+description: Create agent teams for parallel collaboration. Use when user mentions team, parallel, multi-agent, coordinate, collaborate, review team, multiple perspectives, or says "agent-teams".
 ---
 
 # Agent Teams Orchestrator

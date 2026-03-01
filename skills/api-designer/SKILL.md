@@ -1,6 +1,6 @@
 ---
 name: api-designer
-description: API architecture design and documentation for RESTful, GraphQL, and gRPC services. Creates OpenAPI specifications, defines versioning strategies, and establishes authentication/authorization patterns.
+description: API architecture design and documentation for RESTful, GraphQL, and gRPC services. Creates OpenAPI specifications, defines versioning strategies, and establishes authentication/authorization patterns. Use when user asks to design API, create endpoints, document REST/GraphQL, or plan API architecture.
 ---
 
 # API Designer

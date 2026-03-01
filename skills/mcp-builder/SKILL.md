@@ -1,6 +1,6 @@
 ---
 name: mcp-builder
-description: MCP server development for AI agents. Designs tool schemas, implements Python/TypeScript servers, creates evaluation tests. Supports GitHub/Notion/Slack integrations with complete templates and automation scripts.
+description: MCP server development for AI agents. Designs tool schemas, implements Python/TypeScript servers, creates evaluation tests. Use when user asks to build MCP server, create tool integration, or develop Claude plugins. Supports GitHub/Notion/Slack integrations.
 ---
 
 # MCP Server Development Tool

@@ -1,6 +1,6 @@
 ---
 name: tdd-workflow
-description: Standardized Test-Driven Development (TDD) cycle (RED-GREEN-REFACTOR-VERIFY). Use this skill to ensure code quality, high coverage, and regression prevention.
+description: Standardized Test-Driven Development (TDD) cycle (RED-GREEN-REFACTOR-VERIFY). Use when user asks to write tests, do TDD, implement test-first, or ensure code quality with high test coverage and regression prevention.
 ---
 
 # TDD Workflow Skill

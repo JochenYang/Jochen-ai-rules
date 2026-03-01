@@ -1,6 +1,6 @@
 ---
 name: performance-optimizer
-description: Performance bottleneck identification and optimization. Handles database query optimization, caching strategies, algorithm improvements, and Core Web Vitals tuning (LCP/FID/CLS).
+description: Performance bottleneck identification and optimization. Handles database query optimization, caching strategies, algorithm improvements, and Core Web Vitals tuning (LCP/FID/CLS). Use when user asks to optimize performance, improve speed, fix slow queries, or tune web vitals.
 ---
 
 # Performance Optimizer

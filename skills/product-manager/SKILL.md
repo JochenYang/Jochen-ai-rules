@@ -1,6 +1,6 @@
 ---
 name: product-manager
-description: Product requirements analysis and planning. Creates PRD documents, user stories, competitive analysis, feature prioritization, and MVP definitions with structured acceptance criteria.
+description: Product requirements analysis and planning. Creates PRD documents, user stories, competitive analysis, feature prioritization, and MVP definitions. Use when user asks to create PRD, plan product, define features, or analyze requirements.
 ---
 
 # Product Manager
