@@ -1,9 +1,15 @@
 ---
 name: frontend-design
-description: Create distinctive, production-grade frontend interfaces with high design quality. Use when user asks to build web components, pages, applications, or interfaces. Generates creative, polished code that avoids generic AI aesthetics.
+description: Implement distinctive, production-grade frontend UI code. Use when the task is to build components/pages/apps with a clear direction. If design direction is unclear, use ui-ux-pro-max first.
 ---
 
 This skill guides creation of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.
+
+## Boundary With Other Skills
+
+- Use `frontend-design` for **implementation-first UI tasks** (write production code).
+- Use `ui-ux-pro-max` for **design-system selection, style reasoning, and UX audits**.
+- If user asks both strategy and implementation: run `ui-ux-pro-max` first, then implement with `frontend-design`.
 
 The user provides frontend requirements: a component, page, application, or interface to build. They may include context about the purpose, audience, or technical constraints.
 

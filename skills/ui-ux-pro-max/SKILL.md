@@ -1,11 +1,17 @@
 ---
 name: ui-ux-pro-max
-description: "UI/UX design intelligence with 50+ styles, 97 color palettes, and 57 font pairings across 9 tech stacks. Use when user asks to plan, build, create, design, implement, review, fix, improve, or optimize UI/UX for websites, dashboards, mobile apps, or web components. Do NOT use for backend logic or database design."
+description: "UI/UX design-system reasoning and UX quality audit skill. Use when user needs style direction, palette/typography selection, UX review, or design optimization before implementation. Do NOT use for backend logic or database design."
 ---
 
 # UI/UX Pro Max - Design Intelligence
 
 Comprehensive design guide for web and mobile applications. Contains 50+ styles, 97 color palettes, 57 font pairings, 99 UX guidelines, and 25 chart types across 9 technology stacks. Searchable database with priority-based recommendations.
+
+## Boundary With Other Skills
+
+- Use `ui-ux-pro-max` for **design direction, decision support, and UX diagnosis**.
+- Use `frontend-design` for **writing final frontend implementation code**.
+- For end-to-end UI work: decide direction with `ui-ux-pro-max`, then hand off implementation to `frontend-design`.
 
 ## When to Apply
 

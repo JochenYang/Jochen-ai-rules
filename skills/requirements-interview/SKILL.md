@@ -1,58 +1,80 @@
----
+﻿---
 name: requirements-interview
-description: Deep interview using AskUserQuestionTool to produce development plans, SPEC, and PRD. Use when user wants to discuss requirements, clarify needs, or plan features through Q&A. (Chinese description: 使用 AskUserQuestionTool 深度访谈以产出开发计划，并同步生成 SPEC 与 PRD。)
+description: Conduct deep multi-round requirements interviews to produce executable SPEC, PRD, and PLAN drafts. Use when requirements are ambiguous and need interactive clarification.
 ---
 
-# 需求深访与开发计划
+# Requirements Interview
 
-在用户提出需求或修复问题时，通过 AskUserQuestionTool 进行多轮深度访谈，补齐实现细节、体验细节、风险与权衡，最终输出可执行的开发计划，并同步生成 SPEC 与 PRD。
+Run structured, multi-round requirement interviews, then convert answers into actionable documents.
 
-## 适用场景
+## When to Use
 
-- 需求不完整、目标模糊、缺少落地路径
-- 需要为开发或修复问题生成可执行计划
+Use this skill when:
+- Requirements are incomplete, ambiguous, or contradictory.
+- The user asks to "clarify requirements" through Q&A.
+- You need interview-driven outputs (SPEC/PRD/PLAN), not only a static PRD.
 
-## 输入
+Do not use this skill when:
+- The user already provided clear and complete requirements.
+- The user only needs a standard PRD summary (use `product-manager`).
 
-- @SPEC.md（如不存在则先生成初版）
+## Inputs
 
-## 核心原则
+- Existing `SPEC.md` (optional)
+- Existing `PRD.md` (optional)
+- Existing `PLAN.md` (optional)
 
-- 仅使用 AskUserQuestionTool 提问与澄清
-- 问题必须深入、避免显而易见
-- 每一轮问答后更新规范与文档
-- 不假设，所有关键前提都写入文档
-- 至少进行 2 轮访谈；仅当用户明确拒绝继续时才提前结束
-- 不得跳过 SPEC/PRD/PLAN 的产出与更新
+## Tool Strategy
 
-## 访谈流程
+Primary: AskUserQuestionTool (or equivalent interactive question tool).
 
-1. 若 @SPEC.md 不存在，先生成初版并写入
-2. 阅读 @SPEC.md，列出已知信息与缺口
-3. 使用 AskUserQuestionTool 发起一轮深度访谈（每轮至少 1 个开放式问题）
-4. 更新 @SPEC.md，并同步更新 PRD 与 Plan
-5. 重复 3-4，直到需求完整且可执行，且轮次数≥2
+Fallback: If the tool is unavailable, continue with plain conversational questions and keep the same interview structure.
 
-## 访谈维度（必须覆盖）
+## Core Rules
 
-- 业务目标与成功指标
-- 用户画像、核心场景与高频路径
-- 范围边界与明确非目标
-- 关键 UI/UX 交互与可用性要求
-- 技术实现、数据流、依赖与集成边界
-- 性能、稳定性、安全、合规要求
-- 风险、权衡与替代方案
-- 里程碑、优先级与验收标准
+1. Ask deep, non-trivial questions (avoid obvious yes/no prompts).
+2. Minimum 2 rounds of clarification unless user explicitly stops.
+3. After each round, update assumptions and unresolved items.
+4. Separate confirmed facts from hypotheses.
+5. Do not skip final document outputs.
 
-## 输出
+## Interview Dimensions (Mandatory)
 
-- 若不存在则生成 @SPEC.md，并持续更新
-- 若不存在则生成 @PRD.md（包含目标、用户、需求、验收标准）
-- 若不存在则生成 @PLAN.md（包含里程碑、任务拆分、依赖与测试策略）
-- 每轮访谈后必须回写上述三份文档
+Cover these areas:
+- Business goals and success metrics
+- Target users and key scenarios
+- Scope boundaries and explicit non-goals
+- UX expectations and acceptance criteria
+- Technical constraints and integration boundaries
+- Security/compliance/performance requirements
+- Risks, tradeoffs, and alternatives
+- Milestones, priority, and delivery sequence
 
-## 完成标准
+## Workflow
 
-- PRD 与 Plan 可直接进入实现
-- 关键假设与取舍明确记录
-- 验收标准可验证
+1. Read existing `SPEC.md`/`PRD.md`/`PLAN.md` if they exist.
+2. Summarize known facts and gaps.
+3. Run interview round 1 with focused open questions.
+4. Update SPEC/PRD/PLAN drafts.
+5. Run interview round 2+ until requirements are actionable.
+6. Produce final deliverables and a concise uncertainty log.
+
+## Outputs
+
+Always provide or update:
+- `SPEC.md`: problem definition, scope, constraints, acceptance checks
+- `PRD.md`: user value, requirements, priorities, success metrics
+- `PLAN.md`: implementation phases, dependencies, risks, test strategy
+
+## Completion Criteria
+
+- Requirements are implementation-ready.
+- Key assumptions and tradeoffs are explicit.
+- Acceptance criteria are testable.
+- Open questions are listed with owner and next action.
+
+## Handoff Guidance
+
+If implementation is next:
+- handoff to `dev-planner` for execution planning, or
+- handoff to `product-manager` for roadmap-level prioritization.

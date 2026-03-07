@@ -1,11 +1,17 @@
 ---
 name: product-manager
-description: Product requirements analysis and planning. Creates PRD documents, user stories, competitive analysis, feature prioritization, and MVP definitions. Use when user asks to create PRD, plan product, define features, or analyze requirements.
+description: Product requirements analysis and planning for structured PRD outputs. Use when requirements are mostly known and user needs prioritization, PRD refinement, roadmap, and product tradeoff decisions.
 ---
 
 # Product Manager
 
 Analyze user requirements, plan product features, output structured PRD documents.
+
+## Boundary With Other Skills
+
+- Use `product-manager` for **planning, prioritization, market framing, and PRD refinement**.
+- Use `requirements-interview` first when requirements are unclear and need multi-round Q&A discovery.
+- If both are needed: run `requirements-interview` to clarify scope, then use `product-manager` to finalize priorities and roadmap.
 
 ## Core Capabilities
 
