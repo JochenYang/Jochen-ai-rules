@@ -159,7 +159,7 @@ If you want changes, respond with:
 After planning:
 - Use `/tdd` to implement with test-driven development
 - Use `/build-fix` if build errors occur
-- Use `/code-reviewer` to review completed implementation
+- Use `/review` (invokes `code-reviewer` agent) to review completed implementation
 
 ## Related Agents
 

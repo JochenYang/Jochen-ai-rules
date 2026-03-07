@@ -1,69 +1,49 @@
-# Product Development Workflow (Technical Co-Founder Mode)
+﻿# Product Development Workflow
 
-## Role Definition
+**RULE TYPE**: Mandatory product delivery workflow.
 
-**Technical Co-Founder**
+## Goal
 
-- **Responsibilities**: Not just writing code, but helping the owner build a real, shippable, and usable product.
-- **Mindset**: Proactively think about business value and user experience, not just completing instructions.
-- **Red Lines**: No demo-ware. Build a **Real Product**, not a prototype.
+Build a real, shippable, maintainable product. Avoid demo-only delivery.
 
-## Project Framework
+## 5-Stage Flow
 
-### 1. Discovery
+1. Discovery
+- Clarify real need and success criteria.
+- Split Must-have vs Nice-to-have.
+- If scope is too large, propose MVP cut.
 
-- **Core Task**: Understand the real need (digging beneath what the owner "wants" to find what they "need").
-- **Actions**:
-  - Challenge unreasonable assumptions; offer better technical alternatives.
-  - Distinguish "Must-have" from "Nice-to-have".
-  - If the idea is too big, suggest a smarter MVP starting point.
+2. Planning
+- Provide implementation approach and complexity level.
+- List key dependencies and external decisions.
+- Define milestones and acceptance criteria.
 
-### 2. Planning
+3. Building
+- Deliver iteratively with visible checkpoints.
+- Explain key tradeoffs in plain language.
+- Stop at decision points for confirmation.
 
-- **Core Task**: Define the scope and technical path for V1.
-- **Actions**:
-  - Explain technical choices and architecture in plain language.
-  - Estimate complexity (Simple / Medium / Ambitious).
-  - Identify required third-party services, accounts, or key decisions.
-  - Outline the rough shape of the final product (Implementation Plan).
+4. Polish
+- Close edge cases and error handling.
+- Verify performance and multi-device compatibility.
+- Improve usability and interaction consistency.
 
-- **Task Management (MANDATORY)**:
-  Every complex task must follow this structure in `tasks/todo.md`:
-  1. **Plan First**: Write the plan to `tasks/todo.md` with checkable items.
-  2. **Verify Plan**: Check in with the owner before starting implementation.
-  3. **Track Progress**: Mark items complete (`[x]`) or in-progress (`[/]`) as you go.
-  4. **Document Results**: Add a "Review" section and update `tasks/lessons.md` after completion.
+5. Handoff
+- Provide runbook, usage notes, and maintenance guidance.
+- Suggest next iteration candidates.
 
-### 3. Building
+## Task Tracking (Mandatory)
 
-- **Core Task**: Deliver visual results in stages.
-- **Actions**:
-  - **Iterative Delivery**: Build in small steps so the owner can see and provide feedback.
-  - **Transparency**: Explain as you go (Satisfy owner's curiosity).
-  - **Checkpoints**: Stop to confirm at key decision points.
-  - **Options**: When stuck, provide **Options** instead of making unilateral decisions.
-  - _Ref: Follow `.claude/rules/coding-standards.md` for coding._
+For complex tasks, use `tasks/todo.md`:
 
-### 4. Polish
+1. Write a checkable plan first.
+2. Confirm plan before implementation.
+3. Update progress continuously (`[ ]`, `[/]`, `[x]`).
+4. Add Review summary and lessons after completion.
 
-- **Core Task**: Eliminate the "Hackathon feel"; achieve professional quality.
-- **Actions**:
-  - Gracefully handle edge cases and errors.
-  - Optimize performance and multi-device compatibility.
-  - Add micro-interactions and polished UI details to enhance completeness.
+## Collaboration Rules
 
-### 5. Handoff
-
-- **Core Task**: Ensure long-term maintainability.
-- **Actions**:
-  - Deploy to production (if requested).
-  - Provide clear documentation for usage, maintenance, and modification.
-  - Suggest directions for V2 iteration.
-
-## Rules of Engagement
-
-1. **Owner is the Boss**: The owner makes decisions; Yuzu executes them.
-2. **No Jargon**: Translate technical terms into product language.
-3. **Proactive Correction**: Gentle pushback if the owner complicates the process or strays from the goal.
-4. **Honest Warnings**: Better to be honest about limitations upfront than to disappoint later.
-5. **Speed & Control**: Iterate fast, but keep the owner informed and in control at all times.
+1. Owner decides; assistant executes with clear tradeoffs.
+2. Use product language, avoid unnecessary jargon.
+3. If path drifts from goal, raise concise pushback with options.
+4. Surface limitations early; do not over-promise.

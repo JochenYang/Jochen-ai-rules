@@ -1,95 +1,47 @@
-# Git Workflow
+﻿# Git Workflow
 
-**RULE TYPE**: Global mandatory Git standards that ALL commits and branches must follow.
-
-These are non-negotiable requirements for version control.
-
----
+**RULE TYPE**: Mandatory Git conventions.
 
 ## Commit Message Format
 
-```
-<type>(<scope>): <subject>
-```
+`<type>(<scope>): <subject>`
 
-### Types
-| Type     | Description        | Example                                     |
-|----------|--------------------|---------------------------------------------|
-| feat     | New feature        | `feat(auth): add JWT token validation`      |
-| fix      | Bug fix            | `fix(ui): resolve button hover state`       |
-| refactor | Code restructuring | `refactor(api): simplify response handling` |
-| docs     | Documentation      | `docs(readme): add installation guide`      |
-| style    | Formatting         | `style(format): run prettier on utils`      |
-| test     | Tests              | `test(auth): add login validation tests`    |
-| chore    | Maintenance        | `chore(deps): update npm dependencies`      |
-| perf     | Performance        | `perf(db): optimize query performance`      |
+Types: `feat`, `fix`, `refactor`, `docs`, `style`, `test`, `chore`, `perf`, `ci`, `build`, `revert`
 
-### Rules
-- **Language**: English only (no Chinese or pinyin)
-- **Tense**: Present tense ("add" not "added")
-- **Case**: Lowercase subject
-- **Length**: ≤50 characters for subject
-- **No period**: Don't end subject with period
-- **Scope**: Optional, describe affected area
-- **NO signature**: Never add "Generated with Claude Code" or similar signatures
-- **NO Co-Authored-By**: Do not add Co-Authored-By: Claude in commit footer
+## Commit Message Rules
 
-### Examples
+- English only
+- Imperative mood (`add`, `fix`, `update`)
+- Lowercase subject start
+- Subject <= 50 chars recommended
+- No trailing period
+- No AI signature or `Co-Authored-By: Claude`
 
-```
-feat(auth): add JWT token validation
-fix(api): resolve null pointer in user lookup
-docs: update API documentation
-refactor: simplify data transformation logic
-```
+## Commit Workflow (Mandatory)
 
-### Full Format (Optional)
-```
-<type>(<scope>): <subject>
+1. Do not auto-commit after code changes.
+2. Show proposed commit message first.
+3. Commit only after owner confirmation.
+4. Allow owner to edit or skip commit.
 
-<body>
+## Pre-Commit Checklist
 
-<footer>
-```
-
-Example:
-```
-feat(auth): add JWT token validation
-
-Implement JWT token validation middleware to ensure all
-protected routes validate authentication tokens.
-
-BREAKING CHANGE: API now requires Bearer token for all
-authenticated endpoints
-Closes: #123
-```
-
-## Commit Workflow (MANDATORY)
-
-1. **DO NOT auto-commit**: After code changes, you MUST ask for confirmation
-2. **Show commit message**: Present the suggested commit message to the user
-3. **Wait for approval**: Only execute `git add` and `git commit` after user confirms
-4. **Allow modifications**: User can modify the commit message or skip commit
-
-## Before Commit Checklist
-
-- [ ] No hardcoded secrets
+- [ ] No secret leakage
 - [ ] Tests pass
-- [ ] Code formatted
-- [ ] No linting errors
+- [ ] Lint/format pass
+- [ ] Scope is focused
 
 ## Branch Naming
 
-```
-feat/<feature-name>      # New features
-fix/<issue-description>  # Bug fixes
-refactor/<scope>         # Code improvements
-docs/<change>            # Documentation
-```
+- `feat/<feature-name>`
+- `fix/<issue-name>`
+- `refactor/<scope>`
+- `docs/<scope>`
+- `chore/<scope>`
 
-## Pull Request Guidelines
+## Pull Request Rules
 
 - Keep PRs small and focused
-- Include tests
-- Update documentation
-- Link related issues
+- Include tests for behavior changes
+- Update docs for externally visible changes
+- Link related issue/task when available

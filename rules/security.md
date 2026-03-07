@@ -1,42 +1,27 @@
-# Security Guidelines
+﻿# Security Guidelines
 
-**RULE TYPE**: Global mandatory security standards that ALL code must follow.
+**RULE TYPE**: Mandatory security baseline for all code changes.
 
-These are non-negotiable requirements. Security violations must be fixed immediately.
+## Pre-Commit Security Checks
 
----
-
-## Mandatory Security Checks
-
-Before ANY commit:
-- [ ] No hardcoded secrets (API keys, passwords, tokens)
-- [ ] All user inputs validated
-- [ ] SQL injection prevention (parameterized queries)
-- [ ] XSS prevention (sanitized HTML)
-- [ ] CSRF protection enabled
-- [ ] Authentication/authorization verified
-- [ ] Rate limiting on all endpoints
-- [ ] Error messages don't leak sensitive data
+- [ ] No hardcoded secrets (keys, tokens, passwords)
+- [ ] External input validation is enforced
+- [ ] SQL uses parameterized queries
+- [ ] XSS risk is mitigated (escape/sanitize output)
+- [ ] Auth and permission checks are in place
+- [ ] Sensitive details are not exposed in errors/logs
+- [ ] Rate limiting or abuse controls exist on exposed endpoints
 
 ## Secret Management
 
-```typescript
-// NEVER: Hardcoded secrets
-const apiKey = "sk-proj-xxxxx"
+- Read secrets from environment variables or secret manager only.
+- Fail fast when required secrets are missing.
+- Never print secrets in logs, snapshots, or test fixtures.
 
-// ALWAYS: Environment variables
-const apiKey = process.env.OPENAI_API_KEY
+## Incident Response Protocol
 
-if (!apiKey) {
-  throw new Error('OPENAI_API_KEY not configured')
-}
-```
-
-## Security Response Protocol
-
-If security issue found:
-1. STOP immediately
-2. Use **security-reviewer** agent
-3. Fix CRITICAL issues before continuing
-4. Rotate any exposed secrets
-5. Review entire codebase for similar issues
+1. Stop feature delivery for confirmed high-risk issues.
+2. Patch critical vulnerabilities first.
+3. Rotate leaked credentials immediately.
+4. Search codebase for similar patterns and patch globally.
+5. Trigger `security-reviewer` when scope includes auth/payment/PII/secrets.

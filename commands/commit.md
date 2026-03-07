@@ -1,94 +1,53 @@
----
+﻿---
 argument-hint: [--no-verify] [--style=simple|full] [--type=feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert]
-description: Create well-formatted commits with conventional commit messages
+description: Create conventional commits with optional pre-commit checks and full message style
 ---
 
-## Claude Command: Commit（Clean / No Emoji）
+# Commit Command
 
-This command helps you create well-formatted commits following the Conventional Commits specification.
-
----
+Create commit messages that follow Conventional Commits.
 
 ## Usage
 
-Basic usage:
-
 ```bash
 /commit
-```
-
-With options:
-
-```bash
 /commit --no-verify
 /commit --style=full
 /commit --style=full --type=feat
 ```
 
----
+## Options
 
-## Command Options
+- `--no-verify`: Skip pre-commit checks.
+- `--style=simple|full`:
+  - `simple` (default): one-line subject.
+  - `full`: subject + body + footer.
+- `--type=<type>`: Explicitly set commit type.
 
-* `--no-verify`
-  Skip pre-commit checks (lint, build, generate:docs)
+## Workflow
 
-* `--style=simple|full`
+1. Run pre-commit checks unless `--no-verify`:
+   - Detect package manager from lock files.
+   - Run `lint` if available.
+   - Run `build` if available.
+2. Check staging state with `git status`.
+3. If nothing is staged, stage modified/new files.
+4. Analyze changes and suggest split commits when needed.
+5. Generate commit message with selected style.
+6. Ask for final user confirmation before commit.
+7. Validate that subject/body/footer contain no emoji.
 
-  * `simple` (default): concise single-line commit message
-  * `full`: commit message with body and footer sections
+## Message Format
 
-* `--type=<type>`
-  Specify the commit type (overrides automatic detection)
+Simple:
 
----
-
-## What This Command Does
-
-1. **Pre-commit checks** (unless `--no-verify`):
-
-   * Auto-detect package manager (`npm`, `pnpm`, `yarn`, or `bun`) from lock files
-   * Run `lint` script if defined in `package.json` – ensure code quality
-   * Run `build` script if defined – verify build succeeds
-   * Skip scripts that do not exist in the project gracefully
-
-2. **File staging**:
-
-   * Inspect staged files via `git status`
-   * If no files are staged, automatically stage all modified/new files
-
-3. **Change analysis**:
-
-   * Analyze `git diff` to understand changes
-   * Detect whether multiple logical changes should be split
-   * Suggest atomic commits when appropriate
-
-4. **Commit message creation**:
-
-   * Generate commit messages following Conventional Commits
-   * No emoji prefixes are used
-   * Include body and footer when `--style=full` is selected
-
----
-
-## Conventional Commits Format
-
-### Simple Style (Default)
-
-```
+```text
 <type>[optional scope]: <description>
 ```
 
-Example:
+Full:
 
-```
-feat(auth): add JWT token validation
-```
-
----
-
-### Full Style
-
-```
+```text
 <type>[optional scope]: <description>
 
 <body>
@@ -96,123 +55,50 @@ feat(auth): add JWT token validation
 <footer>
 ```
 
-Example:
+## Types
 
-```
-feat(auth): add JWT token validation
+- `feat`: new feature
+- `fix`: bug fix
+- `docs`: documentation
+- `style`: formatting/style-only
+- `refactor`: internal restructuring
+- `perf`: performance improvement
+- `test`: tests
+- `chore`: maintenance/tooling
+- `ci`: CI/CD changes
+- `build`: build/packaging changes
+- `revert`: revert prior commit
 
-Implement JWT token validation middleware to ensure all
-protected routes validate authentication tokens.
+## Subject Rules
 
-BREAKING CHANGE: API now requires Bearer token for all
-authenticated endpoints
-Closes: #123
-```
+- English only
+- Imperative mood (`add`, `fix`, `update`)
+- Start with lowercase verb
+- Prefer <= 50 chars (hard max 72)
+- No trailing period
+- No emoji in subject, body, or footer
+- No AI signature text
 
----
+## Body Rules (`--style=full`)
 
-## Commit Types
+- Explain what changed and why.
+- Prefer short bullet points for multiple changes.
+- Wrap lines at 72 chars.
 
-| Type     | Description   | When to Use                    |
-|----------|---------------|--------------------------------|
-| feat     | New feature   | Adding new functionality       |
-| fix      | Bug fix       | Fixing an issue                |
-| docs     | Documentation | Documentation-only changes     |
-| style    | Code style    | Formatting, lint-only changes  |
-| refactor | Refactoring   | No functional behavior change  |
-| perf     | Performance   | Performance improvements       |
-| test     | Tests         | Adding or updating tests       |
-| chore    | Maintenance   | Tooling, scripts, housekeeping |
-| ci       | CI/CD         | CI configuration changes       |
-| build    | Build system  | Build or packaging changes     |
-| revert   | Revert        | Reverting a previous commit    |
+## Footer Rules (`--style=full`)
 
----
+Allowed examples:
+- `BREAKING CHANGE: ...`
+- `Closes: #123`
+- `Fixes: #123`
+- `Refs: #123`
+- `Reviewed-by: <name>`
+- `Approved-by: <name>`
 
-## Body Section Guidelines (Full Style)
+## Split Commit Guidance
 
-* Explain **what changed and why**, not how
-* Use bullet points for multiple changes
-* Describe behavior changes compared to previous behavior
-* Wrap lines at 72 characters
-* Reference related issues or decisions when relevant
-
----
-
-## Footer Section Guidelines (Full Style)
-
-Footer may include:
-
-* `BREAKING CHANGE:` for incompatible changes
-* Issue references: `Closes:`, `Fixes:`, `Refs:`
-* Attribution: `Co-authored-by:`
-* Review metadata: `Reviewed-by:`, `Approved-by:`
-
-Example:
-
-```
-BREAKING CHANGE: rename config.auth to config.authentication
-Closes: #123
-```
-
----
-
-## Scope Guidelines
-
-* Use short, meaningful nouns
-* Be consistent across the project
-* Prefer module or domain names
-
-Common scopes:
-
-```
-api, auth, ui, db, config, deps
-parser, compiler, validator
-```
-
----
-
-## Commit Splitting Strategy
-
-Suggest splitting commits when detecting:
-
-1. Mixed change types (e.g. feature + fix)
-2. Multiple unrelated concerns
-3. Large cross-module changes
-4. Dependency updates mixed with functional changes
-
----
-
-## Best Practices
-
-### DO
-
-* Use present tense, imperative mood (“add”, not “added”)
-* Keep subject line under 50 characters (72 max)
-* Capitalize the first letter of the description
-* Separate subject and body with a blank line
-* Keep commits atomic and reviewable
-
-### DON’T
-
-* Mix unrelated changes in a single commit
-* Include implementation details in the subject line
-* Use past tense
-* Commit broken code (unless explicitly intended)
-* Include sensitive information
-* NO Co-Authored-By: Do not add Co-Authored-By: Claude in commit footer
-
----
-
-## Important Notes
-
-* Default style is `simple` for everyday commits
-* Use `full` style for:
-
-  * Breaking changes
-  * Complex features
-  * Changes requiring context or explanation
-* Always review the generated message before confirming
-
----
-
+Suggest split commits when:
+1. feature and fix are mixed
+2. unrelated modules are changed together
+3. dependency updates are mixed with functional changes
+4. one commit is too large to review safely

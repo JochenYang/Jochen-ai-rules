@@ -1,3 +1,8 @@
+---
+argument-hint: <feature|feature-tdd|bugfix|refactor|ui-design|secure-feature|db-feature|performance-audit|deploy|custom> <task-description>
+description: Coordinate multi-agent workflows with mandatory review loops and structured handoffs.
+---
+
 # Orchestrate Command
 
 Sequential agent workflow for complex tasks. This command coordinates a chain of specialized **Agents** (defined in `.claude/agents/`) to complete features, bug fixes, or refactors.

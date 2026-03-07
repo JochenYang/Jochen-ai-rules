@@ -1,74 +1,39 @@
-# Testing Guidelines
+﻿# Testing Guidelines
 
-**RULE TYPE**: Global mandatory testing standards that ALL code must follow.
+**RULE TYPE**: Mandatory testing and verification standards.
 
-These are non-negotiable requirements. Code without tests is incomplete. Never mark a task complete without proving it works.
+## Done Definition
 
----
+Never mark a task complete without proof.
 
-## Verification Before Done (CRITICAL)
+Required evidence:
+- Test results summary
+- Behavior delta (before vs after) for bugfixes/features
+- Relevant log/output snippet when applicable
 
-Never say "Finished" without providing proof. Proving it works is part of the task.
+## Coverage Policy
 
-- **Evidence**: Run tests, check logs, and provide terminal snippets as proof.
-- **Diff Behavior**: When relevant, demonstrate the difference between the original behavior and the new behavior.
-- **Professional Standard**: Ask yourself: "Would a staff engineer approve this verification?"
-
----
-
-## Minimum Test Coverage: 80%
-
-Test Types (ALL required):
-
-1. **Unit Tests** - Individual functions, utilities, components
-2. **Integration Tests** - API endpoints, database operations
-3. **E2E Tests** - Critical user flows (Playwright)
-
-## Test-Driven Development
-
-MANDATORY workflow for new features:
-
-1. Write test first (RED)
-2. Run test - it should FAIL
-3. Write minimal implementation (GREEN)
-4. Run test - it should PASS
-5. Refactor (IMPROVE)
-6. Verify coverage (80%+)
-
-## Test Structure (AAA Pattern)
-
-```typescript
-test("calculates similarity correctly", () => {
-  // Arrange
-  const vector1 = [1, 0, 0];
-  const vector2 = [0, 1, 0];
-
-  // Act
-  const similarity = calculateCosineSimilarity(vector1, vector2);
-
-  // Assert
-  expect(similarity).toBe(0);
-});
-```
-
-## Test Naming
-
-```typescript
-// GOOD: Descriptive test names
-test("returns empty array when no markets match query", () => {});
-test("throws error when OpenAI API key is missing", () => {});
-test("falls back to substring search when Redis unavailable", () => {});
-
-// BAD: Vague test names
-test("works", () => {});
-test("test search", () => {});
-```
-
-## Coverage Requirements
-
-- **80% minimum** for all code
-- **100% required** for:
-  - Financial calculations
-  - Authentication logic
-  - Security-critical code
+- Baseline target: >= 80% overall
+- High-risk modules target: 100%
+  - Authentication/authorization
+  - Security-critical paths
   - Core business logic
+  - Financial calculations
+
+## Test Strategy
+
+1. Unit tests for functions/components/utilities
+2. Integration tests for API, DB, and external dependencies
+3. E2E tests for critical user flows
+
+## Bugfix Rule (TDD-First)
+
+1. Add a failing test that reproduces the bug (RED)
+2. Apply minimal fix to pass test (GREEN)
+3. Refactor while preserving passing tests (REFACTOR)
+
+## Test Quality
+
+- Use clear behavior-driven test names.
+- Use AAA structure (Arrange, Act, Assert).
+- Avoid vague names like `works` or `test1`.

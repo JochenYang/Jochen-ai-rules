@@ -23,6 +23,7 @@ Analyze and fix build/compilation errors.
 5. **Verify fix** - Run build again to confirm success
 
 **For complex build issues**, this command may invoke the **explorer** agent (`.claude/agents/explorer.md`) to perform deep analysis.
+If `explorer` is unavailable, fallback to `bug-analyzer` for root cause analysis, then `code-implementer` for fixes.
 
 ## Common Build Errors
 
@@ -61,4 +62,5 @@ Analyze and fix build/compilation errors.
 ## Related Agents
 
 - `.claude/agents/explorer.md` - For deep root cause analysis
+- `.claude/agents/bug-analyzer.md` - Fallback root cause analysis when explorer is unavailable
 - `.claude/agents/code-implementer.md` - For implementing fixes
