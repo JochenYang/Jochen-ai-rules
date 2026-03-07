@@ -1,0 +1,68 @@
+name: Tag From Plugin Version
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".claude-plugin/plugin.json"
+      - ".claude-plugin/marketplace.json"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve version and tag
+        id: meta
+        run: |
+          VERSION=$(node -p "require('./.claude-plugin/plugin.json').version")
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid semver in .claude-plugin/plugin.json: $VERSION"
+            exit 1
+          fi
+          TAG="v$VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Check existing tag
+        id: exists
+        run: |
+          git fetch --tags --force
+          TAG="${{ steps.meta.outputs.tag }}"
+          if git rev-parse "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists. Skip tagging."
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create and push tag
+        if: steps.exists.outputs.exists == 'false'
+        run: |
+          TAG="${{ steps.meta.outputs.tag }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "Release $TAG"
+
+          if git push origin "$TAG"; then
+            echo "Pushed $TAG"
+            exit 0
+          fi
+
+          # Race-safe fallback: if another process created it first, do not fail.
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG now exists on remote. Skip error."
+            exit 0
+          fi
+
+          echo "Failed to push tag $TAG for unknown reason."
+          exit 1
