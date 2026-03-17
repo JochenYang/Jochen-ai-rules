@@ -20,6 +20,8 @@ A focused skill for creating simple, performant Three.js web applications using 
 | **Reference Frames** | [reference-frame-contract.md](references/reference-frame-contract.md) | Calibration, anchoring, axis correctness, debugging |
 | **Game Development** | [game-patterns.md](references/game-patterns.md) | State machines, animation switching, parallax, object pooling |
 | **Advanced Topics** | [advanced-topics.md](references/advanced-topics.md) | Post-processing, shaders, physics, instancing |
+| **Anti-Patterns** | [anti-patterns.md](references/anti-patterns.md) | Common mistakes, performance issues, code organization |
+| **Variation Guidance** | [variation-guidance.md](references/variation-guidance.md) | Visual variety, color palettes, animation styles |
 | **Calibration Helpers** | [scripts/README.md](scripts/README.md) | GLTF calibration helper installation and usage |
 
 ---
@@ -398,72 +400,6 @@ Common hex colors:
 - Red: `0xff0000`, Green: `0x00ff00`, Blue: `0x0000ff`
 - Cyan: `0x00ffff`, Magenta: `0xff00ff`, Yellow: `0xffff00`
 - Orange: `0xff8800`, Purple: `0x8800ff`, Pink: `0xff0088`
-
----
-
-## Anti-Patterns to Avoid
-
-### Basic Setup Mistakes
-
-❌ **Not importing OrbitControls from correct path**
-Why bad: Controls won't load, `THREE.OrbitControls` is undefined in modern Three.js
-Better: Use `import { OrbitControls } from 'three/addons/controls/OrbitControls.js'` or unpkg examples/jsm path
-
-❌ **Forgetting to add object to scene**
-Why bad: Object won't render, silent failure
-Better: Always call `scene.add(object)` after creating meshes/lights
-
-❌ **Using old `requestAnimationFrame` pattern instead of `setAnimationLoop`**
-Why bad: More verbose, doesn't handle XR/WebXR automatically
-Better: `renderer.setAnimationLoop((time) => { ... })`
-
-### Performance Issues
-
-❌ **Creating new geometries in animation loop**
-Why bad: Massive memory allocation, frame rate collapse
-Better: Create geometry once, reuse it. Transform only position/rotation/scale
-
-❌ **Using too many segments on primitives**
-Why bad: Unnecessary vertices, GPU overhead
-Better: Default segments are usually fine. `SphereGeometry(1, 32, 16)` not `SphereGeometry(1, 128, 64)`
-
-❌ **Not setting pixelRatio cap**
-Why bad: 4K/5K displays run at full resolution, poor performance
-Better: `Math.min(window.devicePixelRatio, 2)`
-
-### Code Organization
-
-❌ **Everything in one giant function**
-Why bad: Hard to modify, hard to debug
-Better: Separate setup into functions: `createScene()`, `createLights()`, `createMeshes()`
-
-❌ **Hardcoding all values**
-Why bad: Difficult to tweak and experiment
-Better: Define constants at top: `const CONFIG = { color: 0x00ff88, speed: 0.001 }`
-
----
-
-## Variation Guidance
-
-**IMPORTANT**: Each Three.js app should feel unique and context-appropriate.
-
-**Vary by scenario**:
-- **Portfolio/showcase**: Elegant, smooth animations, muted colors
-- **Game/interactive**: Bright colors, snappy controls, particle effects
-- **Data visualization**: Clean lines, grid helpers, clear labels
-- **Background effect**: Subtle, slow movement, dark/gradient backgrounds
-- **Product viewer**: Realistic lighting, PBR materials, smooth orbit
-
-**Vary visual elements**:
-- **Geometry choice**: Not everything needs to be a cube. Explore spheres, tori, icosahedra
-- **Material style**: Mix flat shaded, glossy, metallic, wireframe
-- **Color palettes**: Use complementary, analogous, or monochromatic schemes
-- **Animation style**: Rotation, oscillation, wave motion, mouse tracking
-
-**Avoid converging on**:
-- Default green cube as first example every time
-- Same camera angle (front-facing, z=5)
-- Identical lighting setup (always directional light at 1,1,1)
 
 ---
 

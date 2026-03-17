@@ -1,4 +1,5 @@
 ---
+argument-hint: <task-description>
 description: Enforce test-driven development workflow. Write failing tests FIRST, then implement minimal code to pass. Invokes the tdd-guide agent.
 ---
 

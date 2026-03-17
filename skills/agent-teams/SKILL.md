@@ -282,3 +282,39 @@ Coordination:
 - All findings consolidated into reviews/auth_review_summary.md
 
 Wait for teammates to finish.
+
+## Troubleshooting
+
+### Issue: Teammates not responding
+Cause: Context window limit or message delivery delay
+Solution:
+- Verify teammate is still running (check task status)
+- Resend message with more explicit instructions
+- If stuck, terminate and respawn the teammate
+
+### Issue: File conflicts between teammates
+Cause: Multiple teammates assigned to same files
+Solution:
+- Immediately stop the team
+- Redistribute file ownership so each file has exactly one owner
+- Resume with clear ownership boundaries
+
+### Issue: Teammate produces generic/low-quality output
+Cause: Vague role definition in spawn prompt
+Solution:
+- Be specific about: file paths, focus areas, output format, quality bar
+- Example: "Write security findings to reviews/sec.md with CVSS severity ratings"
+
+### Issue: Team never finishes (infinite loop)
+Cause: Unclear completion criteria or circular dependencies
+Solution:
+- Define explicit exit conditions in coordination section
+- Set maximum task count or time limit
+- If stuck, manually intervene with "Please summarize your progress and stop"
+
+### Issue: Results not consolidating properly
+Cause: Teammates wrote to wrong files or formats differ
+Solution:
+- Always specify exact output file paths and format in role definitions
+- Lead agent should create consolidation template before spawning team
+- Review intermediate outputs before final consolidation

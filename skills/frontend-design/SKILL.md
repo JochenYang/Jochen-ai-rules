@@ -1,6 +1,6 @@
 ---
 name: frontend-design
-description: Implement distinctive, production-grade frontend UI code. Use when the task is to build components/pages/apps with a clear direction. If design direction is unclear, use ui-ux-pro-max first.
+description: Implement distinctive, production-grade frontend UI code. Use when user asks to "build a button", "create a navbar", "make a landing page", "implement a card component", "design a form", "create a modal", or says "write React/Vue/HTML/CSS code" for components, pages, or apps with clear direction. If design direction is unclear, use ui-ux-pro-max first.
 ---
 
 This skill guides creation of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.
@@ -45,3 +45,46 @@ Interpret creatively and make unexpected choices that feel genuinely designed fo
 **IMPORTANT**: Match implementation complexity to the aesthetic vision. Maximalist designs need elaborate code with extensive animations and effects. Minimalist or refined designs need restraint, precision, and careful attention to spacing, typography, and subtle details. Elegance comes from executing the vision well.
 
 Remember: Claude is capable of extraordinary creative work. Don't hold back, show what can truly be created when thinking outside the box and committing fully to a distinctive vision.
+
+## Examples
+
+### Example 1: Button Component
+User says: "Create a submit button with hover animation"
+Actions:
+1. Choose bold aesthetic direction (e.g., brutalist with sharp edges)
+2. Select distinctive font pairing
+3. Implement CSS with meaningful hover/focus states
+4. Add micro-interaction animation
+Result: Production-ready button code
+
+### Example 2: Landing Page
+User says: "Build a SaaS landing page for a dev tool"
+Actions:
+1. Define aesthetic (e.g., terminal-inspired brutalist)
+2. Create hero, features, pricing sections
+3. Use CSS animations for entrance effects
+4. Ensure responsive design
+Result: Complete HTML/CSS landing page
+
+### Example 3: Card Component
+User says: "Design a product card with hover effects"
+Actions:
+1. Pick visual direction (e.g., soft/pastel luxury)
+2. Implement card layout with CSS Grid/Flexbox
+3. Add depth with shadows, gradients, or transforms
+4. Create hover state animations
+Result: Reusable card component
+
+## Troubleshooting
+
+### Issue: Output looks generic/AI-generated
+Cause: Defaulting to safe choices (Inter font, purple gradients, centered layouts)
+Solution: Commit to a specific aesthetic direction before coding. Reference the Design Thinking section.
+
+### Issue: Design doesn't match the intended tone
+Cause: Skipping the context analysis step
+Solution: Before coding, explicitly state: "This interface is [brutalist/minimalist/luxury/etc] because [reason]."
+
+### Issue: Layout breaks on mobile
+Cause: Hardcoded dimensions or desktop-only breakpoints
+Solution: Use relative units (rem/vh/vw), implement mobile-first media queries, test responsive behavior.

@@ -1,4 +1,5 @@
 ---
+argument-hint: [task-description]
 description: Expert code review for quality, security, and maintainability. Invokes the code-reviewer agent.
 ---
 

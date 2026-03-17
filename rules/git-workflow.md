@@ -1,4 +1,9 @@
-﻿# Git Workflow
+﻿---
+name: git-workflow
+description: Mandatory Git conventions for commit messages and branch naming.
+---
+
+# Git Workflow
 
 **RULE TYPE**: Mandatory Git conventions.
 

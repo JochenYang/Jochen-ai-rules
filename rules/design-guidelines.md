@@ -1,4 +1,9 @@
-﻿# Design Guidelines
+﻿---
+name: design-guidelines
+description: Mandatory UI/UX design standards.
+---
+
+# Design Guidelines
 
 **RULE TYPE**: Mandatory UI/UX design standards.
 

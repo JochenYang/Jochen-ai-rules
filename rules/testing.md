@@ -1,4 +1,9 @@
-﻿# Testing Guidelines
+﻿---
+name: testing
+description: Mandatory testing and verification standards.
+---
+
+# Testing Guidelines
 
 **RULE TYPE**: Mandatory testing and verification standards.
 

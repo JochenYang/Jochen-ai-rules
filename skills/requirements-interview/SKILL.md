@@ -1,6 +1,6 @@
 ﻿---
 name: requirements-interview
-description: Conduct deep multi-round requirements interviews to produce executable SPEC, PRD, and PLAN drafts. Use when requirements are ambiguous and need interactive clarification.
+description: Conduct deep multi-round requirements interviews to produce executable SPEC, PRD, and PLAN drafts. Use when user says "clarify requirements", "采访需求", "extract requirements", "define scope", "analyze needs", or when requirements are ambiguous and need interactive clarification. Do NOT use when requirements are already complete.
 ---
 
 # Requirements Interview
@@ -78,3 +78,32 @@ Always provide or update:
 If implementation is next:
 - handoff to `dev-planner` for execution planning, or
 - handoff to `product-manager` for roadmap-level prioritization.
+
+## Examples
+
+### Example 1: Ambiguous Feature Request
+User says: "I want to add user authentication"
+Actions:
+1. Ask about auth method (OAuth, password-based, SSO?)
+2. Clarify user roles and permissions
+3. Determine session management preferences
+4. Define password reset and recovery flows
+Result: Complete auth SPEC.md with acceptance criteria
+
+### Example 2: New Project Startup
+User says: "Help me define requirements for a CRM system"
+Actions:
+1. Identify target users (sales, support, management?)
+2. Define core workflows (contact management, deals, tasks)
+3. Clarify integrations (email, calendar, phone)
+4. Establish success metrics
+Result: Full PRD.md with prioritized features
+
+### Example 3: Scope Refinement
+User says: "The current feature is too complex, simplify it"
+Actions:
+1. List current scope items
+2. Identify which are must-have vs nice-to-have
+3. Propose simplified scope with clear non-goals
+4. Update SPEC.md boundaries
+Result: Streamlined specification with explicit exclusions

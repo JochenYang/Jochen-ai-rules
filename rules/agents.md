@@ -1,4 +1,9 @@
-﻿# Agent Usage Rules
+﻿---
+name: agents
+description: Mandatory agent selection and orchestration rules.
+---
+
+# Agent Usage Rules
 
 **RULE TYPE**: Mandatory agent selection and orchestration rules.
 

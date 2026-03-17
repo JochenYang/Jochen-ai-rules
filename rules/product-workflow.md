@@ -1,4 +1,9 @@
-﻿# Product Development Workflow
+﻿---
+name: product-workflow
+description: Mandatory product delivery workflow.
+---
+
+# Product Development Workflow
 
 **RULE TYPE**: Mandatory product delivery workflow.
 

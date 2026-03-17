@@ -1,4 +1,9 @@
-﻿# Security Guidelines
+﻿---
+name: security
+description: Mandatory security baseline for all code changes.
+---
+
+# Security Guidelines
 
 **RULE TYPE**: Mandatory security baseline for all code changes.
 

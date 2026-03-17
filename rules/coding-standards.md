@@ -1,4 +1,9 @@
-﻿# Coding Standards
+﻿---
+name: coding-standards
+description: Mandatory engineering standards for code quality.
+---
+
+# Coding Standards
 
 **RULE TYPE**: Mandatory engineering standards.
 

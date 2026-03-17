@@ -1,12 +1,11 @@
 ---
+argument-hint: <task-description>
 description: Restate requirements, assess risks, and create step-by-step implementation plan. WAIT for user CONFIRM before touching any code.
 ---
 
 # Plan Command
 
-This command invokes the **dev-planner** agent to create a comprehensive implementation plan before writing any code.
-
-## What This Command Does
+This command invokes the **dev-planner** agent (`.claude/agents/dev-planner.md`) to create a comprehensive implementation plan before writing any code.
 
 1. **Restate Requirements** - Clarify what needs to be built
 2. **Identify Risks** - Surface potential issues and blockers

@@ -42,3 +42,32 @@ Review the current conversation and analyze:
 ```
 
 Present findings to the user and ask what to implement or save
+
+## Examples
+
+### Example 1: After Bug Fix Session
+User says: "reflect on what we did"
+Actions:
+1. Review conversation history
+2. Identify: bug root cause, solution approach, key learnings
+3. Note: skill gaps discovered (e.g., missing debugging patterns)
+4. Generate reflection report
+Result: Structured learnings for future sessions
+
+### Example 2: After Feature Development
+User says: "what did we learn from this sprint"
+Actions:
+1. Analyze completed tasks
+2. Identify patterns: repeated code structures, useful utilities
+3. Discover improvement opportunities: better testing, refactoring candidates
+4. Generate actionable recommendations
+Result: Actionable improvement list
+
+### Example 3: After Complex Debugging
+User says: "review session and summarize"
+Actions:
+1. Trace problem identification flow
+2. Document hypothesis-validation pattern used
+3. Note tools/approaches that worked well
+4. Extract reusable debugging strategy
+Result: Debugging pattern for future reference

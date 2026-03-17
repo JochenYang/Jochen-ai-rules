@@ -1,4 +1,4 @@
-﻿---
+---
 argument-hint: [--no-verify] [--style=simple|full] [--type=feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert]
 description: Create conventional commits with optional pre-commit checks and full message style
 ---
