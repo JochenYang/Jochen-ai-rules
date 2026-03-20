@@ -32,7 +32,7 @@ Jochen AI Rules 是一个全面的 Claude Code 插件，提供：
 |----------|------|
 | Commands | 9    |
 | Agents   | 11   |
-| Skills   | 21   |
+| Skills   | 22   |
 | 设计风格 | 50+  |
 | 配色方案 | 21   |
 
@@ -105,6 +105,7 @@ claude --plugin-dir ./Jochen-ai-rules
 - **Phaser Build**: 2D HTML5 游戏开发
 - **MCP Builder**: MCP 服务器开发
 - **Reflect**: 会话回顾和学习提取
+- **Miloya Codebase**: 项目上下文引擎，用于代码库定向、缓存交接和任务聚焦的代码检索
 - **Claude Audit**: 审计 .claude/ 文件，检测冗余指令、冗长表述和可移至 memory 的内容
 - **Skills Audit**: 列出所有技能及其行数，检测重复作用域和优化机会
 - **Artifacts Builder**: 创建交互式 Claude 构件（图表、UI 原型、工具）
