@@ -44,8 +44,55 @@ Jochen AI Rules 是一个全面的 Claude Code 插件，提供：
 # 添加市场
 /plugin marketplace add JochenYang/Jochen-ai-rules
 
-# 安装插件
+# 安装全部（包含 agents、commands、skills、hooks）
 /plugin install jochen-ai-rules
+
+# 安装独立 skills：
+/plugin install agent-teams
+/plugin install api-designer
+/plugin install artifacts-builder
+/plugin install claude-audit
+/plugin install database-engineer
+/plugin install developer
+/plugin install devops-engineer
+/plugin install frontend-design
+/plugin install mcp-builder
+/plugin install miloya-codebase
+/plugin install performance-optimizer
+/plugin install phaser-build
+/plugin install product-manager
+/plugin install quality-assurance
+/plugin install reflect
+/plugin install requirements-interview
+/plugin install skills-audit
+/plugin install tdd-workflow
+/plugin install threejs-builder
+/plugin install ui-ux-pro-max
+/plugin install vercel-deploy
+
+# 安装独立 agents：
+/plugin install agent-dev-planner
+/plugin install agent-code-implementer
+/plugin install agent-code-reviewer
+/plugin install agent-bug-analyzer
+/plugin install agent-devops-engineer
+/plugin install agent-performance-optimizer
+/plugin install agent-security-reviewer
+/plugin install agent-database-migration
+/plugin install agent-story-generator
+/plugin install agent-ui-sketcher
+/plugin install agent-tdd-guide
+
+# 安装独立 commands：
+/plugin install command-branch
+/plugin install command-build-fix
+/plugin install command-commit
+/plugin install command-learn
+/plugin install command-orchestrate
+/plugin install command-plan
+/plugin install command-refactor-clean
+/plugin install command-review
+/plugin install command-tdd
 ```
 
 ### 方式二：本地开发

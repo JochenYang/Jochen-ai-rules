@@ -44,8 +44,29 @@ Jochen AI Rules is a comprehensive Claude Code plugin that provides:
 # Add the marketplace
 /plugin marketplace add JochenYang/Jochen-ai-rules
 
-# Install the plugin
+# Install ALL (full bundle with agents, commands, skills, hooks)
 /plugin install jochen-ai-rules
+
+# Install individual skills:
+/plugin install artifacts-builder
+/plugin install claude-audit
+/plugin install database-engineer
+/plugin install frontend-design
+/plugin install miloya-codebase
+/plugin install product-manager
+/plugin install reflect
+/plugin install skills-audit
+/plugin install threejs-builder
+/plugin install ui-ux-pro-max
+
+# Install individual agents:
+/plugin install agent-database-migration
+/plugin install agent-security-reviewer
+
+# Install individual commands:
+/plugin install command-branch
+/plugin install command-commit
+/plugin install command-learn
 ```
 
 ### Option 2: Local Development
