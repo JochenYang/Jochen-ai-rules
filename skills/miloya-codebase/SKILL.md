@@ -1,6 +1,6 @@
 ---
 name: miloya-codebase
-description: Project context engine for repo orientation, cached handoff, and task-focused code retrieval. Usage: /miloya-codebase [refresh|read|report]
+description: Project context engine for repo orientation, cached handoff, and task-focused code retrieval.
 ---
 
 # miloya-codebase
