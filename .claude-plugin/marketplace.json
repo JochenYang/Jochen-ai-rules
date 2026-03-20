@@ -6,12 +6,12 @@
   },
   "metadata": {
     "description": "Jochen's AI development ruleset with workflows, agents and best practices",
-    "version": "1.2.4"
+    "version": "1.2.5"
   },
   "plugins": [
     {
       "name": "jochen-ai-rules",
-      "version": "1.2.4",
+      "version": "1.2.5",
       "source": "./",
       "description": "Complete collection of agents, skills, hooks, commands, and rules for AI-assisted development",
       "author": {
