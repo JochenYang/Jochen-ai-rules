@@ -21,7 +21,6 @@
       "keywords": ["agents", "skills", "hooks", "commands", "tdd", "code-review", "security", "best-practices"],
       "category": "workflow",
       "tags": ["agents", "skills", "hooks", "commands", "tdd", "code-review", "security", "best-practices"],
-      "skills": ["./skills/"],
       "hooks": ["./hooks/hooks.json"],
       "agents": [
         "./agents/dev-planner.md",
