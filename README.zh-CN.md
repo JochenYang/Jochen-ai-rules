@@ -44,55 +44,52 @@ Jochen AI Rules 是一个全面的 Claude Code 插件，提供：
 # 添加市场
 /plugin marketplace add JochenYang/Jochen-ai-rules
 
-# 安装全部（包含 agents、commands、skills、hooks）
-/plugin install jochen-ai-rules
-
 # 安装独立 skills：
-/plugin install agent-teams
-/plugin install api-designer
-/plugin install artifacts-builder
-/plugin install claude-audit
-/plugin install database-engineer
-/plugin install developer
-/plugin install devops-engineer
-/plugin install frontend-design
-/plugin install mcp-builder
-/plugin install miloya-codebase
-/plugin install performance-optimizer
-/plugin install phaser-build
-/plugin install product-manager
-/plugin install quality-assurance
-/plugin install reflect
-/plugin install requirements-interview
-/plugin install skills-audit
-/plugin install tdd-workflow
-/plugin install threejs-builder
-/plugin install ui-ux-pro-max
-/plugin install vercel-deploy
+/plugin install agent-teams@jochen-ai-rules
+/plugin install api-designer@jochen-ai-rules
+/plugin install artifacts-builder@jochen-ai-rules
+/plugin install claude-audit@jochen-ai-rules
+/plugin install database-engineer@jochen-ai-rules
+/plugin install developer@jochen-ai-rules
+/plugin install devops-engineer@jochen-ai-rules
+/plugin install frontend-design@jochen-ai-rules
+/plugin install mcp-builder@jochen-ai-rules
+/plugin install miloya-codebase@jochen-ai-rules
+/plugin install performance-optimizer@jochen-ai-rules
+/plugin install phaser-build@jochen-ai-rules
+/plugin install product-manager@jochen-ai-rules
+/plugin install quality-assurance@jochen-ai-rules
+/plugin install reflect@jochen-ai-rules
+/plugin install requirements-interview@jochen-ai-rules
+/plugin install skills-audit@jochen-ai-rules
+/plugin install tdd-workflow@jochen-ai-rules
+/plugin install threejs-builder@jochen-ai-rules
+/plugin install ui-ux-pro-max@jochen-ai-rules
+/plugin install vercel-deploy@jochen-ai-rules
 
 # 安装独立 agents：
-/plugin install agent-dev-planner
-/plugin install agent-code-implementer
-/plugin install agent-code-reviewer
-/plugin install agent-bug-analyzer
-/plugin install agent-devops-engineer
-/plugin install agent-performance-optimizer
-/plugin install agent-security-reviewer
-/plugin install agent-database-migration
-/plugin install agent-story-generator
-/plugin install agent-ui-sketcher
-/plugin install agent-tdd-guide
+/plugin install agent-bug-analyzer@jochen-ai-rules
+/plugin install agent-code-implementer@jochen-ai-rules
+/plugin install agent-code-reviewer@jochen-ai-rules
+/plugin install agent-database-migration@jochen-ai-rules
+/plugin install agent-dev-planner@jochen-ai-rules
+/plugin install agent-devops-engineer@jochen-ai-rules
+/plugin install agent-performance-optimizer@jochen-ai-rules
+/plugin install agent-security-reviewer@jochen-ai-rules
+/plugin install agent-story-generator@jochen-ai-rules
+/plugin install agent-tdd-guide@jochen-ai-rules
+/plugin install agent-ui-sketcher@jochen-ai-rules
 
 # 安装独立 commands：
-/plugin install command-branch
-/plugin install command-build-fix
-/plugin install command-commit
-/plugin install command-learn
-/plugin install command-orchestrate
-/plugin install command-plan
-/plugin install command-refactor-clean
-/plugin install command-review
-/plugin install command-tdd
+/plugin install command-branch@jochen-ai-rules
+/plugin install command-build-fix@jochen-ai-rules
+/plugin install command-commit@jochen-ai-rules
+/plugin install command-learn@jochen-ai-rules
+/plugin install command-orchestrate@jochen-ai-rules
+/plugin install command-plan@jochen-ai-rules
+/plugin install command-refactor-clean@jochen-ai-rules
+/plugin install command-review@jochen-ai-rules
+/plugin install command-tdd@jochen-ai-rules
 ```
 
 ### 方式二：本地开发

@@ -44,29 +44,52 @@ Jochen AI Rules is a comprehensive Claude Code plugin that provides:
 # Add the marketplace
 /plugin marketplace add JochenYang/Jochen-ai-rules
 
-# Install ALL (full bundle with agents, commands, skills, hooks)
-/plugin install jochen-ai-rules
-
 # Install individual skills:
-/plugin install artifacts-builder
-/plugin install claude-audit
-/plugin install database-engineer
-/plugin install frontend-design
-/plugin install miloya-codebase
-/plugin install product-manager
-/plugin install reflect
-/plugin install skills-audit
-/plugin install threejs-builder
-/plugin install ui-ux-pro-max
+/plugin install agent-teams@jochen-ai-rules
+/plugin install api-designer@jochen-ai-rules
+/plugin install artifacts-builder@jochen-ai-rules
+/plugin install claude-audit@jochen-ai-rules
+/plugin install database-engineer@jochen-ai-rules
+/plugin install developer@jochen-ai-rules
+/plugin install devops-engineer@jochen-ai-rules
+/plugin install frontend-design@jochen-ai-rules
+/plugin install mcp-builder@jochen-ai-rules
+/plugin install miloya-codebase@jochen-ai-rules
+/plugin install performance-optimizer@jochen-ai-rules
+/plugin install phaser-build@jochen-ai-rules
+/plugin install product-manager@jochen-ai-rules
+/plugin install quality-assurance@jochen-ai-rules
+/plugin install reflect@jochen-ai-rules
+/plugin install requirements-interview@jochen-ai-rules
+/plugin install skills-audit@jochen-ai-rules
+/plugin install tdd-workflow@jochen-ai-rules
+/plugin install threejs-builder@jochen-ai-rules
+/plugin install ui-ux-pro-max@jochen-ai-rules
+/plugin install vercel-deploy@jochen-ai-rules
 
 # Install individual agents:
-/plugin install agent-database-migration
-/plugin install agent-security-reviewer
+/plugin install agent-bug-analyzer@jochen-ai-rules
+/plugin install agent-code-implementer@jochen-ai-rules
+/plugin install agent-code-reviewer@jochen-ai-rules
+/plugin install agent-database-migration@jochen-ai-rules
+/plugin install agent-dev-planner@jochen-ai-rules
+/plugin install agent-devops-engineer@jochen-ai-rules
+/plugin install agent-performance-optimizer@jochen-ai-rules
+/plugin install agent-security-reviewer@jochen-ai-rules
+/plugin install agent-story-generator@jochen-ai-rules
+/plugin install agent-tdd-guide@jochen-ai-rules
+/plugin install agent-ui-sketcher@jochen-ai-rules
 
 # Install individual commands:
-/plugin install command-branch
-/plugin install command-commit
-/plugin install command-learn
+/plugin install command-branch@jochen-ai-rules
+/plugin install command-build-fix@jochen-ai-rules
+/plugin install command-commit@jochen-ai-rules
+/plugin install command-learn@jochen-ai-rules
+/plugin install command-orchestrate@jochen-ai-rules
+/plugin install command-plan@jochen-ai-rules
+/plugin install command-refactor-clean@jochen-ai-rules
+/plugin install command-review@jochen-ai-rules
+/plugin install command-tdd@jochen-ai-rules
 ```
 
 ### Option 2: Local Development
