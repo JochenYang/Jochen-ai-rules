@@ -10,18 +10,63 @@
   },
   "plugins": [
     {
-      "name": "jochen-ai-rules",
-      "version": "1.2.7",
+      "name": "workflow-skills",
+      "description": "Planning, requirements, and process improvement skills",
       "source": "./",
-      "description": "Complete collection of agents, skills, hooks, commands, and rules for AI-assisted development",
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "keywords": ["agents", "skills", "hooks", "commands", "tdd", "code-review", "security", "best-practices"],
-      "category": "workflow",
-      "tags": ["agents", "skills", "hooks", "commands", "tdd", "code-review", "security", "best-practices"],
-      "hooks": ["./hooks/hooks.json"],
+      "strict": true,
+      "skills": [
+        "./skills/tdd-workflow",
+        "./skills/quality-assurance",
+        "./skills/skills-audit",
+        "./skills/reflect",
+        "./skills/requirements-interview",
+        "./skills/product-manager",
+        "./skills/agent-teams"
+      ]
+    },
+    {
+      "name": "development-skills",
+      "description": "Full-stack development and architecture skills",
+      "source": "./",
+      "strict": true,
+      "skills": [
+        "./skills/developer",
+        "./skills/frontend-design",
+        "./skills/api-designer",
+        "./skills/database-engineer",
+        "./skills/mcp-builder",
+        "./skills/devops-engineer",
+        "./skills/performance-optimizer"
+      ]
+    },
+    {
+      "name": "creative-skills",
+      "description": "Creative and interactive content skills",
+      "source": "./",
+      "strict": true,
+      "skills": [
+        "./skills/threejs-builder",
+        "./skills/phaser-build",
+        "./skills/artifacts-builder",
+        "./skills/vercel-deploy"
+      ]
+    },
+    {
+      "name": "intelligence-skills",
+      "description": "Code understanding and UI/UX skills",
+      "source": "./",
+      "strict": true,
+      "skills": [
+        "./skills/claude-audit",
+        "./skills/miloya-codebase",
+        "./skills/ui-ux-pro-max"
+      ]
+    },
+    {
+      "name": "jochen-agents",
+      "description": "Specialized AI agents for development workflows",
+      "source": "./",
+      "strict": true,
       "agents": [
         "./agents/dev-planner.md",
         "./agents/code-implementer.md",
@@ -34,7 +79,13 @@
         "./agents/database-migration.md",
         "./agents/performance-optimizer.md",
         "./agents/devops-engineer.md"
-      ],
+      ]
+    },
+    {
+      "name": "jochen-commands",
+      "description": "Slash commands for common development workflows",
+      "source": "./",
+      "strict": true,
       "commands": [
         "./commands/branch.md",
         "./commands/build-fix.md",
@@ -48,537 +99,11 @@
       ]
     },
     {
-      "name": "agent-teams",
-
-      "source": "./skills/agent-teams/",
-      "description": "Create agent teams for parallel collaboration.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["agent-teams"]
-    },
-    {
-      "name": "api-designer",
-
-      "source": "./skills/api-designer/",
-      "description": "API architecture design and documentation for RESTful, GraphQL, and gRPC services.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["api-designer"]
-    },
-    {
-      "name": "artifacts-builder",
-
-      "source": "./skills/artifacts-builder/",
-      "description": "Rapid prototyping tool for React interactive demos and single-file HTML artifacts.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["artifacts-builder"]
-    },
-    {
-      "name": "claude-audit",
-
-      "source": "./skills/claude-audit/",
-      "description": "Audit all .claude/*.md files for redundant instructions, verbose phrasing, and content that could move to memory.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["claude-audit"]
-    },
-    {
-      "name": "database-engineer",
-
-      "source": "./skills/database-engineer/",
-      "description": "Database architecture design, schema optimization, query performance tuning, and data migration.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["database-engineer"]
-    },
-    {
-      "name": "developer",
-
-      "source": "./skills/developer/",
-      "description": "Comprehensive full-stack development for web, mobile, and game projects.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["developer"]
-    },
-    {
-      "name": "devops-engineer",
-
-      "source": "./skills/devops-engineer/",
-      "description": "CI/CD pipeline design, containerization, and infrastructure management.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["devops-engineer"]
-    },
-    {
-      "name": "frontend-design",
-
-      "source": "./skills/frontend-design/",
-      "description": "Implement distinctive, production-grade frontend UI code.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["frontend-design"]
-    },
-    {
-      "name": "mcp-builder",
-
-      "source": "./skills/mcp-builder/",
-      "description": "MCP server development for AI agents.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["mcp-builder"]
-    },
-    {
-      "name": "miloya-codebase",
-
-      "source": "./skills/miloya-codebase/",
-      "description": "Project context engine for repo orientation, cached handoff, and task-focused code retrieval.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["miloya-codebase"]
-    },
-    {
-      "name": "performance-optimizer",
-
-      "source": "./skills/performance-optimizer/",
-      "description": "Performance bottleneck identification and optimization.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["performance-optimizer"]
-    },
-    {
-      "name": "phaser-build",
-
-      "source": "./skills/phaser-build/",
-      "description": "Build 2D HTML5 games using Phaser with WebGL/Canvas rendering.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["phaser-build"]
-    },
-    {
-      "name": "product-manager",
-
-      "source": "./skills/product-manager/",
-      "description": "Product requirements analysis and planning for structured PRD outputs.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["product-manager"]
-    },
-    {
-      "name": "quality-assurance",
-
-      "source": "./skills/quality-assurance/",
-      "description": "Comprehensive code quality assurance covering code review, testing strategies, and security auditing.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["quality-assurance"]
-    },
-    {
-      "name": "reflect",
-
-      "source": "./skills/reflect/",
-      "description": "Review current conversation, analyze tasks, errors, and user feedback.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["reflect"]
-    },
-    {
-      "name": "requirements-interview",
-
-      "source": "./skills/requirements-interview/",
-      "description": "Conduct deep multi-round requirements interviews to produce executable SPEC, PRD, and PLAN drafts.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["requirements-interview"]
-    },
-    {
-      "name": "skills-audit",
-
-      "source": "./skills/skills-audit/",
-      "description": "List all installed skills with line counts and analyze for improvement opportunities.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["skills-audit"]
-    },
-    {
-      "name": "tdd-workflow",
-
-      "source": "./skills/tdd-workflow/",
-      "description": "Standardized Test-Driven Development (TDD) cycle (RED-GREEN-REFACTOR-VERIFY).",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["tdd-workflow"]
-    },
-    {
-      "name": "threejs-builder",
-
-      "source": "./skills/threejs-builder/",
-      "description": "Creates simple Three.js web apps with scene setup, lighting, geometries, materials, animations, and responsive rendering.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["threejs-builder"]
-    },
-    {
-      "name": "ui-ux-pro-max",
-
-      "source": "./skills/ui-ux-pro-max/",
-      "description": "UI/UX design-system reasoning and UX quality audit skill.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["ui-ux-pro-max"]
-    },
-    {
-      "name": "vercel-deploy",
-
-      "source": "./skills/vercel-deploy/",
-      "description": "Deploy projects to Vercel with one command.",
-      "skills": ["./"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "skill",
-      "tags": ["vercel-deploy"]
-    },
-    {
-      "name": "agent-dev-planner",
-
-      "source": "./agents/",
-      "description": "Implementation planning specialist for complex features and refactoring.",
-      "agents": ["./agents/dev-planner.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "agent",
-      "tags": ["agent", "planning"]
-    },
-    {
-      "name": "agent-code-implementer",
-
-      "source": "./agents/",
-      "description": "Production code implementer that transforms plans into clean, maintainable code.",
-      "agents": ["./agents/code-implementer.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "agent",
-      "tags": ["agent", "implementation"]
-    },
-    {
-      "name": "agent-code-reviewer",
-
-      "source": "./agents/",
-      "description": "Code quality auditor focused on security, performance, and maintainability.",
-      "agents": ["./agents/code-reviewer.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "agent",
-      "tags": ["agent", "code-review"]
-    },
-    {
-      "name": "agent-bug-analyzer",
-
-      "source": "./agents/",
-      "description": "Deep root cause investigator for bugs and code issues.",
-      "agents": ["./agents/bug-analyzer.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "agent",
-      "tags": ["agent", "debugging"]
-    },
-    {
-      "name": "agent-devops-engineer",
-
-      "source": "./agents/",
-      "description": "CI/CD pipeline design, containerization, and infrastructure management specialist.",
-      "agents": ["./agents/devops-engineer.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "agent",
-      "tags": ["agent", "devops"]
-    },
-    {
-      "name": "agent-performance-optimizer",
-
-      "source": "./agents/",
-      "description": "Performance bottleneck identification and optimization specialist.",
-      "agents": ["./agents/performance-optimizer.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "agent",
-      "tags": ["agent", "performance"]
-    },
-    {
-      "name": "agent-security-reviewer",
-
-      "source": "./agents/",
-      "description": "Deep security audit specialist following OWASP guidelines.",
-      "agents": ["./agents/security-reviewer.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "agent",
-      "tags": ["agent", "security"]
-    },
-    {
-      "name": "agent-database-migration",
-
-      "source": "./agents/",
-      "description": "Database migration specialist for schema changes and data integrity.",
-      "agents": ["./agents/database-migration.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "agent",
-      "tags": ["agent", "database"]
-    },
-    {
-      "name": "agent-story-generator",
-
-      "source": "./agents/",
-      "description": "User story generator that transforms requirements into structured stories.",
-      "agents": ["./agents/story-generator.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "agent",
-      "tags": ["agent", "product"]
-    },
-    {
-      "name": "agent-ui-sketcher",
-
-      "source": "./agents/",
-      "description": "UI/UX designer that creates ASCII interface mockups and interaction flows.",
-      "agents": ["./agents/ui-sketcher.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "agent",
-      "tags": ["agent", "ui-ux"]
-    },
-    {
-      "name": "agent-tdd-guide",
-
-      "source": "./agents/",
-      "description": "Test-Driven Development specialist enforcing RED-GREEN-REFACTOR cycle.",
-      "agents": ["./agents/tdd-guide.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "agent",
-      "tags": ["agent", "tdd"]
-    },
-    {
-      "name": "command-branch",
-
-      "source": "./commands/",
-      "description": "Git worktree management - create isolated worktrees.",
-      "commands": ["./commands/branch.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "command",
-      "tags": ["command", "git"]
-    },
-    {
-      "name": "command-build-fix",
-
-      "source": "./commands/",
-      "description": "Analyze and fix build errors.",
-      "commands": ["./commands/build-fix.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "command",
-      "tags": ["command", "build"]
-    },
-    {
-      "name": "command-commit",
-
-      "source": "./commands/",
-      "description": "Create conventional commits with optional pre-commit checks.",
-      "commands": ["./commands/commit.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "command",
-      "tags": ["command", "git"]
-    },
-    {
-      "name": "command-learn",
-
-      "source": "./commands/",
-      "description": "Extract reusable patterns from sessions and save to memory.",
-      "commands": ["./commands/learn.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "command",
-      "tags": ["command", "learning"]
-    },
-    {
-      "name": "command-orchestrate",
-
-      "source": "./commands/",
-      "description": "Coordinate multi-agent workflows with review loops and structured handoffs.",
-      "commands": ["./commands/orchestrate.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "command",
-      "tags": ["command", "orchestration"]
-    },
-    {
-      "name": "command-plan",
-
-      "source": "./commands/",
-      "description": "Create implementation plans with risk assessment.",
-      "commands": ["./commands/plan.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "command",
-      "tags": ["command", "planning"]
-    },
-    {
-      "name": "command-refactor-clean",
-
-      "source": "./commands/",
-      "description": "Clean up dead code, unused files, and improve organization.",
-      "commands": ["./commands/refactor-clean.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "command",
-      "tags": ["command", "refactoring"]
-    },
-    {
-      "name": "command-review",
-
-      "source": "./commands/",
-      "description": "Code review with quality audit for security, performance, and maintainability.",
-      "commands": ["./commands/review.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "command",
-      "tags": ["command", "code-review"]
-    },
-    {
-      "name": "command-tdd",
-
-      "source": "./commands/",
-      "description": "Test-driven development workflow with RED-GREEN-REFACTOR cycle.",
-      "commands": ["./commands/tdd.md"],
-      "author": { "name": "Jochen" },
-      "homepage": "https://github.com/JochenYang/Jochen-ai-rules",
-      "repository": "https://github.com/JochenYang/Jochen-ai-rules",
-      "license": "MIT",
-      "category": "command",
-      "tags": ["command", "tdd"]
+      "name": "jochen-hooks",
+      "description": "Automated quality checks and formatting hooks",
+      "source": "./",
+      "strict": true,
+      "hooks": ["./hooks/hooks.json"]
     }
   ]
 }
