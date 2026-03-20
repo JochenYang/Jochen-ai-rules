@@ -50,7 +50,7 @@
     },
     {
       "name": "agent-teams",
-      "version": "1.0.0",
+
       "source": "./skills/agent-teams/",
       "description": "Create agent teams for parallel collaboration.",
       "skills": ["./"],
@@ -63,7 +63,7 @@
     },
     {
       "name": "api-designer",
-      "version": "1.0.0",
+
       "source": "./skills/api-designer/",
       "description": "API architecture design and documentation for RESTful, GraphQL, and gRPC services.",
       "skills": ["./"],
@@ -76,7 +76,7 @@
     },
     {
       "name": "artifacts-builder",
-      "version": "1.0.0",
+
       "source": "./skills/artifacts-builder/",
       "description": "Rapid prototyping tool for React interactive demos and single-file HTML artifacts.",
       "skills": ["./"],
@@ -89,7 +89,7 @@
     },
     {
       "name": "claude-audit",
-      "version": "1.0.0",
+
       "source": "./skills/claude-audit/",
       "description": "Audit all .claude/*.md files for redundant instructions, verbose phrasing, and content that could move to memory.",
       "skills": ["./"],
@@ -102,7 +102,7 @@
     },
     {
       "name": "database-engineer",
-      "version": "1.0.0",
+
       "source": "./skills/database-engineer/",
       "description": "Database architecture design, schema optimization, query performance tuning, and data migration.",
       "skills": ["./"],
@@ -115,7 +115,7 @@
     },
     {
       "name": "developer",
-      "version": "1.0.0",
+
       "source": "./skills/developer/",
       "description": "Comprehensive full-stack development for web, mobile, and game projects.",
       "skills": ["./"],
@@ -128,7 +128,7 @@
     },
     {
       "name": "devops-engineer",
-      "version": "1.0.0",
+
       "source": "./skills/devops-engineer/",
       "description": "CI/CD pipeline design, containerization, and infrastructure management.",
       "skills": ["./"],
@@ -141,7 +141,7 @@
     },
     {
       "name": "frontend-design",
-      "version": "1.0.0",
+
       "source": "./skills/frontend-design/",
       "description": "Implement distinctive, production-grade frontend UI code.",
       "skills": ["./"],
@@ -154,7 +154,7 @@
     },
     {
       "name": "mcp-builder",
-      "version": "1.0.0",
+
       "source": "./skills/mcp-builder/",
       "description": "MCP server development for AI agents.",
       "skills": ["./"],
@@ -167,7 +167,7 @@
     },
     {
       "name": "miloya-codebase",
-      "version": "1.0.0",
+
       "source": "./skills/miloya-codebase/",
       "description": "Project context engine for repo orientation, cached handoff, and task-focused code retrieval.",
       "skills": ["./"],
@@ -180,7 +180,7 @@
     },
     {
       "name": "performance-optimizer",
-      "version": "1.0.0",
+
       "source": "./skills/performance-optimizer/",
       "description": "Performance bottleneck identification and optimization.",
       "skills": ["./"],
@@ -193,7 +193,7 @@
     },
     {
       "name": "phaser-build",
-      "version": "1.0.0",
+
       "source": "./skills/phaser-build/",
       "description": "Build 2D HTML5 games using Phaser with WebGL/Canvas rendering.",
       "skills": ["./"],
@@ -206,7 +206,7 @@
     },
     {
       "name": "product-manager",
-      "version": "1.0.0",
+
       "source": "./skills/product-manager/",
       "description": "Product requirements analysis and planning for structured PRD outputs.",
       "skills": ["./"],
@@ -219,7 +219,7 @@
     },
     {
       "name": "quality-assurance",
-      "version": "1.0.0",
+
       "source": "./skills/quality-assurance/",
       "description": "Comprehensive code quality assurance covering code review, testing strategies, and security auditing.",
       "skills": ["./"],
@@ -232,7 +232,7 @@
     },
     {
       "name": "reflect",
-      "version": "1.0.0",
+
       "source": "./skills/reflect/",
       "description": "Review current conversation, analyze tasks, errors, and user feedback.",
       "skills": ["./"],
@@ -245,7 +245,7 @@
     },
     {
       "name": "requirements-interview",
-      "version": "1.0.0",
+
       "source": "./skills/requirements-interview/",
       "description": "Conduct deep multi-round requirements interviews to produce executable SPEC, PRD, and PLAN drafts.",
       "skills": ["./"],
@@ -258,7 +258,7 @@
     },
     {
       "name": "skills-audit",
-      "version": "1.0.0",
+
       "source": "./skills/skills-audit/",
       "description": "List all installed skills with line counts and analyze for improvement opportunities.",
       "skills": ["./"],
@@ -271,7 +271,7 @@
     },
     {
       "name": "tdd-workflow",
-      "version": "1.0.0",
+
       "source": "./skills/tdd-workflow/",
       "description": "Standardized Test-Driven Development (TDD) cycle (RED-GREEN-REFACTOR-VERIFY).",
       "skills": ["./"],
@@ -284,7 +284,7 @@
     },
     {
       "name": "threejs-builder",
-      "version": "1.0.0",
+
       "source": "./skills/threejs-builder/",
       "description": "Creates simple Three.js web apps with scene setup, lighting, geometries, materials, animations, and responsive rendering.",
       "skills": ["./"],
@@ -297,7 +297,7 @@
     },
     {
       "name": "ui-ux-pro-max",
-      "version": "1.0.0",
+
       "source": "./skills/ui-ux-pro-max/",
       "description": "UI/UX design-system reasoning and UX quality audit skill.",
       "skills": ["./"],
@@ -310,7 +310,7 @@
     },
     {
       "name": "vercel-deploy",
-      "version": "1.0.0",
+
       "source": "./skills/vercel-deploy/",
       "description": "Deploy projects to Vercel with one command.",
       "skills": ["./"],
@@ -323,7 +323,7 @@
     },
     {
       "name": "agent-dev-planner",
-      "version": "1.0.0",
+
       "source": "./agents/",
       "description": "Implementation planning specialist for complex features and refactoring.",
       "agents": ["./agents/dev-planner.md"],
@@ -336,7 +336,7 @@
     },
     {
       "name": "agent-code-implementer",
-      "version": "1.0.0",
+
       "source": "./agents/",
       "description": "Production code implementer that transforms plans into clean, maintainable code.",
       "agents": ["./agents/code-implementer.md"],
@@ -349,7 +349,7 @@
     },
     {
       "name": "agent-code-reviewer",
-      "version": "1.0.0",
+
       "source": "./agents/",
       "description": "Code quality auditor focused on security, performance, and maintainability.",
       "agents": ["./agents/code-reviewer.md"],
@@ -362,7 +362,7 @@
     },
     {
       "name": "agent-bug-analyzer",
-      "version": "1.0.0",
+
       "source": "./agents/",
       "description": "Deep root cause investigator for bugs and code issues.",
       "agents": ["./agents/bug-analyzer.md"],
@@ -375,7 +375,7 @@
     },
     {
       "name": "agent-devops-engineer",
-      "version": "1.0.0",
+
       "source": "./agents/",
       "description": "CI/CD pipeline design, containerization, and infrastructure management specialist.",
       "agents": ["./agents/devops-engineer.md"],
@@ -388,7 +388,7 @@
     },
     {
       "name": "agent-performance-optimizer",
-      "version": "1.0.0",
+
       "source": "./agents/",
       "description": "Performance bottleneck identification and optimization specialist.",
       "agents": ["./agents/performance-optimizer.md"],
@@ -401,7 +401,7 @@
     },
     {
       "name": "agent-security-reviewer",
-      "version": "1.0.0",
+
       "source": "./agents/",
       "description": "Deep security audit specialist following OWASP guidelines.",
       "agents": ["./agents/security-reviewer.md"],
@@ -414,7 +414,7 @@
     },
     {
       "name": "agent-database-migration",
-      "version": "1.0.0",
+
       "source": "./agents/",
       "description": "Database migration specialist for schema changes and data integrity.",
       "agents": ["./agents/database-migration.md"],
@@ -427,7 +427,7 @@
     },
     {
       "name": "agent-story-generator",
-      "version": "1.0.0",
+
       "source": "./agents/",
       "description": "User story generator that transforms requirements into structured stories.",
       "agents": ["./agents/story-generator.md"],
@@ -440,7 +440,7 @@
     },
     {
       "name": "agent-ui-sketcher",
-      "version": "1.0.0",
+
       "source": "./agents/",
       "description": "UI/UX designer that creates ASCII interface mockups and interaction flows.",
       "agents": ["./agents/ui-sketcher.md"],
@@ -453,7 +453,7 @@
     },
     {
       "name": "agent-tdd-guide",
-      "version": "1.0.0",
+
       "source": "./agents/",
       "description": "Test-Driven Development specialist enforcing RED-GREEN-REFACTOR cycle.",
       "agents": ["./agents/tdd-guide.md"],
@@ -466,7 +466,7 @@
     },
     {
       "name": "command-branch",
-      "version": "1.0.0",
+
       "source": "./commands/",
       "description": "Git worktree management - create isolated worktrees.",
       "commands": ["./commands/branch.md"],
@@ -479,7 +479,7 @@
     },
     {
       "name": "command-build-fix",
-      "version": "1.0.0",
+
       "source": "./commands/",
       "description": "Analyze and fix build errors.",
       "commands": ["./commands/build-fix.md"],
@@ -492,7 +492,7 @@
     },
     {
       "name": "command-commit",
-      "version": "1.0.0",
+
       "source": "./commands/",
       "description": "Create conventional commits with optional pre-commit checks.",
       "commands": ["./commands/commit.md"],
@@ -505,7 +505,7 @@
     },
     {
       "name": "command-learn",
-      "version": "1.0.0",
+
       "source": "./commands/",
       "description": "Extract reusable patterns from sessions and save to memory.",
       "commands": ["./commands/learn.md"],
@@ -518,7 +518,7 @@
     },
     {
       "name": "command-orchestrate",
-      "version": "1.0.0",
+
       "source": "./commands/",
       "description": "Coordinate multi-agent workflows with review loops and structured handoffs.",
       "commands": ["./commands/orchestrate.md"],
@@ -531,7 +531,7 @@
     },
     {
       "name": "command-plan",
-      "version": "1.0.0",
+
       "source": "./commands/",
       "description": "Create implementation plans with risk assessment.",
       "commands": ["./commands/plan.md"],
@@ -544,7 +544,7 @@
     },
     {
       "name": "command-refactor-clean",
-      "version": "1.0.0",
+
       "source": "./commands/",
       "description": "Clean up dead code, unused files, and improve organization.",
       "commands": ["./commands/refactor-clean.md"],
@@ -557,7 +557,7 @@
     },
     {
       "name": "command-review",
-      "version": "1.0.0",
+
       "source": "./commands/",
       "description": "Code review with quality audit for security, performance, and maintainability.",
       "commands": ["./commands/review.md"],
@@ -570,7 +570,7 @@
     },
     {
       "name": "command-tdd",
-      "version": "1.0.0",
+
       "source": "./commands/",
       "description": "Test-driven development workflow with RED-GREEN-REFACTOR cycle.",
       "commands": ["./commands/tdd.md"],
