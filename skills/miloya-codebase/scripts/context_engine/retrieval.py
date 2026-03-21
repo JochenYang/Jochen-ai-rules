@@ -10,12 +10,24 @@ STOPWORDS = {
     'files', 'repo', 'project', 'understand', 'task', 'mode', 'need', 'use',
 }
 
-ACTION_QUERY_TOKENS = {
-    'download', 'install', 'delete', 'remove', 'load', 'sync', 'start',
-    'stop', 'dispatch', 'route', 'reply', 'send', 'receive', 'create',
-    'update', 'fetch', 'clone', 'import', 'export', 'connect', 'select',
-    'change', 'choose', 'toggle', 'apply', 'set', '选择', '切换', '修改',
-}
+
+def is_probably_test_path(path: str) -> bool:
+    lowered = path.replace('\\', '/').lower()
+    filename = lowered.rsplit('/', 1)[-1]
+    return any(
+        token in lowered
+        for token in (
+            '/tests/',
+            '/__tests__/',
+            '.test.',
+            '.spec.',
+            '.e2e.',
+            '_test.',
+            'test-harness',
+            'test_harness',
+            'fixtures/',
+        )
+    ) or filename.startswith(('test_', 'spec_'))
 
 
 TASK_BLUEPRINTS = {
@@ -249,11 +261,6 @@ def score_chunk(
         score += len(overlap) * 12
         reasons.append(f'keyword overlap: {", ".join(overlap[:4])}')
 
-    action_overlap = query_tokens & ACTION_QUERY_TOKENS
-    if action_overlap and chunk.get('kind') == 'action-flow':
-        score += 20
-        reasons.append('operation anchor')
-
     path_rank = important_ranks.get(chunk['path'])
     if path_rank is not None:
         score += max(0, 30 - path_rank * 3)
@@ -276,6 +283,14 @@ def score_chunk(
     if task == 'code-review' and chunk['kind'] in {'function', 'model', 'route'}:
         score += 8
         reasons.append('review hotspot')
+
+    if is_probably_test_path(chunk['path']):
+        if task == 'feature-delivery':
+            score -= 26
+            reasons.append('test file downrank')
+        elif task in {'understand-project', 'onboarding'}:
+            score -= 14
+            reasons.append('test file downrank')
 
     return score, reasons
 

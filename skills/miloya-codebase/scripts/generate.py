@@ -1201,6 +1201,7 @@ def build_focus_context_pack(
     important_ranks = {item['path']: index for index, item in enumerate(important_files)}
     recent_changed = set(external_context.get('recentChangedFiles', []))
     query_intent = infer_query_intent(query)
+    read_profile = select_read_profile(query_intent)
     expanded_query_terms = expand_query_terms_for_retrieval(
         query_intent,
         snapshot.get('retrieval', {}),
@@ -1217,9 +1218,9 @@ def build_focus_context_pack(
         recent_changed=recent_changed,
         file_dependency_map=file_dependency_map,
         task=task,
-        limit=24,
+        limit=36,
     )
-    matches = rerank_read_matches(matches, query_intent)[:12]
+    matches = rerank_read_matches(matches, query_intent, read_profile)[:14]
     related_paths = []
     for match in matches:
         related_paths.append(match['path'])
@@ -1485,98 +1486,6 @@ def normalize_query_text(query: str | None) -> str | None:
     return normalized or query
 
 
-GENERAL_QUERY_TERM_EXPANSIONS = {
-    'skill': ['skills'],
-    'skills': ['skill'],
-    'plugin': ['plugins', 'extension'],
-    'display': ['screen', 'view', 'render'],
-    'screen': ['display', 'view'],
-    'encoder': ['codec'],
-    'codec': ['encoder'],
-    'fps': ['framerate', 'frame-rate', 'max-fps', 'frame', 'rate'],
-    'framerate': ['fps', 'frame-rate', 'max-fps', 'frame', 'rate'],
-    'bitrate': ['rate'],
-    'resolution': ['width', 'height', 'size'],
-    'select': ['selector', 'option', 'choose', 'preset', 'change'],
-    'change': ['select', 'option', 'preset'],
-    'runtime': ['flow', 'lifecycle', 'engine', 'adapter'],
-    'lifecycle': ['runtime', 'flow'],
-    'download': ['install', 'fetch', 'clone', 'archive', 'zip'],
-    'install': ['download', 'setup', 'enable'],
-    'delete': ['remove', 'cleanup'],
-    'remove': ['delete', 'cleanup'],
-    'load': ['read', 'parse', 'resolve'],
-    'read': ['load', 'parse'],
-    'list': ['scan', 'discover'],
-    'config': ['setting', 'configure', 'options'],
-    'setting': ['config', 'configure', 'options'],
-    'route': ['routing', 'router', 'dispatch', 'delivery'],
-    'routing': ['route', 'router', 'dispatch', 'delivery'],
-    'gateway': ['adapter', 'connector', 'transport', 'channel'],
-    'message': ['reply', 'send', 'receive', 'channel'],
-    'store': ['persist', 'save', 'sqlite', 'db'],
-    'persist': ['store', 'save', 'sqlite'],
-    'type': ['types', 'interface', 'schema', 'model'],
-    'types': ['type', 'interface', 'schema', 'model'],
-    '配置': ['config', 'setting', 'configure', 'options'],
-    '路由': ['route', 'routing', 'router', 'dispatch', 'delivery'],
-    '网关': ['gateway', 'adapter', 'connector', 'transport', 'channel'],
-    '消息': ['message', 'reply', 'send', 'receive', 'channel'],
-    '存储': ['store', 'persist', 'save', 'sqlite', 'db'],
-    '持久化': ['persist', 'store', 'save', 'sqlite'],
-    '类型': ['type', 'types', 'interface', 'schema', 'model'],
-    '界面': ['ui', 'component', 'page', 'view'],
-    '组件': ['component', 'ui', 'view'],
-    '显示': ['display', 'screen', 'view'],
-    '帧率': ['fps', 'framerate', 'max-fps', 'frame', 'rate'],
-    '编码器': ['encoder', 'codec'],
-    '码率': ['bitrate', 'rate'],
-    '比特率': ['bitrate', 'rate'],
-    '分辨率': ['resolution', 'width', 'height', 'size'],
-    '选择': ['select', 'selector', 'option', 'choose', 'preset', 'change'],
-    '选项': ['option', 'select', 'preset'],
-    '预设': ['preset', 'option', 'select'],
-    '切换': ['toggle', 'switch', 'change', 'select'],
-    '运行时': ['runtime', 'engine', 'adapter', 'flow'],
-    '生命周期': ['lifecycle', 'runtime', 'flow'],
-    '流程': ['flow', 'process', 'pipeline', 'lifecycle'],
-    '实现': ['implementation', 'implement', 'logic'],
-    '下载': ['download', 'install', 'fetch', 'clone', 'archive', 'zip'],
-    '安装': ['install', 'setup', 'enable'],
-    '删除': ['delete', 'remove', 'cleanup'],
-    '读取': ['read', 'load', 'parse'],
-    '加载': ['load', 'read', 'resolve'],
-    '解析': ['parse', 'resolve'],
-    '管理': ['manager', 'manage', 'management'],
-    '技能': ['skill', 'skills'],
-    '插件': ['plugin', 'plugins', 'extension'],
-    '服务': ['service', 'services'],
-    '处理': ['handler', 'process'],
-    '会话': ['session'],
-}
-
-GENERAL_QUERY_ACTION_TERMS = {
-    'download', 'install', 'delete', 'remove', 'load', 'read', 'list', 'scan',
-    'discover', 'parse', 'resolve', 'sync', 'start', 'stop', 'save', 'persist',
-    'dispatch', 'delivery', 'send', 'receive', 'reply', 'select', 'change',
-    'choose', 'toggle', 'apply', 'set',
-    '下载', '安装', '删除', '读取', '加载', '解析', '同步', '启动', '停止', '保存',
-    '持久化', '分发', '投递', '发送', '接收', '回复', '选择', '切换', '修改', '设置',
-}
-
-PARAMETER_SELECTION_TERMS = {
-    'fps', 'framerate', 'frame-rate', 'max-fps',
-    'bitrate', 'rate', 'resolution', 'width', 'height', 'size',
-    'encoder', 'codec', 'display', 'screen',
-    '帧率', '码率', '比特率', '分辨率', '编码器', '显示',
-}
-
-UI_SELECTION_TERMS = {
-    'select', 'selector', 'option', 'choose', 'preset', 'change', 'toggle',
-    '设置', '选择', '选项', '预设', '切换', '修改',
-}
-
-
 def extract_text_terms(text: str | None) -> list[str]:
     if not text:
         return []
@@ -1607,10 +1516,12 @@ def extract_query_terms(query: str | None) -> list[str]:
             if len(term) <= 4 and term not in seen:
                 seen.add(term)
                 collected.append(term)
-            for candidate in GENERAL_QUERY_TERM_EXPANSIONS:
-                if candidate in term and candidate not in seen:
-                    seen.add(candidate)
-                    collected.append(candidate)
+            elif len(term) > 4:
+                for index in range(len(term) - 1):
+                    candidate = term[index:index + 2]
+                    if candidate not in seen:
+                        seen.add(candidate)
+                        collected.append(candidate)
             continue
 
         if term not in seen:
@@ -1620,26 +1531,31 @@ def extract_query_terms(query: str | None) -> list[str]:
     return collected[:24]
 
 
+def is_probably_test_path(path: str) -> bool:
+    lowered = normalize_rel_path(path).lower()
+    file_name = Path(lowered).name
+    return any(
+        token in lowered
+        for token in [
+            '/tests/',
+            '.test.',
+            '.spec.',
+            '_test.',
+            '.e2e.',
+            'test-harness',
+            'test_harness',
+            'fixtures/',
+            '/__tests__/',
+        ]
+    ) or file_name.startswith(('test_', 'spec_'))
+
+
 def expand_query_terms(terms: list[str]) -> list[str]:
-    expanded: list[str] = []
-    seen = set()
-
-    for term in terms:
-        if term not in seen:
-            seen.add(term)
-            expanded.append(term)
-        for synonym in GENERAL_QUERY_TERM_EXPANSIONS.get(term, []):
-            if synonym not in seen:
-                seen.add(synonym)
-                expanded.append(synonym)
-
-    return expanded[:32]
+    return list(dict.fromkeys(terms))[:32]
 
 
 def determine_read_limits(query_intent: dict) -> dict[str, int]:
-    labels = set(query_intent.get('labels', []))
-    keywords = set(query_intent.get('keywords', []))
-    limits = {
+    return {
         'files': 4,
         'snippets': 3,
         'nextHops': 2,
@@ -1647,43 +1563,9 @@ def determine_read_limits(query_intent: dict) -> dict[str, int]:
         'maxWords': 380,
     }
 
-    if 'integration-flow' in labels or 'routing-flow' in labels:
-        limits.update({
-            'files': 4,
-            'snippets': 3,
-            'nextHops': 2,
-            'anchors': 4,
-            'maxWords': 420,
-        })
-    elif 'configuration' in labels or 'documentation-link' in labels:
-        limits.update({
-            'files': 4,
-            'snippets': 3,
-            'nextHops': 2,
-            'anchors': 4,
-            'maxWords': 380,
-        })
-    elif 'runtime-flow' in labels:
-        limits.update({
-            'files': 4,
-            'snippets': 3,
-            'nextHops': 2,
-            'anchors': 4,
-            'maxWords': 400,
-        })
-
-    if keywords & GENERAL_QUERY_ACTION_TERMS:
-        limits['files'] = min(limits['files'], 4)
-        limits['snippets'] = min(limits['snippets'], 3)
-
-    return limits
-
 
 def select_read_profile(query_intent: dict) -> dict:
-    keyword_set = set(query_intent.get('keywords', []))
-    exact_terms = set(query_intent.get('terms', []))
-    action_terms = keyword_set & GENERAL_QUERY_ACTION_TERMS
-    profile = {
+    return {
         'name': 'generic',
         'focusManagerTokens': set(),
         'focusEntrySuffixes': set(),
@@ -1692,34 +1574,6 @@ def select_read_profile(query_intent: dict) -> dict:
         'boostSymbolTerms': set(),
         'penalizeSymbolTerms': set(),
     }
-
-    if keyword_set & {'skill', 'skills', 'plugin', 'plugins'} and action_terms:
-        profile.update({
-            'name': 'skill-runtime',
-            'focusManagerTokens': {'skillmanager', 'pluginmanager'},
-            'focusEntrySuffixes': {'main.ts', 'preload.ts'},
-            'preferPathTokens': set(),
-            'suppressPathTokens': [
-                '/libs/:runtime',
-                '/scripts/:setup',
-            ],
-            'boostSymbolTerms': exact_terms & {'download', 'install', 'remove', 'delete'},
-            'penalizeSymbolTerms': {'install', 'setup'} - exact_terms,
-        })
-    elif 'parameter-selection' in query_intent.get('labels', []):
-        profile.update({
-            'name': 'parameter-selection',
-            'focusManagerTokens': set(),
-            'focusEntrySuffixes': {'main.ts', 'preload.ts'},
-            'preferPathTokens': {'/pages/', '/components/', 'display', 'settings', 'encoding', 'screen'},
-            'suppressPathTokens': [],
-            'boostSymbolTerms': keyword_set & (
-                PARAMETER_SELECTION_TERMS | {'select', 'change', 'option', 'preset'}
-            ),
-            'penalizeSymbolTerms': set(),
-        })
-
-    return profile
 
 
 def determine_report_limits(query_intent: dict) -> dict[str, int]:
@@ -1796,15 +1650,8 @@ def infer_report_confidence(query_intent: dict, core_files: list[dict], snippets
 
 
 def determine_report_sections(query_intent: dict, task: str | None) -> list[str]:
-    labels = set(query_intent.get('labels', []))
     sections = ['summary', 'core-files', 'code-anchors']
 
-    if {'integration-flow', 'routing-flow', 'runtime-flow'} & labels:
-        sections.append('call-chain')
-    if 'configuration' in labels or 'persistence-flow' in labels:
-        sections.append('config-and-persistence')
-    if 'type-definition' in labels:
-        sections.append('related-types')
     if task in {'bugfix-investigation', 'code-review'}:
         sections.append('risks')
 
@@ -1826,11 +1673,9 @@ def prioritize_read_file_paths(
     query_intent: dict,
     read_profile: dict,
 ) -> list[str]:
-    labels = set(query_intent.get('labels', []))
     query_terms = set(query_intent.get('keywords', []))
     exact_terms = set(query_intent.get('terms', []))
-    action_terms = query_terms & GENERAL_QUERY_ACTION_TERMS
-    exact_action_terms = exact_terms & GENERAL_QUERY_ACTION_TERMS
+    test_query = any(term in {'test', 'tests', 'spec', 'harness', 'fixture', 'e2e', '测试', '用例'} for term in (query_terms | exact_terms))
     snippet_paths = [item.get('path') for item in snippet_items if item.get('path')]
     ordered_candidates = []
     ordered_candidates.extend(snippet_paths)
@@ -1889,6 +1734,8 @@ def prioritize_read_file_paths(
             score -= 18
         if (lowered.startswith('scripts/') or '/scripts/' in lowered) and not (query_terms & {'script', 'setup', 'build', 'cli'}):
             score -= 10
+        if is_probably_test_path(path) and not test_query:
+            score -= 42
 
         keyword_overlap = len(path_terms & query_terms)
         if keyword_overlap:
@@ -1896,28 +1743,12 @@ def prioritize_read_file_paths(
         exact_overlap = len(path_terms & exact_terms)
         if exact_overlap:
             score += min(exact_overlap, 2) * 18
-
-        if 'integration-flow' in labels or 'routing-flow' in labels:
-            if any(token in lowered for token in structural_tokens):
-                score += 28
-            if any(token in lowered for token in module_tokens):
-                score += 18
-            if any(token in lowered for token in ['constants', '/i18n.', '/locales/', '/assets/']):
-                score -= 12
-
-        if 'configuration' in labels or 'documentation-link' in labels:
-            if any(token in lowered for token in ['imsettings', 'settings.tsx', '/components/', 'schemaform', 'config', '/types/']):
-                score += 25
-
-        if 'runtime-flow' in labels:
-            if any(token in lowered for token in ['runtime', 'manager', 'adapter', 'engine', 'gateway', 'connector', 'plugin']):
-                score += 20
-            if query_terms & GENERAL_QUERY_ACTION_TERMS and any(
-                token in lowered for token in ['manager', 'service', 'handler', 'controller', 'route', 'router', 'store', 'gateway', 'adapter']
-            ):
-                score += 14
-            if exact_action_terms and any(token in lowered for token in ['manager', 'skillmanager', 'pluginmanager']):
-                score += 18
+        if any(token in lowered for token in structural_tokens):
+            score += 14
+        if any(token in lowered for token in module_tokens):
+            score += 10
+        if any(token in lowered for token in ['constants', '/i18n.', '/locales/', '/assets/']):
+            score -= 8
 
         score += score_path_with_profile(path, query_intent, read_profile)
 
@@ -1927,54 +1758,10 @@ def prioritize_read_file_paths(
 
 
 def score_path_with_profile(path: str, query_intent: dict, read_profile: dict) -> int:
-    lowered = normalize_rel_path(path).lower()
-    query_terms = set(query_intent.get('keywords', []))
-    exact_terms = set(query_intent.get('terms', []))
-    action_terms = query_terms & GENERAL_QUERY_ACTION_TERMS
-    exact_action_terms = exact_terms & GENERAL_QUERY_ACTION_TERMS
-    score = 0
-
-    for token in read_profile.get('focusManagerTokens', set()):
-        if token in lowered:
-            score += 42
-
-    for token in read_profile.get('preferPathTokens', set()):
-        if token in lowered:
-            score += 26
-
-    for suffix in read_profile.get('focusEntrySuffixes', set()):
-        if lowered.endswith('/' + suffix) or lowered.endswith(suffix):
-            score += 20 if suffix == 'main.ts' else 18
-
-    if is_suppressed_by_profile(path, query_intent, read_profile):
-        if '/libs/' in lowered:
-            score -= 16
-        if lowered.startswith('scripts/') or '/scripts/' in lowered:
-            score -= 24
-
-    if action_terms and not exact_action_terms and any(token in lowered for token in ['install', 'setup']):
-        score -= 8
-
-    return score
+    return 0
 
 
 def is_suppressed_by_profile(path: str, query_intent: dict, read_profile: dict) -> bool:
-    lowered = normalize_rel_path(path).lower()
-    keyword_set = set(query_intent.get('keywords', []))
-    exact_terms = set(query_intent.get('terms', []))
-    if exact_terms & {'runtime', 'script', 'setup', 'python'}:
-        return False
-    if keyword_set & {'runtime', 'script', 'setup', 'python'} and exact_terms:
-        return False
-    for rule in read_profile.get('suppressPathTokens', []):
-        prefix, _, token = rule.partition(':')
-        prefix = prefix or ''
-        token = token or ''
-        if prefix and prefix not in lowered:
-            continue
-        if token and token not in lowered:
-            continue
-        return True
     return False
 
 
@@ -1988,173 +1775,16 @@ def refine_read_file_paths(snapshot: dict, file_paths: list[str], query_intent: 
         seen.add(normalized)
         deduped.append(normalized)
 
-    if read_profile.get('name') == 'generic':
-        return deduped
-
-    preferred = []
-    used = set()
-
-    def add_path(path: str) -> None:
-        normalized = normalize_rel_path(path)
-        if not normalized or normalized in used or normalized not in seen:
-            return
-        used.add(normalized)
-        preferred.append(normalized)
-
-    for path in deduped:
-        lowered = path.lower()
-        if any(token in lowered for token in read_profile.get('preferPathTokens', set())):
-            add_path(path)
-
-    for path in deduped:
-        lowered = path.lower()
-        if any(token in lowered for token in read_profile.get('focusManagerTokens', set())):
-            add_path(path)
-
+    entry_points = []
+    seen_entries = set()
     for path in snapshot.get('summary', {}).get('entryPoints', []):
-        lowered = normalize_rel_path(path).lower()
-        if any(lowered.endswith(suffix) for suffix in read_profile.get('focusEntrySuffixes', set())):
-            add_path(path)
+        normalized = normalize_rel_path(path)
+        if normalized in seen and normalized not in seen_entries:
+            entry_points.append(normalized)
+            seen_entries.add(normalized)
 
-    for path in deduped:
-        lowered = path.lower()
-        if any(lowered.endswith(suffix) for suffix in read_profile.get('focusEntrySuffixes', set())):
-            add_path(path)
-
-    remainder = [
-        path for path in deduped
-        if path not in used and not is_suppressed_by_profile(path, query_intent, read_profile)
-    ]
-    return preferred + remainder
-
-
-def infer_query_intent(query: str | None) -> dict:
-    if not query:
-        return {
-            'labels': ['general-read'],
-            'keywords': [],
-        }
-
-    lowered = query.lower()
-    labels = []
-
-    if any(token in lowered for token in ['config', 'setting', '配置', '参数']):
-        labels.append('configuration')
-    if any(token in lowered for token in ['link', 'url', 'guide', 'doc', '文档', '链接']):
-        labels.append('documentation-link')
-    if any(token in lowered for token in ['persist', 'save', 'store', '保存', '持久化']):
-        labels.append('persistence-flow')
-    if any(token in lowered for token in ['type', 'schema', 'interface', 'model', '类型']):
-        labels.append('type-definition')
-    if any(token in lowered for token in ['ui', 'component', 'page', '界面', '组件']):
-        labels.append('ui-entry')
-    if any(token in lowered for token in ['runtime', 'lifecycle', 'flow', '执行', '链路']):
-        labels.append('runtime-flow')
-
-    if not labels:
-        labels.append('general-read')
-
-    keywords = sorted({
-        token
-        for token in re.findall(r'[\w\-/.:#@]+', lowered)
-        if len(token) >= 3
-    })[:16]
-
-    return {
-        'labels': labels,
-        'keywords': keywords,
-    }
-
-
-def infer_query_intent_v2(query: str | None) -> dict:
-    if not query:
-        return {
-            'labels': ['general-read'],
-            'keywords': [],
-        }
-
-    lowered = (normalize_query_text(query) or query).lower()
-    labels = []
-
-    if any(token in lowered for token in ['config', 'setting', '配置', '参数']):
-        labels.append('configuration')
-    if any(token in lowered for token in ['link', 'url', 'guide', 'doc', '文档', '链接']):
-        labels.append('documentation-link')
-    if any(token in lowered for token in ['persist', 'save', 'store', '保存', '持久']):
-        labels.append('persistence-flow')
-    if any(token in lowered for token in ['type', 'schema', 'interface', 'model', '类型']):
-        labels.append('type-definition')
-    if any(token in lowered for token in ['ui', 'component', 'page', '界面', '组件']):
-        labels.append('ui-entry')
-    if any(token in lowered for token in ['runtime', 'lifecycle', 'flow', '执行', '链路']):
-        labels.append('runtime-flow')
-    if any(token in lowered for token in ['gateway', 'delivery', 'route', 'handler', 'session', 'router', '投递', '路由', '网关']):
-        labels.append('integration-flow')
-    if any(token in lowered for token in ['delivery route', 'message', 'session', '投递', '消息', '路由', 'route']):
-        labels.append('routing-flow')
-
-    if not labels:
-        labels.append('general-read')
-
-    keywords = sorted({
-        token
-        for token in re.findall(r'[\w\-/.:#@]+', lowered)
-        if len(token) >= 3 and '�' not in token
-    })[:16]
-
-    return {
-        'labels': sorted(dict.fromkeys(labels)),
-        'keywords': keywords,
-    }
-
-
-infer_query_intent = infer_query_intent_v2
-
-
-def infer_query_intent_generic(query: str | None) -> dict:
-    if not query:
-        return {
-            'labels': ['general-read'],
-            'keywords': [],
-        }
-
-    lowered = (normalize_query_text(query) or query).lower()
-    labels = []
-
-    if any(token in lowered for token in ['config', 'setting', '配置', '参数']):
-        labels.append('configuration')
-    if any(token in lowered for token in ['link', 'url', 'guide', 'doc', '文档', '链接', '说明']):
-        labels.append('documentation-link')
-    if any(token in lowered for token in ['persist', 'save', 'store', '保存', '持久', '存储']):
-        labels.append('persistence-flow')
-    if any(token in lowered for token in ['type', 'schema', 'interface', 'model', '类型', '模型', '接口']):
-        labels.append('type-definition')
-    if any(token in lowered for token in ['ui', 'component', 'page', '界面', '组件', '页面']):
-        labels.append('ui-entry')
-    if any(token in lowered for token in ['runtime', 'lifecycle', 'flow', '执行', '链路', '流程']):
-        labels.append('runtime-flow')
-    if any(token in lowered for token in ['gateway', 'adapter', 'connector', 'integration', 'plugin', 'handler', 'manager', 'session', '网关', '适配', '连接', '集成', '插件']):
-        labels.append('integration-flow')
-    if any(token in lowered for token in ['route', 'router', 'delivery', 'dispatch', 'message', 'reply', 'channel', 'session', '路由', '投递', '分发', '消息', '回复', '通道', '会话']):
-        labels.append('routing-flow')
-
-    if not labels:
-        labels.append('general-read')
-
-    keywords = sorted({
-        token
-        for token in re.findall(r'[\w\-/.:#@\u4e00-\u9fff]+', lowered)
-        if len(token) >= 2 and '锟' not in token
-    })[:16]
-
-    return {
-        'labels': sorted(dict.fromkeys(labels)),
-        'keywords': keywords,
-    }
-
-
-infer_query_intent = infer_query_intent_generic
-infer_query_intent_v2 = infer_query_intent_generic
+    remainder = [path for path in deduped if path not in seen_entries]
+    return entry_points + remainder
 
 
 def infer_query_intent_framework(query: str | None) -> dict:
@@ -2168,35 +1798,8 @@ def infer_query_intent_framework(query: str | None) -> dict:
     lowered = (normalize_query_text(query) or query).lower()
     terms = extract_query_terms(lowered)
     keywords = expand_query_terms(terms)
-    keyword_set = set(keywords)
-    labels = []
-
-    if keyword_set & {'config', 'setting', 'configure', 'options', '配置'}:
-        labels.append('configuration')
-    if keyword_set & {'link', 'url', 'guide', 'doc', 'docs', 'documentation', '说明', '文档'}:
-        labels.append('documentation-link')
-    if keyword_set & {'persist', 'save', 'store', 'sqlite', 'db', '持久化', '存储', '保存'}:
-        labels.append('persistence-flow')
-    if keyword_set & {'type', 'types', 'interface', 'schema', 'model', '类型'}:
-        labels.append('type-definition')
-    if keyword_set & ({'ui', 'component', 'page', 'view', '界面', '组件'} | UI_SELECTION_TERMS | {'display', 'screen'}):
-        labels.append('ui-entry')
-    if keyword_set & PARAMETER_SELECTION_TERMS:
-        labels.append('parameter-selection')
-    if keyword_set & {'runtime', 'lifecycle', 'flow', 'process', 'pipeline', '运行时', '生命周期', '流程'}:
-        labels.append('runtime-flow')
-    if keyword_set & {'skill', 'skills', 'plugin', 'plugins'} and keyword_set & GENERAL_QUERY_ACTION_TERMS:
-        labels.append('runtime-flow')
-    if keyword_set & {'gateway', 'adapter', 'connector', 'integration', 'plugin', 'handler', 'manager', 'session', 'channel', '网关', '适配', '集成', '插件'}:
-        labels.append('integration-flow')
-    if keyword_set & {'route', 'routing', 'router', 'delivery', 'dispatch', 'message', 'reply', 'channel', 'session', '路由', '投递', '分发', '消息', '回复', '会话'}:
-        labels.append('routing-flow')
-
-    if not labels:
-        labels.append('general-read')
-
     return {
-        'labels': sorted(dict.fromkeys(labels)),
+        'labels': ['general-read'],
         'keywords': keywords[:20],
         'terms': terms[:20],
     }
@@ -2208,11 +1811,9 @@ infer_query_intent_v2 = infer_query_intent_framework
 
 def rerank_read_matches(matches: list[dict], query_intent: dict, read_profile: dict | None = None) -> list[dict]:
     read_profile = read_profile or select_read_profile(query_intent)
-    labels = set(query_intent.get('labels', []))
     query_terms = set(query_intent.get('keywords', []))
     exact_terms = set(query_intent.get('terms', []))
-    action_terms = query_terms & GENERAL_QUERY_ACTION_TERMS
-    exact_action_terms = exact_terms & GENERAL_QUERY_ACTION_TERMS
+    test_query = any(term in {'test', 'tests', 'spec', 'harness', 'fixture', 'e2e', '测试', '用例'} for term in (query_terms | exact_terms))
     reranked = []
 
     for item in matches:
@@ -2232,46 +1833,8 @@ def rerank_read_matches(matches: list[dict], query_intent: dict, read_profile: d
             bonus -= 18
         if (path.startswith('scripts/') or '/scripts/' in path) and not (query_terms & {'script', 'setup', 'build', 'cli'}):
             bonus -= 10
-
-        if 'documentation-link' in labels:
-            if kind == 'link':
-                bonus += 40
-            if any(token in haystack for token in ['guideurl', 'http://', 'https://', 'guide', 'docs', 'link']):
-                bonus += 24
-
-        if 'configuration' in labels:
-            if kind in {'config-flow', 'config-type'}:
-                bonus += 28
-            if any(token in haystack for token in ['config', 'setting', 'persistconfig', 'updateconfig']):
-                bonus += 18
-
-        if 'ui-entry' in labels:
-            if any(token in path for token in ['/components/', 'settings.tsx', 'imsettings']):
-                bonus += 24
-
-        if 'persistence-flow' in labels and any(token in haystack for token in ['persist', 'store', 'save']):
-            bonus += 20
-
-        if 'type-definition' in labels and any(token in path for token in ['/types/', '.d.ts', 'schema', 'model']):
-            bonus += 16
-
-        if 'runtime-flow' in labels:
-            if any(token in path for token in ['runtime', 'adapter', 'manager', '/main/', 'gateway', 'engine', 'plugin', 'connector']):
-                bonus += 28
-            if any(token in haystack for token in ['runtime', 'lifecycle', 'session', 'manager', 'adapter', 'gateway', 'engine', 'plugin']):
-                bonus += 20
-
-        if 'integration-flow' in labels:
-            if any(token in path for token in ['manager', 'handler', 'adapter', 'gateway', 'connector', 'plugin', 'service', '/main/', '/server/', '/api/']):
-                bonus += 28
-            if any(token in haystack for token in ['gateway', 'adapter', 'connector', 'integration', 'session', 'handler', 'channel', 'plugin', 'transport']):
-                bonus += 22
-
-        if 'routing-flow' in labels:
-            if any(token in path for token in ['route', 'router', 'dispatch', 'delivery', 'handler', 'gateway', 'channel', 'session']):
-                bonus += 24
-            if any(token in haystack for token in ['route', 'delivery', 'dispatch', 'session', 'message', 'reply', 'channel', 'send', 'receive']):
-                bonus += 18
+        if is_probably_test_path(path) and not test_query:
+            bonus -= 48
 
         keyword_overlap = len(haystack_terms & query_terms)
         if keyword_overlap:
@@ -2283,13 +1846,6 @@ def rerank_read_matches(matches: list[dict], query_intent: dict, read_profile: d
         if exact_symbol_overlap:
             bonus += min(exact_symbol_overlap, 2) * 18
 
-        if action_terms and haystack_terms & action_terms:
-            bonus += 14
-        if exact_action_terms and haystack_terms & exact_action_terms:
-            bonus += 18
-        if exact_action_terms and symbol_terms & exact_action_terms:
-            bonus += 20
-
         bonus += score_match_with_profile(path, symbol_terms, query_intent, read_profile)
 
         reranked.append((item.get('score', 0) + bonus, item))
@@ -2299,40 +1855,7 @@ def rerank_read_matches(matches: list[dict], query_intent: dict, read_profile: d
 
 
 def score_match_with_profile(path: str, symbol_terms: set[str], query_intent: dict, read_profile: dict) -> int:
-    lowered = normalize_rel_path(path).lower()
-    exact_terms = set(query_intent.get('terms', []))
-    bonus = 0
-
-    for token in read_profile.get('focusManagerTokens', set()):
-        if token in lowered:
-            bonus += 32
-
-    for token in read_profile.get('preferPathTokens', set()):
-        if token in lowered:
-            bonus += 22
-
-    for suffix in read_profile.get('focusEntrySuffixes', set()):
-        if lowered.endswith('/' + suffix) or lowered.endswith(suffix):
-            bonus += 16
-
-    if is_suppressed_by_profile(path, query_intent, read_profile):
-        if '/libs/' in lowered:
-            bonus -= 18
-        if lowered.startswith('scripts/') or '/scripts/' in lowered:
-            bonus -= 24
-
-    boosted_terms = read_profile.get('boostSymbolTerms', set())
-    if boosted_terms and symbol_terms & boosted_terms:
-        bonus += 24
-
-    penalized_terms = read_profile.get('penalizeSymbolTerms', set())
-    if penalized_terms and symbol_terms & penalized_terms and not (symbol_terms & boosted_terms):
-        bonus -= 10
-
-    if 'download' in exact_terms and 'download' in symbol_terms:
-        bonus += 24
-
-    return bonus
+    return 0
 
 
 def build_read_file_entries(
@@ -2551,38 +2074,25 @@ def build_read_flow_anchors(
     query_intent: dict,
     limit: int,
 ) -> list[dict]:
-    labels = set(query_intent.get('labels', []))
-    if not labels.intersection({'integration-flow', 'routing-flow', 'runtime-flow'}):
-        return []
-
     anchors = []
     seen = set()
-    query_terms = set(query_intent.get('keywords', []))
-    action_terms = query_terms & GENERAL_QUERY_ACTION_TERMS
-
-    def allow_path(path: str) -> bool:
-        lowered = (path or '').lower()
-        if {'integration-flow', 'routing-flow'} & labels:
-            return any(token in lowered for token in ['gateway', 'route', 'router', 'handler', 'manager', 'store', 'service', 'adapter', 'connector', 'session', 'channel', '/main/', '/server/', '/api/'])
-        return True
 
     def classify_anchor(path: str, kind: str, preview: str = '') -> tuple[str | None, int]:
         lowered = (path or '').lower()
-        combined_terms = set(extract_text_terms(f'{path or ""} {preview or ""}'))
         if lowered.endswith('index.ts') or lowered.endswith('main.ts') or lowered.endswith('app.tsx'):
             return 'entry', 0
-        if 'runtime-flow' in labels and action_terms and kind in {'function', 'action-flow'} and combined_terms & action_terms:
-            return 'operation', 1
         if 'manager' in lowered:
-            return 'manager', 2
+            return 'manager', 1
         if 'deliveryroute' in lowered or 'route' in lowered or 'router' in lowered or 'dispatch' in lowered:
-            return 'routing', 3
+            return 'routing', 2
         if 'handler' in lowered:
-            return 'handler', 4
+            return 'handler', 3
         if 'store' in lowered:
-            return 'store', 5
+            return 'store', 4
         if any(token in lowered for token in ['gateway', 'adapter', 'connector', 'plugin', 'transport']):
-            return 'integration', 6
+            return 'integration', 5
+        if any(token in lowered for token in ['runtime', 'session', 'channel', 'service']):
+            return 'runtime', 6
         if 'type' in lowered or '.d.ts' in lowered or 'schema' in lowered or 'model' in lowered:
             return 'types', 7
         if kind == 'function':
@@ -2591,7 +2101,7 @@ def build_read_flow_anchors(
 
     for item in snippet_items:
         path = item.get('path')
-        if not path or not allow_path(path):
+        if not path:
             continue
         anchor_type, priority = classify_anchor(
             path,
@@ -2620,8 +2130,6 @@ def build_read_flow_anchors(
         })
 
     for path in file_paths:
-        if not allow_path(path):
-            continue
         anchor_type, priority = classify_anchor(path, '')
         if not anchor_type:
             continue
@@ -2664,7 +2172,6 @@ def build_read_next_hops(
     next_hops = []
     seen = set(file_paths)
     matched_paths = [item.get('path') for item in snippet_items if item.get('path')]
-    intent_labels = set(query_intent.get('labels', []))
     query_terms = set(query_intent.get('keywords', []))
 
     def path_module(path: str) -> str:
@@ -2712,91 +2219,19 @@ def build_read_next_hops(
         for dependency in dependency_map.get(path, [])[:4]:
             add_hop(dependency, 'matched file dependency')
 
-    if 'configuration' in intent_labels or 'documentation-link' in intent_labels:
-        for item in important_files:
-            path = item['path'].lower()
-            if any(token in path for token in ['config', 'setting', 'readme', 'guide', 'doc']):
-                add_hop(item['path'], 'configuration or guide follow-up')
-                if len(next_hops) >= 8:
-                    break
+    matched_modules = {path_module(path) for path in matched_paths + file_paths if path}
+    for module_name in matched_modules:
+        for path in module_file_map.get(module_name, [])[:8]:
+            add_hop(path, 'same module follow-up')
+            if len(next_hops) >= 8:
+                break
+        if len(next_hops) >= 8:
+            break
 
-    if 'type-definition' in intent_labels or 'configuration' in intent_labels:
-        for item in important_files:
-            path = item['path'].lower()
-            if any(token in path for token in ['types', 'type', '.d.ts', 'schema', 'model']):
-                add_hop(item['path'], 'type definition follow-up')
-                if len(next_hops) >= 8:
-                    break
-
-    if 'persistence-flow' in intent_labels:
-        for item in important_files:
-            path = item['path'].lower()
-            if any(token in path for token in ['store', 'service', 'sqlite', 'persist']):
-                add_hop(item['path'], 'persistence flow follow-up')
-                if len(next_hops) >= 8:
-                    break
-
-    if 'ui-entry' in intent_labels:
-        for item in important_files:
-            path = item['path'].lower()
-            if any(token in path for token in ['component', 'app.tsx', 'page', 'view', 'settings']):
-                add_hop(item['path'], 'ui entry follow-up')
-                if len(next_hops) >= 8:
-                    break
-
-    if 'integration-flow' in intent_labels or 'routing-flow' in intent_labels:
-        flow_candidates = []
-        flow_candidates.extend(file_paths)
-        flow_candidates.extend(item.get('path') for item in snippet_items if item.get('path'))
-        flow_candidates.extend(item['path'] for item in important_files)
-        deduped_candidates = []
-        seen_candidates = set()
-        for path in flow_candidates:
-            path = normalize_rel_path(path) if path else path
-            if not path or path in seen_candidates:
-                continue
-            seen_candidates.add(path)
-            deduped_candidates.append(path)
-        deduped_candidates.sort(
-            key=lambda candidate: (
-                -len(set(extract_text_terms(candidate)) & query_terms),
-                candidate,
-            )
-        )
-        for path in deduped_candidates:
-            lowered = (path or '').lower()
-            if any(token in lowered for token in ['gateway', 'adapter', 'connector', 'manager', 'handler', 'route', 'router', 'dispatch', 'delivery', 'store', 'service', 'session', 'channel']):
-                add_hop(path, 'integration or routing follow-up')
-                if len(next_hops) >= 8:
-                    break
-
-    if 'runtime-flow' in intent_labels:
-        runtime_candidates = []
-        matched_modules = {path_module(path) for path in matched_paths + file_paths if path}
-        for module_name in matched_modules:
-            runtime_candidates.extend(module_file_map.get(module_name, [])[:8])
-        runtime_candidates.extend(snapshot.get('summary', {}).get('entryPoints', [])[:8])
-        runtime_candidates.extend(item['path'] for item in important_files)
-        deduped_runtime_candidates = []
-        seen_runtime = set()
-        for path in runtime_candidates:
-            path = normalize_rel_path(path) if path else path
-            if not path or path in seen_runtime:
-                continue
-            seen_runtime.add(path)
-            deduped_runtime_candidates.append(path)
-        deduped_runtime_candidates.sort(
-            key=lambda candidate: (
-                -len(set(extract_text_terms(candidate)) & query_terms),
-                candidate,
-            )
-        )
-        for path in deduped_runtime_candidates:
-            lowered = path.lower()
-            if any(token in lowered for token in ['main.ts', 'preload', 'skillmanager', 'runtime', 'adapter', 'gateway', 'engine', '/main/', 'channel', 'session', 'sync']):
-                add_hop(path, 'runtime flow follow-up')
-                if len(next_hops) >= 8:
-                    break
+    for path in snapshot.get('summary', {}).get('entryPoints', [])[:8]:
+        add_hop(path, 'entry point follow-up')
+        if len(next_hops) >= 8:
+            break
 
     if query_terms:
         for item in important_files:
@@ -2805,6 +2240,16 @@ def build_read_next_hops(
                 add_hop(item['path'], 'keyword-related important file')
                 if len(next_hops) >= 8:
                     break
+
+    if len(next_hops) < 8:
+        hotspot_candidates = sorted(
+            graph.get('hotspots', []),
+            key=lambda item: (-(item.get('inbound', 0) + item.get('outbound', 0)), item.get('path') or ''),
+        )
+        for item in hotspot_candidates:
+            add_hop(item.get('path') or '', 'structural hotspot follow-up')
+            if len(next_hops) >= 8:
+                break
 
     return next_hops[:8]
 
