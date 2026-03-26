@@ -44,6 +44,16 @@ Before coding, align on:
 Commit to a clear aesthetic direction before writing code. Bold maximalism and
 refined minimalism both work when execution is intentional.
 
+Before building, also write three anchors:
+
+- **Visual thesis**: one sentence describing mood, material, and energy
+- **Content plan**: hero, support, detail, final CTA
+- **Interaction thesis**: two or three motion ideas that change the feel of the
+  page
+
+Each section should have one job, one dominant visual idea, and one primary
+takeaway or action.
+
 ## Core Principles
 
 - Avoid generic AI aesthetics, especially default font stacks, timid palettes,
@@ -133,6 +143,42 @@ Rules:
 - Avoid interchangeable centered-hero plus three-card-grid layouts unless the
   surrounding product already uses that pattern.
 - Use grid, overlap, stacking, or sectional contrast to create hierarchy.
+- Treat the first viewport like a poster, not a document.
+- Default to cardless layouts for marketing and brand-led work. Use sections,
+  columns, dividers, lists, and media blocks before reaching for card grids.
+- Let each section carry one dominant idea instead of stacking many small UI
+  devices into the same region.
+
+### Landing Page Composition
+
+- Default sequence: hero, support, detail, final CTA.
+- Make the brand or product name the loudest text on branded pages.
+- Use one dominant visual anchor in the first viewport.
+- Prefer full-bleed or visually dominant heroes when the brief is brand-led.
+- Avoid hero cards, stat strips, logo clouds, and floating dashboard props by
+  default.
+- Keep the hero text column narrow enough to scan quickly and place it on a
+  calm area of the visual.
+- If a sticky header consumes viewport height, budget for it in the hero.
+
+### App And Dashboard Restraint
+
+- Default to calm hierarchy, strong spacing, few colors, and minimal chrome.
+- Organize product UI around workspace, navigation, secondary context, and one
+  clear accent for action or state.
+- Prefer utility copy over marketing copy for dashboards, admin tools, and
+  operational surfaces.
+- Avoid dashboard-card mosaics unless the card itself is the interaction model.
+
+### Imagery And Copy
+
+- Make imagery do narrative work; decorative texture alone is not enough.
+- Prefer real-looking, in-situ imagery over fake dashboards or abstract filler.
+- Ensure imagery has a stable tonal area for text and tap targets.
+- Keep headlines concise, let them carry the meaning, and trim repetition
+  aggressively.
+- For product surfaces, prioritize orientation, status, and action over mood or
+  campaign language.
 
 ### Components
 
@@ -160,10 +206,16 @@ Rules:
 - Lazy-load heavy libraries and isolate perpetual motion in small leaf
   components.
 - Disable expensive parallax or 3D effects on coarse pointers or weak devices.
+- For visually led work, ship two or three intentional motions: one entrance
+  sequence, one scroll-linked or depth effect, and one hover or reveal that
+  sharpens affordance.
+- Remove motion that is ornamental only; motion should improve hierarchy,
+  atmosphere, or affordance in a quick recording.
 
 Read these when needed:
 
 - `references/motion-recipes.md`
+- `references/composition-playbook.md`
 - `references/troubleshooting.md`
 
 ## Asset Generation
@@ -233,11 +285,15 @@ Before delivering:
 - generated media is saved locally
 - heavy libraries are justified and isolated
 - code matches the intended aesthetic rather than a generic template
+- the first screen has one unmistakable visual anchor
+- the brand or product is unmistakable in the first screen
+- each section has one job and cards are used only when they earn their place
 
 ## References
 
 Read only as needed:
 
+- `references/composition-playbook.md`
 - `references/motion-recipes.md`
 - `references/troubleshooting.md`
 - `references/asset-prompt-guide.md`
