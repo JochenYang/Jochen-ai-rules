@@ -142,7 +142,7 @@ claude --plugin-dir ./Jochen-ai-rules
 - **Database Engineer**: Schema 设计、查询优化、迁移
 - **API Designer**: REST、GraphQL、gRPC 设计
 - **Quality Assurance**: 测试，安全审计
-- **Frontend Design**: 生产级 UI 创建
+- **Frontend Design**: 生产级前端实现，覆盖动效、本地媒体资产与转化文案
 - **UI/UX Pro Max**: 50+ 设计风格、21 种配色方案
 - **Agent Teams**: 多 agent 协作
 - **Three.js Builder**: 3D 网页内容创建

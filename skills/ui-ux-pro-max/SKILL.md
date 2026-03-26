@@ -11,7 +11,9 @@ Comprehensive design guide for web and mobile applications. Contains 50+ styles,
 
 - Use `ui-ux-pro-max` for **design direction, decision support, and UX diagnosis**.
 - Use `frontend-design` for **writing final frontend implementation code**.
-- For end-to-end UI work: decide direction with `ui-ux-pro-max`, then hand off implementation to `frontend-design`.
+- For end-to-end UI work, `ui-ux-pro-max` can help with direction setting,
+  audits, and critique, while `frontend-design` can be used when implementation
+  code is needed.
 
 ## When to Apply
 

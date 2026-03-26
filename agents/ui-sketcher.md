@@ -180,4 +180,4 @@ Before finalizing output, verify:
 This agent references the following skills for best practices:
 
 - `.claude/skills/ui-ux-pro-max/` - 50 styles, 21 palettes, 50 font pairings, component library patterns
-- `.claude/skills/frontend-design/` - Production-grade frontend design principles and creative direction
+- `.claude/skills/frontend-design/` - Production-grade frontend implementation with motion systems, local assets, and conversion-aware delivery

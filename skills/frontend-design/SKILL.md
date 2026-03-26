@@ -1,90 +1,250 @@
 ---
 name: frontend-design
-description: Implement distinctive, production-grade frontend UI code. Use when user asks to "build a button", "create a navbar", "make a landing page", "implement a card component", "design a form", "create a modal", or says "write React/Vue/HTML/CSS code" for components, pages, or apps with clear direction. If design direction is unclear, use ui-ux-pro-max first.
+description: Implement distinctive, production-grade frontend UI code with strong visual direction, motion systems, local media asset generation, conversion-aware copy, and polished frontend execution. Use when building landing pages, marketing sites, product pages, dashboards, motion-heavy interfaces, or frontend experiences that need real assets and compelling copy.
 ---
 
-This skill guides creation of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.
+# Frontend Design
+
+Build distinctive, production-grade frontend interfaces with clear visual direction,
+strong motion, real local assets, and conversion-aware content. Prefer
+implementation over abstract strategy, but keep the final output cohesive,
+performant, and ready to ship.
 
 ## Boundary With Other Skills
 
-- Use `frontend-design` for **implementation-first UI tasks** (write production code).
-- Use `ui-ux-pro-max` for **design-system selection, style reasoning, and UX audits**.
-- If user asks both strategy and implementation: run `ui-ux-pro-max` first, then implement with `frontend-design`.
+- Use `frontend-design` for implementation-first frontend work.
+- Use `ui-ux-pro-max` only when the user explicitly wants a separate UX audit,
+  design-system review, or style-direction critique before implementation.
+- Use `developer` when the task expands into backend or broader full-stack
+  architecture.
+- Keep media generation tied to the frontend deliverable. Do not drift into
+  unrelated art, video, or audio production unless the user explicitly asks.
 
-The user provides frontend requirements: a component, page, application, or interface to build. They may include context about the purpose, audience, or technical constraints.
+## When To Use
 
-## Design Thinking
+Use this skill when the user asks to:
 
-Before coding, understand the context and commit to a BOLD aesthetic direction:
-- **Purpose**: What problem does this interface solve? Who uses it?
-- **Tone**: Pick an extreme: brutally minimal, maximalist chaos, retro-futuristic, organic/natural, luxury/refined, playful/toy-like, editorial/magazine, brutalist/raw, art deco/geometric, soft/pastel, industrial/utilitarian, etc. There are so many flavors to choose from. Use these for inspiration but design one that is true to the aesthetic direction.
-- **Constraints**: Technical requirements (framework, performance, accessibility).
-- **Differentiation**: What makes this UNFORGETTABLE? What's the one thing someone will remember?
+- build a landing page, marketing site, dashboard, product page, or interactive
+  app shell
+- create polished React, Vue, HTML, CSS, or Tailwind frontend code
+- add motion systems, scroll storytelling, or premium interaction details
+- generate local image, video, or audio assets for the interface
+- write conversion-aware UI copy, headings, and CTAs
+- build visually distinctive frontend work that should not feel generic
 
-**CRITICAL**: Choose a clear conceptual direction and execute it with precision. Bold maximalism and refined minimalism both work - the key is intentionality, not intensity.
+## Working Style
 
-Then implement working code (HTML/CSS/JS, React, Vue, etc.) that is:
-- Production-grade and functional
-- Visually striking and memorable
-- Cohesive with a clear aesthetic point-of-view
-- Meticulously refined in every detail
+Before coding, align on:
 
-## Frontend Aesthetics Guidelines
+- **Purpose**: what the interface does and who it serves
+- **Tone**: the specific visual direction to commit to
+- **Constraints**: framework, design system, performance, accessibility
+- **Differentiation**: the one memorable visual or interaction idea
 
-Focus on:
-- **Typography**: Choose fonts that are beautiful, unique, and interesting. Avoid generic fonts like Arial and Inter; opt instead for distinctive choices that elevate the frontend's aesthetics; unexpected, characterful font choices. Pair a distinctive display font with a refined body font.
-- **Color & Theme**: Commit to a cohesive aesthetic. Use CSS variables for consistency. Dominant colors with sharp accents outperform timid, evenly-distributed palettes.
-- **Motion**: Use animations for effects and micro-interactions. Prioritize CSS-only solutions for HTML. Use Motion library for React when available. Focus on high-impact moments: one well-orchestrated page load with staggered reveals (animation-delay) creates more delight than scattered micro-interactions. Use scroll-triggering and hover states that surprise.
-- **Spatial Composition**: Unexpected layouts. Asymmetry. Overlap. Diagonal flow. Grid-breaking elements. Generous negative space OR controlled density.
-- **Backgrounds & Visual Details**: Create atmosphere and depth rather than defaulting to solid colors. Add contextual effects and textures that match the overall aesthetic. Apply creative forms like gradient meshes, noise textures, geometric patterns, layered transparencies, dramatic shadows, decorative borders, custom cursors, and grain overlays.
+Commit to a clear aesthetic direction before writing code. Bold maximalism and
+refined minimalism both work when execution is intentional.
 
-NEVER use generic AI-generated aesthetics like overused font families (Inter, Roboto, Arial, system fonts), cliched color schemes (particularly purple gradients on white backgrounds), predictable layouts and component patterns, and cookie-cutter design that lacks context-specific character.
+## Core Principles
 
-Interpret creatively and make unexpected choices that feel genuinely designed for the context. No design should be the same. Vary between light and dark themes, different fonts, different aesthetics. NEVER converge on common choices (Space Grotesk, for example) across generations.
+- Avoid generic AI aesthetics, especially default font stacks, timid palettes,
+  and interchangeable layouts.
+- Use expressive typography and a deliberate visual hierarchy.
+- Prefer asymmetry, rhythm, overlap, layering, or controlled density over flat
+  boilerplate composition.
+- Match implementation complexity to the intended visual direction.
+- Preserve the existing design language when working inside an established
+  product or design system.
+- Ship real working code, not mockup-only markup.
 
-**IMPORTANT**: Match implementation complexity to the aesthetic vision. Maximalist designs need elaborate code with extensive animations and effects. Minimalist or refined designs need restraint, precision, and careful attention to spacing, typography, and subtle details. Elegance comes from executing the vision well.
+## Workflow
 
-Remember: Claude is capable of extraordinary creative work. Don't hold back, show what can truly be created when thinking outside the box and committing fully to a distinctive vision.
+### 1. Align The Request
 
-## Examples
+1. Identify page type, audience, and technical constraints.
+2. Confirm framework and styling stack from the repo before importing
+   dependencies.
+3. Choose a strong visual direction and motion intensity.
 
-### Example 1: Button Component
-User says: "Create a submit button with hover animation"
-Actions:
-1. Choose bold aesthetic direction (e.g., brutalist with sharp edges)
-2. Select distinctive font pairing
-3. Implement CSS with meaningful hover/focus states
-4. Add micro-interaction animation
-Result: Production-ready button code
+### 2. Plan Layout, Motion, And Assets Together
 
-### Example 2: Landing Page
-User says: "Build a SaaS landing page for a dev tool"
-Actions:
-1. Define aesthetic (e.g., terminal-inspired brutalist)
-2. Create hero, features, pricing sections
-3. Use CSS animations for entrance effects
-4. Ensure responsive design
-Result: Complete HTML/CSS landing page
+1. Break the UI into sections and reusable components.
+2. Decide which sections need motion, which need static polish, and which need
+   supporting media.
+3. Prefer the smallest set of tools that can deliver the intended effect.
 
-### Example 3: Card Component
-User says: "Design a product card with hover effects"
-Actions:
-1. Pick visual direction (e.g., soft/pastel luxury)
-2. Implement card layout with CSS Grid/Flexbox
-3. Add depth with shadows, gradients, or transforms
-4. Create hover state animations
-Result: Reusable card component
+### 3. Verify Dependencies
 
-## Troubleshooting
+- Check `package.json` before using a library.
+- Do not mix Tailwind v3 and v4 syntax.
+- For React or Next.js, isolate interactive behavior into client boundaries when
+  needed.
 
-### Issue: Output looks generic/AI-generated
-Cause: Defaulting to safe choices (Inter font, purple gradients, centered layouts)
-Solution: Commit to a specific aesthetic direction before coding. Reference the Design Thinking section.
+### 4. Generate Local Assets When Needed
 
-### Issue: Design doesn't match the intended tone
-Cause: Skipping the context analysis step
-Solution: Before coding, explicitly state: "This interface is [brutalist/minimalist/luxury/etc] because [reason]."
+Only generate media when it directly supports the frontend outcome.
 
-### Issue: Layout breaks on mobile
-Cause: Hardcoded dimensions or desktop-only breakpoints
-Solution: Use relative units (rem/vh/vw), implement mobile-first media queries, test responsive behavior.
+Rules:
+
+- Never ship placeholder image or video URLs.
+- Show prompts to the user before generation when prompts materially affect the
+  result.
+- Save assets locally in the target project.
+- Prefer web-ready formats and compress before delivery.
+
+### 5. Write Real Copy
+
+- Do not use lorem ipsum or filler text.
+- Write copy that matches the product, audience, and tone.
+- Use AIDA, PAS, or FAB when helpful.
+
+### 6. Implement The UI
+
+- Build responsive, accessible, production-ready code.
+- Integrate local assets, real copy, and intentional motion.
+- Favor polish in spacing, states, and interaction details.
+
+### 7. Run Quality Gates
+
+- Validate responsive behavior.
+- Validate reduced-motion handling.
+- Validate loading, empty, and error states when applicable.
+- Validate that media is local and dependencies are real.
+
+## Design Rules
+
+### Typography
+
+- Prefer distinctive display and body pairings over default stacks.
+- Avoid Inter, Arial, Roboto, and other generic defaults unless the existing
+  product already uses them.
+- Match font personality to the product tone instead of reaching for the same
+  pairings every time.
+
+### Color And Surfaces
+
+- Commit to one coherent palette and use CSS variables for consistency.
+- Avoid predictable purple-on-white gradients and washed-out startup palettes.
+- Build atmosphere with layered backgrounds, textures, gradients, borders, or
+  shadow systems that fit the concept.
+
+### Layout
+
+- Prefer asymmetry, modular rhythm, or intentional negative space.
+- Avoid interchangeable centered-hero plus three-card-grid layouts unless the
+  surrounding product already uses that pattern.
+- Use grid, overlap, stacking, or sectional contrast to create hierarchy.
+
+### Components
+
+- Customize shadcn-style primitives or base components so they belong to the
+  chosen direction.
+- Add meaningful loading, empty, error, hover, focus, and pressed states.
+- Do not stop at the happy path.
+
+## Motion Rules
+
+### Tool Selection
+
+- Use CSS for simple hover, focus, and lightweight entrance effects.
+- Use Framer Motion for UI transitions and layout choreography.
+- Use GSAP only when scroll sequencing or precise timeline control is needed.
+- Use Three.js or React Three Fiber only when 3D materially improves the
+  experience.
+
+### Guardrails
+
+- Do not mix GSAP and Framer Motion in the same component.
+- Animate GPU-friendly properties such as `transform`, `opacity`, `filter`, and
+  carefully chosen `clip-path`.
+- Respect `prefers-reduced-motion`.
+- Lazy-load heavy libraries and isolate perpetual motion in small leaf
+  components.
+- Disable expensive parallax or 3D effects on coarse pointers or weak devices.
+
+Read these when needed:
+
+- `references/motion-recipes.md`
+- `references/troubleshooting.md`
+
+## Asset Generation
+
+Use local generation only when the frontend needs real supporting media.
+
+Available scripts:
+
+- `scripts/minimax_image.py`
+- `scripts/minimax_video.py`
+- `scripts/minimax_tts.py`
+- `scripts/minimax_music.py`
+
+Asset workflow:
+
+1. Parse the needed asset type, quantity, format, and placement.
+2. Craft a concrete prompt with composition, lighting, tone, and usage.
+3. Confirm prompts with the user before generation when visual direction is
+   sensitive.
+4. Save generated files under the target project's asset directory.
+5. Prefer WebP for images, compressed MP4 for video, and normalized audio when
+   possible.
+
+Read these when needed:
+
+- `references/asset-prompt-guide.md`
+- `references/minimax-cli-reference.md`
+- `references/minimax-image-guide.md`
+- `references/minimax-video-guide.md`
+- `references/minimax-tts-guide.md`
+- `references/minimax-music-guide.md`
+- `references/minimax-voice-catalog.md`
+- `references/env-setup.md`
+
+## Copywriting
+
+Write real product copy that supports the interface.
+
+- Use AIDA for landing pages and narrative marketing sections.
+- Use PAS for pain-driven hooks and problem framing.
+- Use FAB for feature explanation and benefit-oriented detail.
+- Use concrete CTA language that tells the user what they get.
+
+Good copy is concise, specific, and visually integrated with the layout. Avoid
+generic hype and empty slogans.
+
+## Generative And Visual Frontend
+
+When the request includes generative or art-led presentation:
+
+- use `templates/viewer.html` as the base for interactive visual output
+- use `templates/generator_template.js` as the starting pattern
+- use `canvas-fonts/` when curated local typography helps the visual result
+- prefer deterministic seeded behavior when reproducibility matters
+
+Keep artistic exploration in service of the frontend outcome unless the user
+explicitly asks for standalone visual art.
+
+## Quality Gates
+
+Before delivering:
+
+- responsive on mobile and desktop
+- reduced-motion path is handled
+- loading, empty, and error states exist when applicable
+- no placeholder media URLs remain
+- generated media is saved locally
+- heavy libraries are justified and isolated
+- code matches the intended aesthetic rather than a generic template
+
+## References
+
+Read only as needed:
+
+- `references/motion-recipes.md`
+- `references/troubleshooting.md`
+- `references/asset-prompt-guide.md`
+- `references/minimax-cli-reference.md`
+- `references/minimax-image-guide.md`
+- `references/minimax-video-guide.md`
+- `references/minimax-tts-guide.md`
+- `references/minimax-music-guide.md`
+- `references/minimax-voice-catalog.md`
+- `references/env-setup.md`

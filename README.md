@@ -142,7 +142,7 @@ claude --plugin-dir ./Jochen-ai-rules
 - **Database Engineer**: Schema design, query optimization, migrations
 - **API Designer**: REST, GraphQL, gRPC design
 - **Quality Assurance**: Testing, security auditing
-- **Frontend Design**: Production-grade UI creation
+- **Frontend Design**: Production-grade frontend implementation with motion, local media assets, and conversion-aware copy
 - **UI/UX Pro Max**: 50+ design styles, 21 color palettes
 - **Agent Teams**: Multi-agent collaboration
 - **Three.js Builder**: 3D web content creation
