@@ -53,6 +53,7 @@ Jochen AI Rules 是一个全面的 Claude Code 插件，提供：
 /plugin install developer@jochen-ai-rules
 /plugin install devops-engineer@jochen-ai-rules
 /plugin install frontend-design@jochen-ai-rules
+/plugin install handoff@jochen-ai-rules
 /plugin install mcp-builder@jochen-ai-rules
 /plugin install miloya-codebase@jochen-ai-rules
 /plugin install performance-optimizer@jochen-ai-rules
@@ -102,6 +103,46 @@ git clone https://github.com/JochenYang/Jochen-ai-rules.git
 claude --plugin-dir ./Jochen-ai-rules
 ```
 
+### 方式三：OpenCode 命令包装
+
+OpenCode 支持在 `.opencode/commands/` 下定义项目级 Markdown 命令。
+本仓库已提供：
+
+- `.opencode/commands/handoff.md`
+
+在 OpenCode 中打开项目后，可以直接使用：
+
+```bash
+/handoff write <topic-or-existing-file>
+/handoff read [handoff-file]
+```
+
+这个包装层会复用 `handoff` skill 的逻辑，并保持相同的默认行为：
+
+- `write` 未指定已有文件时，在 `repo/progress/handoffs/` 下新建交接文档
+- `write` 指定已有 handoff 路径时，更新该文件
+- `read` 未指定文件时，读取最新的一份
+- `read` 指定文件时，读取对应的 handoff 文档
+
+### 确定性 Handoff 解析脚本
+
+`handoff` skill 现在包含一个跨平台 Python 辅助脚本
+`skills/handoff/scripts/handoff.py`，用于把目标文件选择做成确定行为。
+
+```bash
+python skills/handoff/scripts/handoff.py write search-migration --project-root /path/to/project
+python skills/handoff/scripts/handoff.py read --project-root /path/to/project
+```
+
+规则：
+
+- `write` 只有在参数指向一个已存在的 handoff 文件时才会更新
+- 否则 `write` 会在 `repo/progress/handoffs/` 下新建一份带时间戳的文档
+- `read` 指定文件时读取指定文件
+- `read` 未指定文件时读取最新的一份
+- 如果 `--project-root` 误指向已安装的 skill 目录，脚本会返回
+  `invalid_project_root`，而不是继续猜路径
+
 > 说明：Claude Code 最终会从你的 Claude 配置目录（通常是 `.claude/`）加载这些文件。
 > 这个仓库为了便于开发，把 `agents/`、`commands/`、`hooks/`、`rules/`、`skills/` 放在仓库根目录；
 > 但文档里仍可能使用 `.claude/...` 路径，因为那是运行时的真实位置。
@@ -143,6 +184,7 @@ claude --plugin-dir ./Jochen-ai-rules
 - **API Designer**: REST、GraphQL、gRPC 设计
 - **Quality Assurance**: 测试，安全审计
 - **Frontend Design**: 生产级前端实现，覆盖动效、本地媒体资产与转化文案
+- **Handoff**: 手动上下文交接工作流，在 reset 前写出可续开发的交接文档，并在新会话中继续读取
 - **UI/UX Pro Max**: 50+ 设计风格、21 种配色方案
 - **Agent Teams**: 多 agent 协作
 - **Three.js Builder**: 3D 网页内容创建

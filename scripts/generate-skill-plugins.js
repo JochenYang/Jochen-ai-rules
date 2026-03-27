@@ -93,7 +93,7 @@ function updateMarketplaceJson(skills, agents, commands) {
     marketplace = {
       name: "jochen-ai-rules",
       owner: { name: "Jochen", email: "dayantv666@gmail.com" },
-      metadata: { description: "Jochen's AI development ruleset", version: "1.2.9" },
+      metadata: { description: "Jochen's AI development ruleset", version: "1.2.10" },
       plugins: []
     };
   }

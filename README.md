@@ -53,6 +53,7 @@ Jochen AI Rules is a comprehensive Claude Code plugin that provides:
 /plugin install developer@jochen-ai-rules
 /plugin install devops-engineer@jochen-ai-rules
 /plugin install frontend-design@jochen-ai-rules
+/plugin install handoff@jochen-ai-rules
 /plugin install mcp-builder@jochen-ai-rules
 /plugin install miloya-codebase@jochen-ai-rules
 /plugin install performance-optimizer@jochen-ai-rules
@@ -102,6 +103,50 @@ git clone https://github.com/JochenYang/Jochen-ai-rules.git
 claude --plugin-dir ./Jochen-ai-rules
 ```
 
+### Option 3: OpenCode Command Wrapper
+
+OpenCode supports per-project markdown commands under `.opencode/commands/`.
+This repository includes:
+
+- `.opencode/commands/handoff.md`
+
+After opening the project in OpenCode, you can use:
+
+```bash
+/handoff write <topic-or-existing-file>
+/handoff read [handoff-file]
+```
+
+This wrapper delegates to the `handoff` skill logic and keeps the same default
+behavior:
+
+- write without an existing file creates a new handoff under
+  `repo/progress/handoffs/`
+- write with an existing handoff path updates that file
+- read without a file loads the latest handoff
+- read with a file loads the specified handoff
+
+### Deterministic Handoff Resolver
+
+The `handoff` skill includes a cross-platform Python helper at
+`skills/handoff/scripts/handoff.py` so file selection does not rely on model
+guessing.
+
+```bash
+python skills/handoff/scripts/handoff.py write search-migration --project-root /path/to/project
+python skills/handoff/scripts/handoff.py read --project-root /path/to/project
+```
+
+Rules:
+
+- `write` updates only when the argument points to an existing handoff file
+- otherwise `write` creates a new timestamped file under
+  `repo/progress/handoffs/`
+- `read` loads the specified file when provided
+- otherwise `read` loads the latest handoff
+- if `--project-root` accidentally points at the installed skill directory, the
+  script returns `invalid_project_root` instead of guessing
+
 > Note: Claude Code ultimately loads these files from your Claude configuration folder (typically under `.claude/`).
 > This repository keeps `agents/`, `commands/`, `hooks/`, `rules/`, `skills/` at the repo root for development,
 > but documentation may reference `.claude/...` paths because that is the runtime location.
@@ -143,6 +188,7 @@ claude --plugin-dir ./Jochen-ai-rules
 - **API Designer**: REST, GraphQL, gRPC design
 - **Quality Assurance**: Testing, security auditing
 - **Frontend Design**: Production-grade frontend implementation with motion, local media assets, and conversion-aware copy
+- **Handoff**: Manual context handoff workflow for writing resume-ready development notes before reset and reading them back later
 - **UI/UX Pro Max**: 50+ design styles, 21 color palettes
 - **Agent Teams**: Multi-agent collaboration
 - **Three.js Builder**: 3D web content creation

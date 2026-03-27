@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Jochen's AI development ruleset with workflows, agents and best practices",
-    "version": "1.2.9"
+    "version": "1.2.10"
   },
   "plugins": [
     {
@@ -55,6 +55,12 @@
       "name": "frontend-design",
       "source": "./skills/frontend-design/",
       "description": "Implement distinctive, production-grade frontend UI code with motion systems, local media assets, and conversion-aware copy.",
+      "skills": ["./"]
+    },
+    {
+      "name": "handoff",
+      "source": "./skills/handoff/",
+      "description": "Create structured manual handoff documents for context reset and resume in long-running development work.",
       "skills": ["./"]
     },
     {
