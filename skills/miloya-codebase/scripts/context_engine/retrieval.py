@@ -10,6 +10,16 @@ STOPWORDS = {
     'files', 'repo', 'project', 'understand', 'task', 'mode', 'need', 'use',
 }
 
+CONFIG_QUERY_TOKENS = {
+    'config', 'setting', 'settings', 'env', 'schema', 'workflow', 'workflows',
+    'pipeline', 'pipelines', 'release', 'releases', 'ci', 'cd', 'action',
+    'actions', 'manifest', 'secrets', 'secret', 'deploy', 'deployment',
+}
+
+MANIFEST_SUFFIXES = {'.json', '.yaml', '.yml', '.toml', '.ini', '.cfg', '.conf'}
+DOC_SUFFIXES = {'.md', '.mdx', '.rst', '.txt', '.adoc'}
+DOC_NAME_TOKENS = {'readme', 'guide', 'manual', 'wiki', 'documentation', 'doc', 'skill', 'skills'}
+
 
 def is_probably_test_path(path: str) -> bool:
     lowered = path.replace('\\', '/').lower()
@@ -249,12 +259,17 @@ def score_chunk(
 ) -> tuple[int, list[str]]:
     score = 0
     reasons = []
+    path = chunk['path']
+    kind = chunk.get('kind', '')
     haystack = ' '.join([
-        chunk['path'],
-        chunk.get('kind', ''),
+        path,
+        kind,
         ' '.join(chunk.get('signals', [])),
         chunk.get('preview', ''),
     ]).lower()
+    config_query = is_config_query(query_tokens)
+    manifest_like = is_manifest_like_path(path)
+    documentation_like = is_documentation_path(path)
 
     overlap = sorted(token for token in query_tokens if token in haystack)
     if overlap:
@@ -271,20 +286,31 @@ def score_chunk(
         score += boost
         reasons.append('recently changed')
 
-    if task == 'understand-project' and chunk['kind'] in {'section', 'model', 'function'}:
+    if task == 'understand-project' and kind in {'section', 'model', 'function'}:
         score += 10
         reasons.append('orientation chunk')
-    if task == 'feature-delivery' and chunk['kind'] in {'route', 'function', 'model', 'action-flow'}:
+    if task == 'feature-delivery' and kind in {'route', 'function', 'model', 'action-flow'}:
         score += 12
         reasons.append('implementation anchor')
-    if task == 'bugfix-investigation' and chunk['kind'] in {'route', 'function'}:
+    if task == 'bugfix-investigation' and kind in {'route', 'function'}:
         score += 10
         reasons.append('execution path')
-    if task == 'code-review' and chunk['kind'] in {'function', 'model', 'route'}:
+    if task == 'code-review' and kind in {'function', 'model', 'route'}:
         score += 8
         reasons.append('review hotspot')
 
-    if is_probably_test_path(chunk['path']):
+    if config_query:
+        if kind in {'config-flow', 'config-type'}:
+            score += 24
+            reasons.append('configuration anchor')
+        if manifest_like:
+            score += 20
+            reasons.append('manifest file')
+        if documentation_like:
+            score -= 16
+            reasons.append('documentation downrank for config query')
+
+    if is_probably_test_path(path):
         if task == 'feature-delivery':
             score -= 26
             reasons.append('test file downrank')
@@ -293,6 +319,30 @@ def score_chunk(
             reasons.append('test file downrank')
 
     return score, reasons
+
+
+def is_config_query(query_tokens: set[str]) -> bool:
+    return any(token in CONFIG_QUERY_TOKENS for token in query_tokens)
+
+
+def is_manifest_like_path(path: str) -> bool:
+    lowered = path.replace('\\', '/').lower()
+    filename = lowered.rsplit('/', 1)[-1]
+    suffix = ''
+    if '.' in filename:
+        suffix = '.' + filename.rsplit('.', 1)[-1]
+    file_tokens = tokenize(filename)
+    return suffix in MANIFEST_SUFFIXES or any(token in CONFIG_QUERY_TOKENS for token in file_tokens)
+
+
+def is_documentation_path(path: str) -> bool:
+    lowered = path.replace('\\', '/').lower()
+    filename = lowered.rsplit('/', 1)[-1]
+    suffix = ''
+    if '.' in filename:
+        suffix = '.' + filename.rsplit('.', 1)[-1]
+    file_tokens = tokenize(filename)
+    return suffix in DOC_SUFFIXES or any(token in DOC_NAME_TOKENS for token in file_tokens)
 
 
 def format_chunk_match(chunk: dict, score: int, reasons: list[str]) -> dict:

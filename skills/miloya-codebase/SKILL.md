@@ -42,18 +42,22 @@ Use it when:
 
 ### `/miloya-codebase refresh`
 
-Force regenerate the snapshot.
+Incrementally update the index and cache metadata.
 
 Behavior:
 
-- Ignore cache reuse
-- Re-scan the project and overwrite the existing snapshot
+- Recompute the source fingerprint and compare it with the cached artifacts
+- Reuse the cached artifacts when nothing changed
+- Update the index incrementally when sources changed
+- Keep the existing snapshot structure and only refresh metadata needed by the
+  cache contract
+- Can be combined with `read` / `report` to refresh before answering
 
 Use it when:
 
-- the codebase changed significantly
-- you suspect the snapshot is stale
-- you explicitly do not want cache reuse
+- the repo changed and you want the cache to catch up
+- you want fresh context without forcing unnecessary rebuild work
+- you want `read` / `report` to consume the freshest snapshot first
 
 ### `/miloya-codebase read`
 
@@ -151,7 +155,8 @@ The entrypoint is always `scripts/generate.py`, but the mode determines whether
 source code is scanned or cached artifacts are consumed:
 
 - default mode: may generate a snapshot or reuse a cached one
-- `refresh`: always rescans and overwrites the cached snapshot
+- `refresh`: incrementally updates the index when sources changed and keeps the
+  existing snapshot structure
 - `read`: consumes the existing snapshot and index to build a retrieval payload
 - `report`: consumes the existing snapshot and index to build a `deep-pack`
 
@@ -159,6 +164,7 @@ Important clarifications:
 
 - Seeing `python ... generate.py ... --read` or `--report` does not mean the
   repo is being rescanned
+- Seeing `refresh` means "incrementally update the index if needed", not "force rebuild"
 - `freshness.reason` inside a `read` or `report` payload describes how the
   current snapshot was produced previously; it does not mean the current
   invocation regenerated the snapshot
@@ -200,8 +206,9 @@ that path is `miloya-codebase/`.
 
 ```bash
 python {skill_dir}/scripts/generate.py <project_path>
-python {skill_dir}/scripts/generate.py <project_path> --force
+python {skill_dir}/scripts/generate.py <project_path> refresh
 python {skill_dir}/scripts/generate.py <project_path> --read
+python {skill_dir}/scripts/generate.py <project_path> --read --refresh
 python {skill_dir}/scripts/generate.py <project_path> --read --task feature-delivery --query "skill lifecycle runtime"
 python {skill_dir}/scripts/generate.py <project_path> --read --task feature-delivery --query-escaped "\\u6280\\u80fd\\u7ba1\\u7406\\u5668\\u5982\\u4f55\\u5b9e\\u73b0"
 python {skill_dir}/scripts/generate.py <project_path> --read --task feature-delivery --query-file query.txt

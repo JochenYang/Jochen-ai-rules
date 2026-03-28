@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 miloya-codebase: Generate project snapshot JSON
-Usage: python generate.py <project_path> [--force]
+Usage: python generate.py <project_path> [refresh|--refresh|read|--read|report|--report]
 """
 
 import hashlib
@@ -20,6 +20,7 @@ if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
 from context_engine.analyzers import AnalyzerRegistry
+from context_engine.csr import build_csr_read_enhancement
 from context_engine.external_context import collect_external_context
 from context_engine.graph import build_code_graph
 from context_engine.retrieval import build_retrieval_artifacts, retrieve_chunks
@@ -39,6 +40,7 @@ MAX_SNIPPET_LINES = 12
 MAX_CHUNK_LINES = 60
 MAX_CHUNK_PREVIEW_LINES = 16
 MAX_CHUNK_CATALOG_ITEMS = 40
+HASH_AUDIT_BUDGET = 32
 
 EXCLUDE_DIRS = {
     'node_modules', '.git', 'dist', 'build', 'venv', '__pycache__',
@@ -292,7 +294,7 @@ def rank_key_function(func: dict, entry_points: list[str]) -> tuple[int, int, st
         path_score -= 20
     if file_name.startswith(('main', 'app', 'index')):
         path_score -= 10
-    if '/tests/' in file_path.lower() or file_name.startswith('test_') or file_name.endswith('_test.py'):
+    if is_probably_test_path(file_path):
         path_score += 40
     if file_path.lower().endswith('.md'):
         path_score += 20
@@ -365,20 +367,33 @@ def read_text_file(path: Path) -> str | None:
         return None
 
 
-def build_source_fingerprint(files: list[str], project_path: str) -> str:
-    base = Path(project_path)
+def compute_file_content_hash(path_obj: Path) -> str:
+    digest = hashlib.sha256()
+    with path_obj.open('rb') as file_obj:
+        while True:
+            chunk = file_obj.read(1024 * 1024)
+            if not chunk:
+                break
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def build_source_fingerprint(signatures: dict[str, dict]) -> str:
     digest = hashlib.sha256()
 
-    for file_path in files:
-        path_obj = Path(file_path)
-        rel_path = normalize_rel_path(os.path.relpath(file_path, base))
-        stat = path_obj.stat()
-        digest.update(f'{rel_path}:{stat.st_size}:{stat.st_mtime_ns}\n'.encode('utf-8'))
+    for rel_path in sorted(signatures.keys()):
+        meta = signatures[rel_path]
+        digest.update(
+            (
+                f"{rel_path}:{meta.get('sizeBytes')}:{meta.get('mtimeNs')}:"
+                f"{meta.get('contentHash', '')}\n"
+            ).encode('utf-8')
+        )
 
     return digest.hexdigest()
 
 
-def build_file_signatures(files: list[str], project_path: str) -> dict[str, dict]:
+def build_fast_file_signatures(files: list[str], project_path: str) -> dict[str, dict]:
     base = Path(project_path)
     signatures = {}
 
@@ -392,6 +407,166 @@ def build_file_signatures(files: list[str], project_path: str) -> dict[str, dict
         }
 
     return signatures
+
+
+def fast_signature_matches(previous_meta: dict | None, current_meta: dict | None) -> bool:
+    previous_meta = previous_meta or {}
+    current_meta = current_meta or {}
+    return {
+        'sizeBytes': previous_meta.get('sizeBytes'),
+        'mtimeNs': previous_meta.get('mtimeNs'),
+    } == {
+        'sizeBytes': current_meta.get('sizeBytes'),
+        'mtimeNs': current_meta.get('mtimeNs'),
+    }
+
+
+def signature_matches(previous_meta: dict | None, current_meta: dict | None) -> bool:
+    previous_meta = previous_meta or {}
+    current_meta = current_meta or {}
+    return {
+        'sizeBytes': previous_meta.get('sizeBytes'),
+        'mtimeNs': previous_meta.get('mtimeNs'),
+        'contentHash': previous_meta.get('contentHash'),
+    } == {
+        'sizeBytes': current_meta.get('sizeBytes'),
+        'mtimeNs': current_meta.get('mtimeNs'),
+        'contentHash': current_meta.get('contentHash'),
+    }
+
+
+def build_file_signatures(
+    files: list[str],
+    project_path: str,
+) -> dict[str, dict]:
+    base = Path(project_path)
+    fast_signatures = build_fast_file_signatures(files, project_path)
+    signatures = {}
+
+    for file_path in files:
+        path_obj = Path(file_path)
+        rel_path = normalize_rel_path(os.path.relpath(file_path, base))
+        fast_meta = fast_signatures[rel_path]
+        signatures[rel_path] = {
+            **fast_meta,
+            'contentHash': compute_file_content_hash(path_obj),
+        }
+
+    return signatures
+
+
+def sanitize_git_path(path: str | None) -> str | None:
+    normalized = normalize_rel_path((path or '').strip().strip('"'))
+    if not normalized or is_excluded_path(normalized):
+        return None
+    return normalized
+
+
+def collect_git_changed_paths(
+    project_path: str,
+    previous_commit: str | None = None,
+    current_commit: str | None = None,
+) -> set[str]:
+    changed_paths: set[str] = set()
+
+    for git_args in [
+        ['diff', '--name-only', 'HEAD'],
+        ['diff', '--cached', '--name-only', 'HEAD'],
+        ['ls-files', '--others', '--exclude-standard'],
+    ]:
+        output = run_git_command(project_path, git_args)
+        if not output:
+            continue
+        for raw_line in output.splitlines():
+            sanitized = sanitize_git_path(raw_line)
+            if sanitized:
+                changed_paths.add(sanitized)
+
+    status_output = run_git_command(project_path, ['status', '--porcelain'])
+    if status_output:
+        for raw_line in status_output.splitlines():
+            line = raw_line.rstrip()
+            if len(line) < 4:
+                continue
+            payload = line[3:]
+            if ' -> ' in payload:
+                old_path, new_path = payload.split(' -> ', 1)
+                for candidate in (old_path, new_path):
+                    sanitized = sanitize_git_path(candidate)
+                    if sanitized:
+                        changed_paths.add(sanitized)
+            else:
+                sanitized = sanitize_git_path(payload)
+                if sanitized:
+                    changed_paths.add(sanitized)
+
+    if previous_commit and current_commit and previous_commit != current_commit:
+        diff_output = run_git_command(project_path, ['diff', '--name-only', previous_commit, current_commit])
+        if diff_output:
+            for raw_line in diff_output.splitlines():
+                sanitized = sanitize_git_path(raw_line)
+                if sanitized:
+                    changed_paths.add(sanitized)
+
+    return changed_paths
+
+
+def build_incremental_file_signatures(
+    files: list[str],
+    project_path: str,
+    previous_files: dict[str, dict],
+    previous_commit: str | None = None,
+    current_commit: str | None = None,
+    audit_cursor: int = 0,
+) -> tuple[dict[str, dict], set[str], int]:
+    base = Path(project_path)
+    fast_signatures = build_fast_file_signatures(files, project_path)
+    git_changed_paths = collect_git_changed_paths(project_path, previous_commit, current_commit)
+    hash_candidate_paths = {
+        path for path, fast_meta in fast_signatures.items()
+        if path not in previous_files
+        or not previous_files.get(path, {}).get('contentHash')
+        or not fast_signature_matches(previous_files.get(path, {}), fast_meta)
+        or path in git_changed_paths
+    }
+
+    if current_commit is None:
+        stable_paths = sorted(
+            path for path, fast_meta in fast_signatures.items()
+            if path not in hash_candidate_paths
+            and previous_files.get(path, {}).get('contentHash')
+            and fast_signature_matches(previous_files.get(path, {}), fast_meta)
+        )
+        if stable_paths:
+            normalized_cursor = audit_cursor % len(stable_paths)
+            budget = min(HASH_AUDIT_BUDGET, len(stable_paths))
+            audit_paths = [
+                stable_paths[(normalized_cursor + offset) % len(stable_paths)]
+                for offset in range(budget)
+            ]
+            hash_candidate_paths.update(audit_paths)
+            next_audit_cursor = (normalized_cursor + budget) % len(stable_paths)
+        else:
+            next_audit_cursor = 0
+    else:
+        next_audit_cursor = 0
+
+    signatures: dict[str, dict] = {}
+    for rel_path, fast_meta in fast_signatures.items():
+        previous_meta = previous_files.get(rel_path, {})
+        if rel_path not in hash_candidate_paths and previous_meta.get('contentHash'):
+            signatures[rel_path] = {
+                **fast_meta,
+                'contentHash': previous_meta['contentHash'],
+            }
+            continue
+
+        signatures[rel_path] = {
+            **fast_meta,
+            'contentHash': compute_file_content_hash(base / rel_path),
+        }
+
+    return signatures, hash_candidate_paths, next_audit_cursor
 
 
 def get_newest_source_mtime(files: list[str]) -> str | None:
@@ -619,7 +794,7 @@ def score_file(record: dict, entry_points: list[str], root_manifests: set[str]) 
     if any(token in lower_path for token in ['route', 'controller', 'service', 'model', 'schema', 'config', 'main', 'app', 'index']):
         score += 8
 
-    if '/tests/' in lower_path or record['fileName'].startswith('test_') or record['fileName'].endswith('_test.py'):
+    if is_probably_test_path(lower_path):
         score -= 40
         reasons.append('test/support file')
     if lower_path.endswith('.md') and record['fileName'] not in ['README.md', 'README_zh.md']:
@@ -982,10 +1157,7 @@ def diff_index_state(previous_state: dict | None, current_signatures: dict[str, 
     shared_paths = current_paths & previous_paths
     changed_paths = {
         path for path in shared_paths
-        if {
-            'sizeBytes': previous_files.get(path, {}).get('sizeBytes'),
-            'mtimeNs': previous_files.get(path, {}).get('mtimeNs'),
-        } != current_signatures.get(path, {})
+        if not signature_matches(previous_files.get(path, {}), current_signatures.get(path, {}))
     }
     unchanged_paths = shared_paths - changed_paths
 
@@ -1044,13 +1216,11 @@ def build_index_metadata(
     }
 
 
-def save_index_state(
-    index_state_file: Path,
+def build_index_files_payload(
     current_signatures: dict[str, dict],
     chunks: list[dict],
     file_records: list[dict],
-    source_fingerprint: str,
-) -> None:
+) -> dict[str, dict]:
     chunk_ids_by_path: dict[str, list[str]] = {}
     for chunk in chunks:
         chunk_ids_by_path.setdefault(chunk['path'], []).append(chunk['id'])
@@ -1065,17 +1235,29 @@ def save_index_state(
             'analysisConfidence': record.get('analysisConfidence'),
             'chunkIds': chunk_ids_by_path.get(record['path'], []),
         }
+    return files_payload
 
+
+def save_index_state_payload(index_state_file: Path, payload: dict) -> None:
+    index_state_file.parent.mkdir(parents=True, exist_ok=True)
+    index_state_file.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding='utf-8')
+
+
+def save_index_state(
+    index_state_file: Path,
+    current_signatures: dict[str, dict],
+    chunks: list[dict],
+    file_records: list[dict],
+    source_fingerprint: str,
+) -> None:
     payload = {
         'version': INDEX_STATE_VERSION,
         'generatedAt': utc_now_iso(),
         'sourceFingerprint': source_fingerprint,
-        'files': files_payload,
+        'files': build_index_files_payload(current_signatures, chunks, file_records),
         'chunks': chunks,
     }
-
-    index_state_file.parent.mkdir(parents=True, exist_ok=True)
-    index_state_file.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding='utf-8')
+    save_index_state_payload(index_state_file, payload)
 
 
 def load_existing_snapshot(output_file: Path) -> dict | None:
@@ -1086,6 +1268,11 @@ def load_existing_snapshot(output_file: Path) -> dict | None:
         return json.loads(output_file.read_text(encoding='utf-8'))
     except Exception:
         return None
+
+
+def write_snapshot(output_file: Path, snapshot: dict) -> None:
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    output_file.write_text(json.dumps(snapshot, indent=2, ensure_ascii=False), encoding='utf-8')
 
 
 def summarize_modules_from_records(file_records: list[dict]) -> dict[str, str]:
@@ -1200,7 +1387,7 @@ def build_focus_context_pack(
     external_context = snapshot.get('externalContext', {})
     important_ranks = {item['path']: index for index, item in enumerate(important_files)}
     recent_changed = set(external_context.get('recentChangedFiles', []))
-    query_intent = infer_query_intent(query)
+    query_intent = enrich_query_intent_with_snapshot(snapshot, infer_query_intent(query))
     read_profile = select_read_profile(query_intent)
     expanded_query_terms = expand_query_terms_for_retrieval(
         query_intent,
@@ -1258,13 +1445,25 @@ def build_read_payload(
     normalized_query = normalize_query_text(query)
     retrieval = snapshot.get('retrieval', {})
     available_tasks = retrieval.get('availableTasks', [])
-    selected_task = task if task in available_tasks else retrieval.get('defaultTask', 'understand-project')
+    base_query_intent = infer_query_intent(normalized_query)
+    selected_task = resolve_read_task(task, available_tasks, retrieval, base_query_intent)
     quick_start = snapshot.get('contextHints', {})
     graph = snapshot.get('graph', {})
     important_files = snapshot.get('importantFiles', [])
     representative_snippets = snapshot.get('representativeSnippets', [])
-    query_intent = infer_query_intent(normalized_query)
+    csr_context = build_csr_read_enhancement(
+        snapshot,
+        index_state,
+        selected_task,
+        normalized_query,
+        base_query_intent,
+    )
+    query_intent = enrich_query_intent_with_snapshot(
+        snapshot,
+        merge_query_intent(base_query_intent, csr_context),
+    )
     read_profile = select_read_profile(query_intent)
+    hinted_file_paths = collect_hint_file_paths(index_state, query_intent, read_profile)
     read_limits = determine_read_limits(query_intent)
 
     if normalized_query:
@@ -1278,9 +1477,16 @@ def build_read_payload(
         file_paths = build_default_read_paths(snapshot, task_pack)
         task_description = task_pack.get('description') or describe_task(snapshot, selected_task)
 
+    snippet_items = merge_ranked_matches(csr_context.get('matches', []), snippet_items)
+    file_paths = merge_ordered_paths(csr_context.get('files', []), file_paths)
+    file_paths = merge_ordered_paths(hinted_file_paths, file_paths)
     snippet_items = rerank_read_matches(snippet_items, query_intent, read_profile)
     file_paths = prioritize_read_file_paths(file_paths, snippet_items, query_intent, read_profile)
     file_paths = refine_read_file_paths(snapshot, file_paths, query_intent, read_profile)
+    search_scope = merge_search_scope(
+        build_read_search_scope(snapshot, file_paths[:read_limits['files']]),
+        csr_context,
+    )
 
     return {
         'mode': 'read',
@@ -1301,6 +1507,14 @@ def build_read_payload(
         'queryProfile': read_profile['name'],
         'taskDescription': task_description,
         'availableTasks': available_tasks,
+        'contextEngine': {
+            'name': 'miloya-csr',
+            'enabled': csr_context.get('enabled', False),
+            'task': selected_task,
+            'route': csr_context.get('route', {}),
+            'matchCount': len(csr_context.get('matches', [])),
+            'fileCount': len(csr_context.get('files', [])),
+        },
         'files': build_read_file_entries(
             file_paths[:read_limits['files']],
             important_files,
@@ -1316,7 +1530,7 @@ def build_read_payload(
         ),
         'flowAnchors': build_read_flow_anchors(file_paths, snippet_items, query_intent, read_limits['anchors']),
         'nextHops': build_read_next_hops(snapshot, file_paths, snippet_items, query_intent)[:read_limits['nextHops']],
-        'searchScope': build_read_search_scope(snapshot, file_paths[:read_limits['files']]),
+        'searchScope': search_scope,
         'hotspots': graph.get('hotspots', [])[:8],
         'moduleDependencies': graph.get('moduleDependencies', [])[:12],
         'externalContext': summarize_external_context(snapshot.get('externalContext', {})),
@@ -1351,6 +1565,168 @@ def build_read_payload(
             'preferredNarrative': 'locate-and-briefly-explain',
             'returnSummaryFirst': True,
         },
+    }
+
+
+def merge_query_intent(query_intent: dict, csr_context: dict) -> dict:
+    route = csr_context.get('route', {})
+    merged = dict(query_intent)
+    labels = list(dict.fromkeys([
+        *(query_intent.get('labels', []) or []),
+        'csr-routed' if csr_context.get('enabled') else '',
+        route.get('profile', ''),
+        route.get('subfocus', ''),
+    ]))
+    merged['labels'] = [label for label in labels if label]
+    if route.get('task'):
+        merged['preferredTask'] = route['task']
+    merged['routingConfidence'] = route.get('confidence')
+    return merged
+
+
+def enrich_query_intent_with_snapshot(snapshot: dict, query_intent: dict) -> dict:
+    merged = dict(query_intent)
+    dynamic_hints = build_dynamic_path_hints(snapshot, query_intent)
+    if dynamic_hints:
+        merged['dynamicPathHints'] = dynamic_hints
+    else:
+        merged['dynamicPathHints'] = []
+    return merged
+
+
+def build_dynamic_path_hints(snapshot: dict, query_intent: dict) -> list[str]:
+    query_terms = set(query_intent.get('keywords', [])) | set(query_intent.get('terms', []))
+    if not query_terms:
+        return []
+
+    candidates = []
+    candidates.extend(snapshot.get('modules', {}).keys())
+    candidates.extend(snapshot.get('fileTree', {}).keys())
+    candidates.extend(snapshot.get('summary', {}).get('entryPoints', []))
+    candidates.extend(snapshot.get('contextHints', {}).get('readOrder', []))
+    candidates.extend(item.get('path') for item in snapshot.get('importantFiles', []) if item.get('path'))
+    candidates.extend(
+        item.get('module')
+        for item in snapshot.get('graph', {}).get('pathIndex', [])
+        if item.get('module')
+    )
+
+    ranked = []
+    seen = set()
+    for candidate in candidates:
+        if not candidate:
+            continue
+        normalized = normalize_rel_path(candidate)
+        if normalized in seen:
+            continue
+        seen.add(normalized)
+        terms = set(extract_text_terms(normalized))
+        if not terms:
+            continue
+        overlap_count = count_fuzzy_term_overlap(terms, query_terms)
+        if not overlap_count:
+            continue
+        score = overlap_count * 12
+        basename_terms = set(extract_text_terms(Path(normalized).name))
+        score += count_fuzzy_term_overlap(basename_terms, query_terms) * 8
+        if normalized.endswith('/'):
+            score += 4
+        ranked.append((score, normalized))
+
+    ranked.sort(key=lambda item: (-item[0], len(item[1]), item[1]))
+    return [path for _, path in ranked[:8]]
+
+
+def merge_ranked_matches(primary: list[dict], secondary: list[dict]) -> list[dict]:
+    merged = []
+    seen = set()
+    for item in [*primary, *secondary]:
+        key = item.get('id') or (
+            item.get('path'),
+            item.get('startLine'),
+            item.get('endLine'),
+            item.get('kind'),
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        merged.append(item)
+    return merged
+
+
+def merge_ordered_paths(primary: list[str], secondary: list[str]) -> list[str]:
+    merged = []
+    seen = set()
+    for path in [*primary, *secondary]:
+        normalized = normalize_rel_path(path) if path else ''
+        if not normalized or normalized in seen:
+            continue
+        seen.add(normalized)
+        merged.append(normalized)
+    return merged
+
+
+def collect_hint_file_paths(
+    index_state: dict | None,
+    query_intent: dict,
+    read_profile: dict,
+    limit: int = 12,
+) -> list[str]:
+    index_files = (index_state or {}).get('files', {})
+    hints = query_intent.get('dynamicPathHints', [])[:6]
+    if not index_files or not hints:
+        return []
+
+    query_terms = set(query_intent.get('keywords', []))
+    exact_terms = set(query_intent.get('terms', []))
+    ranked = []
+
+    for path in index_files:
+        normalized = normalize_rel_path(path)
+        lowered = normalized.lower()
+        best_hint_score = 0
+
+        for index, hint in enumerate(hints):
+            normalized_hint = normalize_rel_path(hint).lower()
+            if lowered == normalized_hint or lowered.startswith(normalized_hint.rstrip('/') + '/'):
+                best_hint_score = max(best_hint_score, 36 - index * 4)
+            elif normalized_hint and normalized_hint in lowered:
+                best_hint_score = max(best_hint_score, 18 - index * 2)
+
+        if best_hint_score <= 0:
+            continue
+
+        path_terms = set(extract_text_terms(normalized))
+        role = infer_read_file_role(normalized, {}) or ''
+        score = best_hint_score
+        score += min(count_fuzzy_term_overlap(path_terms, query_terms), 4) * 8
+        score += min(count_fuzzy_term_overlap(path_terms, exact_terms), 3) * 10
+        if role_matches_profile(role, read_profile):
+            score += 10
+        if is_documentation_file(normalized) and not is_documentation_query(query_intent):
+            score -= 10
+        if is_script_like_file(normalized) and not is_script_query(query_intent):
+            score -= 6
+
+        ranked.append((score, normalized))
+
+    ranked.sort(key=lambda item: (-item[0], len(item[1]), item[1]))
+    return [path for _, path in ranked[:limit]]
+
+
+def merge_search_scope(base_scope: dict, csr_context: dict) -> dict:
+    merged_paths = merge_ordered_paths(
+        (csr_context.get('searchScope') or {}).get('preferPaths', []),
+        base_scope.get('preferPaths', []),
+    )
+    notes = []
+    for note in [*((csr_context.get('searchScope') or {}).get('notes', [])), *base_scope.get('notes', [])]:
+        if note and note not in notes:
+            notes.append(note)
+    return {
+        **base_scope,
+        'preferPaths': merged_paths[:10],
+        'notes': notes[:5],
     }
 
 
@@ -1534,20 +1910,15 @@ def extract_query_terms(query: str | None) -> list[str]:
 def is_probably_test_path(path: str) -> bool:
     lowered = normalize_rel_path(path).lower()
     file_name = Path(lowered).name
-    return any(
-        token in lowered
-        for token in [
-            '/tests/',
-            '.test.',
-            '.spec.',
-            '_test.',
-            '.e2e.',
-            'test-harness',
-            'test_harness',
-            'fixtures/',
-            '/__tests__/',
-        ]
-    ) or file_name.startswith(('test_', 'spec_'))
+    file_terms = set(extract_text_terms(lowered))
+    return (
+        '.test.' in lowered
+        or '.spec.' in lowered
+        or '_test.' in lowered
+        or '.e2e.' in lowered
+        or file_name.startswith(('test_', 'spec_'))
+        or bool(file_terms & {'test', 'tests', 'spec', 'fixture', 'fixtures', 'e2e', 'harness'})
+    )
 
 
 def expand_query_terms(terms: list[str]) -> list[str]:
@@ -1565,12 +1936,53 @@ def determine_read_limits(query_intent: dict) -> dict[str, int]:
 
 
 def select_read_profile(query_intent: dict) -> dict:
+    labels = set(query_intent.get('labels', []))
+    if 'test-surface' in labels or 'tests' in labels:
+        return {
+            'name': 'tests',
+            'focusTerms': {'test', 'spec', 'fixture', 'harness', 'assert', 'regression'},
+            'suppressTerms': {'route', 'router', 'dispatch'},
+            'focusEntrySuffixes': {'test.ts', 'test.py', 'test.js', 'spec.ts', 'spec.js'},
+            'targetRoles': {'Test surface'},
+            'boostSymbolTerms': {'test', 'spec', 'fixture', 'assert'},
+            'penalizeSymbolTerms': {'route', 'router'},
+        }
+    if 'configuration' in labels or 'config' in labels:
+        return {
+            'name': 'config',
+            'focusTerms': {'config', 'settings', 'setting', 'env', 'schema', 'option'},
+            'suppressTerms': {'component', 'screen', 'page'},
+            'focusEntrySuffixes': {'config.ts', 'config.py', 'settings.ts', 'settings.py'},
+            'targetRoles': {'Configuration', 'Type definition'},
+            'boostSymbolTerms': {'config', 'schema', 'settings', 'env'},
+            'penalizeSymbolTerms': {'component'},
+        }
+    if 'execution-path' in labels or 'failure-trace' in labels or 'trace' in labels:
+        return {
+            'name': 'trace',
+            'focusTerms': {'manager', 'handler', 'controller', 'router', 'route', 'dispatch', 'service', 'process'},
+            'suppressTerms': {'fixture', 'mock', 'readme'},
+            'focusEntrySuffixes': {'main.ts', 'index.ts', 'app.ts', 'app.py'},
+            'targetRoles': {'Routing / transport', 'Handler / controller', 'Service', 'Runtime / integration'},
+            'boostSymbolTerms': {'dispatch', 'route', 'handler', 'service', 'process'},
+            'penalizeSymbolTerms': {'fixture', 'mock'},
+        }
+    if 'feature' in labels or 'implementation-surface' in labels:
+        return {
+            'name': 'feature',
+            'focusTerms': {'service', 'handler', 'controller', 'adapter', 'gateway', 'component', 'create', 'update', 'load', 'save'},
+            'suppressTerms': {'fixture', 'mock', 'readme'},
+            'focusEntrySuffixes': {'main.ts', 'index.ts', 'app.tsx', 'app.py'},
+            'targetRoles': {'Service', 'Handler / controller', 'Runtime / integration', 'UI component'},
+            'boostSymbolTerms': {'create', 'update', 'load', 'save', 'dispatch'},
+            'penalizeSymbolTerms': {'fixture'},
+        }
     return {
         'name': 'generic',
-        'focusManagerTokens': set(),
+        'focusTerms': set(),
+        'suppressTerms': set(),
         'focusEntrySuffixes': set(),
-        'preferPathTokens': set(),
-        'suppressPathTokens': [],
+        'targetRoles': set(),
         'boostSymbolTerms': set(),
         'penalizeSymbolTerms': set(),
     }
@@ -1608,16 +2020,11 @@ def infer_path_module(path: str) -> str:
     parts = Path(normalized).parts
     if not parts:
         return './'
-    if len(parts) >= 4 and parts[0] == 'src' and parts[1] in {'main', 'renderer', 'common'}:
-        return f'{parts[0]}/{parts[1]}/{parts[2]}/'
-    if len(parts) >= 2 and parts[0] == 'src':
-        return f'{parts[0]}/{parts[1]}/'
-    if len(parts) >= 2 and parts[0] in {'SKILLs', 'skills', 'packages', 'apps', 'openclaw-extensions'}:
-        return f'{parts[0]}/{parts[1]}/'
-    if len(parts) == 1:
+    directory_parts = list(parts[:-1]) if Path(normalized).suffix else list(parts)
+    if not directory_parts:
         return './'
-    first_part = next(iter(parts), '')
-    return './' if not first_part else f'{first_part}/'
+    depth = 2 if len(directory_parts) >= 2 else 1
+    return '/'.join(directory_parts[:depth]) + '/'
 
 
 def filter_report_module_dependencies(
@@ -1692,47 +2099,17 @@ def prioritize_read_file_paths(
     def score_path(path: str) -> tuple[int, int, str]:
         lowered = path.lower()
         path_terms = set(extract_text_terms(path))
+        role = infer_read_file_role(path, {}) or ''
         score = 0
-        structural_tokens = [
-            'manager',
-            'handler',
-            'controller',
-            'service',
-            'store',
-            'repository',
-            'adapter',
-            'gateway',
-            'connector',
-            'middleware',
-            'transport',
-            'channel',
-            'session',
-            'route',
-            'router',
-            'dispatch',
-            'delivery',
-        ]
-        module_tokens = [
-            '/main/',
-            '/server/',
-            '/api/',
-            '/services/',
-            '/handlers/',
-            '/controllers/',
-            '/routes/',
-            '/stores/',
-            '/modules/',
-            '/runtime/',
-        ]
 
         if path in snippet_paths:
             score += 40
 
-        if lowered.startswith('src/') or lowered.startswith('app/') or lowered.startswith('server/'):
-            score += 12
-        if query_terms and any(token in lowered for token in ['/docs/', 'readme', 'skill.md', 'prompt', '/rules/']):
+        if role_matches_profile(role, read_profile):
+            score += 14
+        if is_documentation_file(path) and not is_documentation_query(query_intent):
             score -= 18
-        if (lowered.startswith('scripts/') or '/scripts/' in lowered) and not (query_terms & {'script', 'setup', 'build', 'cli'}):
+        if is_script_like_file(path) and not is_script_query(query_intent):
             score -= 10
         if is_probably_test_path(path) and not test_query:
             score -= 42
@@ -1743,11 +2120,13 @@ def prioritize_read_file_paths(
         exact_overlap = len(path_terms & exact_terms)
         if exact_overlap:
             score += min(exact_overlap, 2) * 18
-        if any(token in lowered for token in structural_tokens):
-            score += 14
-        if any(token in lowered for token in module_tokens):
-            score += 10
-        if any(token in lowered for token in ['constants', '/i18n.', '/locales/', '/assets/']):
+        focus_overlap = count_fuzzy_term_overlap(path_terms, read_profile.get('focusTerms', set()))
+        if focus_overlap:
+            score += min(focus_overlap, 3) * 8
+        suppress_overlap = count_fuzzy_term_overlap(path_terms, read_profile.get('suppressTerms', set()))
+        if suppress_overlap:
+            score -= min(suppress_overlap, 2) * 6
+        if path_terms & {'constant', 'constants', 'i18n', 'locale', 'locales', 'asset', 'assets'}:
             score -= 8
 
         score += score_path_with_profile(path, query_intent, read_profile)
@@ -1758,7 +2137,36 @@ def prioritize_read_file_paths(
 
 
 def score_path_with_profile(path: str, query_intent: dict, read_profile: dict) -> int:
-    return 0
+    score = 0
+    lowered = path.lower()
+    path_terms = set(extract_text_terms(lowered))
+    query_terms = set(query_intent.get('keywords', []))
+    exact_terms = set(query_intent.get('terms', []))
+    role = infer_read_file_role(path, {}) or ''
+
+    focus_overlap = count_fuzzy_term_overlap(path_terms, read_profile.get('focusTerms', set()))
+    if focus_overlap:
+        score += min(focus_overlap, 3) * 8
+    suppress_overlap = count_fuzzy_term_overlap(path_terms, read_profile.get('suppressTerms', set()))
+    if suppress_overlap:
+        score -= min(suppress_overlap, 2) * 6
+    if any(lowered.endswith(suffix) for suffix in read_profile.get('focusEntrySuffixes', set())):
+        score += 12
+    if role_matches_profile(role, read_profile):
+        score += 10
+    if query_terms and path_terms & query_terms:
+        score += min(len(path_terms & query_terms), 4) * 8
+    if exact_terms and path_terms & exact_terms:
+        score += min(len(path_terms & exact_terms), 3) * 10
+
+    for index, hint in enumerate(query_intent.get('dynamicPathHints', [])[:6]):
+        normalized_hint = normalize_rel_path(hint).lower()
+        if lowered == normalized_hint or lowered.startswith(normalized_hint.rstrip('/') + '/'):
+            score += max(28 - index * 4, 8)
+        elif normalized_hint and normalized_hint in lowered:
+            score += max(16 - index * 2, 4)
+
+    return score
 
 
 def is_suppressed_by_profile(path: str, query_intent: dict, read_profile: dict) -> bool:
@@ -1774,6 +2182,9 @@ def refine_read_file_paths(snapshot: dict, file_paths: list[str], query_intent: 
             continue
         seen.add(normalized)
         deduped.append(normalized)
+
+    if query_intent.get('dynamicPathHints'):
+        return deduped
 
     entry_points = []
     seen_entries = set()
@@ -1793,15 +2204,45 @@ def infer_query_intent_framework(query: str | None) -> dict:
             'labels': ['general-read'],
             'keywords': [],
             'terms': [],
+            'preferredTask': 'understand-project',
         }
 
     lowered = (normalize_query_text(query) or query).lower()
     terms = extract_query_terms(lowered)
     keywords = expand_query_terms(terms)
+    term_set = set(terms) | set(keywords)
+    labels = []
+
+    if contains_any_term(term_set, {'bug', 'fix', 'error', 'fail', 'failed', 'crash', 'issue', '异常', '报错', '失败', '出错'}):
+        labels.append('bugfix')
+    if contains_any_term(term_set, {'review', 'audit', 'risk', '审查', '检查', '风险'}):
+        labels.append('review')
+    if contains_any_term(term_set, {'feature', 'implement', 'implementation', 'integration', 'integrate', '接入', '实现', '新增', '增加'}):
+        labels.append('feature')
+    if contains_any_term(term_set, {'route', 'router', 'path', 'dispatch', 'handler', '调用', '链路', '流程', '路由', '入口'}):
+        labels.append('trace')
+    if contains_any_term(term_set, {'config', 'setting', 'settings', 'env', 'schema', 'workflow', 'pipeline', 'release', 'ci', 'cd', 'action', 'actions', '配置', '环境'}):
+        labels.append('config')
+    if contains_any_term(term_set, {'type', 'types', 'schema', 'model', 'interface', '类型', '模型', '结构'}):
+        labels.append('types')
+    if contains_any_term(term_set, {'test', 'tests', 'spec', 'e2e', 'fixture', '测试', '用例'}):
+        labels.append('tests')
+
+    preferred_task = 'understand-project'
+    if 'review' in labels:
+        preferred_task = 'code-review'
+    elif 'bugfix' in labels or 'trace' in labels:
+        preferred_task = 'bugfix-investigation'
+    elif 'feature' in labels:
+        preferred_task = 'feature-delivery'
+    elif 'tests' in labels:
+        preferred_task = 'bugfix-investigation'
+
     return {
-        'labels': ['general-read'],
+        'labels': labels or ['general-read'],
         'keywords': keywords[:20],
         'terms': terms[:20],
+        'preferredTask': preferred_task,
     }
 
 
@@ -1826,12 +2267,13 @@ def rerank_read_matches(matches: list[dict], query_intent: dict, read_profile: d
         haystack = ' '.join([path, kind, preview, signals])
         haystack_terms = set(extract_text_terms(haystack))
         symbol_terms = set(extract_text_terms(preview_head))
+        role = infer_read_file_role(path, item) or ''
 
-        if path.startswith('src/') or path.startswith('app/') or path.startswith('server/'):
+        if role_matches_profile(role, read_profile):
             bonus += 12
-        if query_terms and any(token in path for token in ['/docs/', 'readme', 'skill.md', 'prompt', '/rules/']):
+        if is_documentation_file(path) and not is_documentation_query(query_intent):
             bonus -= 18
-        if (path.startswith('scripts/') or '/scripts/' in path) and not (query_terms & {'script', 'setup', 'build', 'cli'}):
+        if is_script_like_file(path) and not is_script_query(query_intent):
             bonus -= 10
         if is_probably_test_path(path) and not test_query:
             bonus -= 48
@@ -1855,7 +2297,137 @@ def rerank_read_matches(matches: list[dict], query_intent: dict, read_profile: d
 
 
 def score_match_with_profile(path: str, symbol_terms: set[str], query_intent: dict, read_profile: dict) -> int:
-    return 0
+    score = 0
+    lowered = path.lower()
+    query_terms = set(query_intent.get('keywords', []))
+    exact_terms = set(query_intent.get('terms', []))
+    path_terms = set(extract_text_terms(lowered))
+    role = infer_read_file_role(path, {}) or ''
+
+    focus_overlap = count_fuzzy_term_overlap(path_terms, read_profile.get('focusTerms', set()))
+    if focus_overlap:
+        score += min(focus_overlap, 3) * 8
+    suppress_overlap = count_fuzzy_term_overlap(path_terms, read_profile.get('suppressTerms', set()))
+    if suppress_overlap:
+        score -= min(suppress_overlap, 2) * 6
+    if any(lowered.endswith(suffix) for suffix in read_profile.get('focusEntrySuffixes', set())):
+        score += 14
+    if role_matches_profile(role, read_profile):
+        score += 10
+
+    boosted = symbol_terms & read_profile.get('boostSymbolTerms', set())
+    if boosted:
+        score += min(len(boosted), 3) * 8
+    penalized = symbol_terms & read_profile.get('penalizeSymbolTerms', set())
+    if penalized:
+        score -= min(len(penalized), 2) * 6
+    if query_terms and symbol_terms & query_terms:
+        score += min(len(symbol_terms & query_terms), 2) * 6
+    fuzzy_keyword_overlap = count_fuzzy_term_overlap(path_terms, query_terms)
+    if fuzzy_keyword_overlap:
+        score += min(fuzzy_keyword_overlap, 4) * 8
+    fuzzy_exact_overlap = count_fuzzy_term_overlap(path_terms, exact_terms)
+    if fuzzy_exact_overlap:
+        score += min(fuzzy_exact_overlap, 3) * 10
+
+    for index, hint in enumerate(query_intent.get('dynamicPathHints', [])[:6]):
+        normalized_hint = normalize_rel_path(hint).lower()
+        if lowered == normalized_hint or lowered.startswith(normalized_hint.rstrip('/') + '/'):
+            score += max(24 - index * 4, 8)
+        elif normalized_hint and normalized_hint in lowered:
+            score += max(14 - index * 2, 4)
+
+    if lowered.endswith('.json') and not (path_terms & (query_terms | exact_terms)):
+        score -= 10
+
+    return score
+
+
+def role_matches_profile(role: str | None, read_profile: dict) -> bool:
+    return bool(role and role in read_profile.get('targetRoles', set()))
+
+
+def is_documentation_query(query_intent: dict) -> bool:
+    terms = set(query_intent.get('keywords', [])) | set(query_intent.get('terms', []))
+    return contains_any_term(terms, {'doc', 'docs', 'documentation', 'readme', 'guide', 'manual', 'wiki', '说明', '文档'})
+
+
+def is_documentation_file(path: str) -> bool:
+    normalized = normalize_rel_path(path).lower()
+    name = Path(normalized).name.lower()
+    suffix = Path(normalized).suffix.lower()
+    file_terms = set(extract_text_terms(name))
+    return (
+        suffix in {'.md', '.mdx', '.rst', '.txt', '.adoc'}
+        or name in {'readme', 'readme.md', 'changelog.md', 'contributing.md', 'license', 'license.md', 'security.md'}
+        or bool(file_terms & {'readme', 'changelog', 'guide', 'manual', 'wiki', 'documentation', 'doc'})
+    )
+
+
+def is_script_query(query_intent: dict) -> bool:
+    terms = set(query_intent.get('keywords', [])) | set(query_intent.get('terms', []))
+    return contains_any_term(terms, {'script', 'setup', 'build', 'release', 'deploy', 'cli', '命令', '脚本'})
+
+
+def is_script_like_file(path: str) -> bool:
+    normalized = normalize_rel_path(path).lower()
+    suffix = Path(normalized).suffix.lower()
+    name_terms = set(extract_text_terms(Path(normalized).name))
+    return suffix in {'.sh', '.ps1', '.bat', '.cmd'} or bool(name_terms & {'script', 'setup', 'build', 'release', 'deploy', 'cli'})
+
+
+def contains_any_term(terms: set[str], candidates: set[str]) -> bool:
+    return count_fuzzy_term_overlap(terms, candidates) > 0
+
+
+def count_fuzzy_term_overlap(left: set[str], right: set[str]) -> int:
+    matched = 0
+    for token in left:
+        token_variants = build_term_variants(token)
+        for other in right:
+            other_variants = build_term_variants(other)
+            if token_variants & other_variants:
+                matched += 1
+                break
+    return matched
+
+
+def build_term_variants(token: str) -> set[str]:
+    normalized = (token or '').strip().lower()
+    if not normalized:
+        return set()
+
+    variants = {normalized}
+    if len(normalized) >= 4:
+        if normalized.endswith('ies'):
+            variants.add(normalized[:-3] + 'y')
+        if normalized.endswith('es'):
+            variants.add(normalized[:-2])
+        if normalized.endswith('s'):
+            variants.add(normalized[:-1])
+        else:
+            variants.add(normalized + 's')
+    return {item for item in variants if item}
+
+
+def resolve_read_task(
+    requested_task: str,
+    available_tasks: list[str],
+    retrieval: dict,
+    query_intent: dict,
+) -> str:
+    default_task = retrieval.get('defaultTask', 'understand-project')
+    if requested_task in available_tasks and requested_task != default_task:
+        return requested_task
+
+    preferred_task = query_intent.get('preferredTask')
+    if preferred_task in available_tasks:
+        return preferred_task
+
+    if requested_task in available_tasks:
+        return requested_task
+
+    return default_task
 
 
 def build_read_file_entries(
@@ -1909,25 +2481,34 @@ def build_read_file_entries(
 def infer_read_file_role(path: str, snippet: dict) -> str | None:
     lowered = path.lower()
     snippet_kind = (snippet.get('kind') or '').lower()
+    file_name = Path(lowered).name.lower()
+    file_terms = set(extract_text_terms(file_name))
+    path_terms = set(extract_text_terms(lowered))
 
     if lowered.endswith(('main.ts', 'app.tsx', 'preload.ts', 'index.html')):
         return 'Entry point'
-    if any(token in lowered for token in ['/components/', '.tsx', 'view', 'screen', 'page', 'settings']):
+    if lowered.endswith(('.tsx', '.jsx')) or file_terms & {'component', 'view', 'screen', 'page'}:
         return 'UI component'
-    if any(token in lowered for token in ['/types/', '.d.ts', 'schema', 'model', 'types.ts', 'types.py']):
+    if lowered.endswith('.d.ts') or file_terms & {'type', 'types'} or path_terms & {'schema', 'model', 'interface'}:
         return 'Type definition'
-    if any(token in lowered for token in ['config', 'setting']):
+    if is_documentation_file(path):
+        return 'Documentation'
+    if Path(lowered).suffix in {'.json', '.yaml', '.yml', '.toml', '.ini', '.cfg', '.conf'}:
         return 'Configuration'
-    if any(token in lowered for token in ['manager', 'runtime', 'adapter', 'gateway', 'connector', 'agentengine', 'plugin']):
+    if path_terms & {'config', 'setting', 'settings', 'env', 'option', 'workflow', 'pipeline', 'release'}:
+        return 'Configuration'
+    if path_terms & {'manager', 'runtime', 'adapter', 'gateway', 'connector', 'agentengine', 'plugin'}:
         return 'Runtime / integration'
-    if any(token in lowered for token in ['route', 'router', 'dispatch', 'delivery', 'transport']):
+    if path_terms & {'route', 'router', 'dispatch', 'delivery', 'transport'}:
         return 'Routing / transport'
-    if any(token in lowered for token in ['handler', 'controller', 'middleware']):
+    if path_terms & {'handler', 'controller', 'middleware'}:
         return 'Handler / controller'
-    if any(token in lowered for token in ['store', 'sqlite']):
+    if path_terms & {'store', 'sqlite', 'storage', 'repository'}:
         return 'Store'
-    if '/services/' in lowered or lowered.endswith('service.ts'):
+    if 'service' in file_terms or 'service' in path_terms:
         return 'Service'
+    if is_probably_test_path(path):
+        return 'Test surface'
     if snippet_kind == 'link':
         return 'Documentation / link source'
     return None
@@ -1967,12 +2548,16 @@ def infer_read_file_reason(path: str, snippet: dict, hotspot: dict, indexed: dic
     elif signals:
         reasons.append(f'{signals} structural signals')
 
-    if any(token in lowered for token in ['skillmanager', 'runtime', 'adapter', 'gateway']):
+    if set(extract_text_terms(lowered)) & {'skillmanager', 'runtime', 'adapter', 'gateway'}:
         reasons.append('participates in runtime or skill execution flow')
-    elif any(token in lowered for token in ['/components/', 'settings.tsx', 'imsettings']):
-        reasons.append('entry point for user-facing configuration flow')
-    elif any(token in lowered for token in ['/types/', '.d.ts', 'types.ts', 'types.py']):
-        reasons.append('defines shared types consumed across modules')
+    else:
+        inferred_role = infer_read_file_role(path, snippet)
+        if inferred_role == 'UI component':
+            reasons.append('contains user-facing interaction or presentation logic')
+        elif inferred_role == 'Type definition':
+            reasons.append('defines shared types consumed across modules')
+        elif inferred_role == 'Configuration':
+            reasons.append('captures configuration or environment-facing behavior')
 
     if not reasons:
         return None
@@ -2175,20 +2760,7 @@ def build_read_next_hops(
     query_terms = set(query_intent.get('keywords', []))
 
     def path_module(path: str) -> str:
-        normalized = normalize_rel_path(path)
-        parts = Path(normalized).parts
-        if not parts:
-            return './'
-        if len(parts) >= 4 and parts[0] == 'src' and parts[1] in {'main', 'renderer', 'common'}:
-            return f'{parts[0]}/{parts[1]}/{parts[2]}/'
-        if len(parts) >= 2 and parts[0] == 'src':
-            return f'{parts[0]}/{parts[1]}/'
-        if len(parts) >= 2 and parts[0] in {'SKILLs', 'skills', 'packages', 'apps', 'openclaw-extensions'}:
-            return f'{parts[0]}/{parts[1]}/'
-        if len(parts) == 1:
-            return './'
-        first_part = next(iter(parts), '')
-        return './' if not first_part else f'{first_part}/'
+        return infer_path_module(path)
 
     def add_hop(path: str, reason: str) -> None:
         path = normalize_rel_path(path)
@@ -2303,7 +2875,7 @@ def scan_files(project_path: str) -> list[str]:
         # Filter out excluded directories in-place
         filtered_dirs = []
         for dir_name in dirs:
-            if dir_name in EXCLUDE_DIRS or dir_name.startswith('.'):
+            if dir_name in EXCLUDE_DIRS:
                 continue
             rel_dir = dir_name if not rel_root else f'{rel_root}/{dir_name}'
             if is_excluded_path(rel_dir):
@@ -2312,8 +2884,6 @@ def scan_files(project_path: str) -> list[str]:
         dirs[:] = filtered_dirs
 
         for filename in filenames:
-            if filename.startswith('.'):
-                continue
             full_path = os.path.join(root, filename)
             rel_path = normalize_rel_path(os.path.relpath(full_path, base))
             if is_excluded_path(rel_path):
@@ -2561,8 +3131,8 @@ def generate_snapshot(project_path: str, force: bool = False) -> dict:
 
     # Scan files
     files = scan_files(project_path)
-    source_fingerprint = build_source_fingerprint(files, project_path)
     current_signatures = build_file_signatures(files, project_path)
+    source_fingerprint = build_source_fingerprint(current_signatures)
     newest_source_mtime = get_newest_source_mtime(files)
     existing_snapshot = load_existing_snapshot(output_file)
     existing_index_state = load_existing_index_state(index_state_file)
@@ -2589,6 +3159,7 @@ def generate_snapshot(project_path: str, force: bool = False) -> dict:
             (existing_index_state or {}).get('chunks', []),
             existing_snapshot.get('importantFiles', []),
         )
+        write_snapshot(output_file, existing_snapshot)
         return existing_snapshot
 
     file_records, total_lines = collect_file_records(files, project_path)
@@ -2741,13 +3312,126 @@ def generate_snapshot(project_path: str, force: bool = False) -> dict:
     }
 
     # Save to file
-    output_dir.mkdir(parents=True, exist_ok=True)
-    with open(output_file, 'w', encoding='utf-8') as f:
-        json.dump(snapshot, f, indent=2, ensure_ascii=False)
+    write_snapshot(output_file, snapshot)
     save_index_state(index_state_file, current_signatures, chunks, file_records, source_fingerprint)
 
     print(f"Snapshot saved to: {output_file}", file=sys.stderr)
     return snapshot
+
+
+def refresh_index(project_path: str) -> dict:
+    base = Path(project_path)
+    output_dir = base / 'repo' / 'progress'
+    output_file = output_dir / 'miloya-codebase.json'
+    index_state_file = output_dir / 'miloya-codebase.index.json'
+    existing_snapshot = load_existing_snapshot(output_file)
+    existing_index_state = load_existing_index_state(index_state_file)
+
+    if not existing_snapshot or not existing_index_state:
+        return generate_snapshot(project_path, force=False)
+
+    files = scan_files(project_path)
+    previous_files = existing_index_state.get('files', {})
+    previous_commit = (existing_snapshot.get('git') or {}).get('commit')
+    current_commit = run_git_command(project_path, ['rev-parse', 'HEAD'])
+    audit_cursor = int((existing_snapshot.get('freshness') or {}).get('hashAuditCursor') or 0)
+    current_signatures, hashed_candidate_paths, next_audit_cursor = build_incremental_file_signatures(
+        files,
+        project_path,
+        previous_files,
+        previous_commit=previous_commit,
+        current_commit=current_commit,
+        audit_cursor=audit_cursor,
+    )
+    source_fingerprint = build_source_fingerprint(current_signatures)
+    newest_source_mtime = get_newest_source_mtime(files)
+    previous_chunks = existing_index_state.get('chunks', [])
+    previous_paths = set(previous_files.keys())
+    current_paths = set(current_signatures.keys())
+    removed_paths = previous_paths - current_paths
+    changed_or_new_paths = {
+        path for path in current_paths
+        if path not in previous_files
+        or not signature_matches(previous_files.get(path, {}), current_signatures.get(path, {}))
+    }
+
+    if not changed_or_new_paths and not removed_paths:
+        existing_snapshot['generatedAt'] = utc_now_iso()
+        existing_snapshot['sourceFingerprint'] = source_fingerprint
+        existing_snapshot['freshness'] = {
+            'stale': False,
+            'reason': 'source fingerprint unchanged',
+            'newestSourceMtime': newest_source_mtime,
+            'snapshotPath': normalize_rel_path(str(output_file.relative_to(base))),
+            'hashedCandidateFiles': len(hashed_candidate_paths),
+            'hashAuditCursor': next_audit_cursor,
+        }
+        existing_snapshot['index'] = build_index_metadata(
+            base,
+            index_state_file,
+            existing_index_state,
+            current_signatures,
+            previous_chunks,
+            reusing_snapshot=True,
+        )
+        existing_snapshot['chunkCatalog'] = build_chunk_catalog(
+            previous_chunks,
+            existing_snapshot.get('importantFiles', []),
+        )
+        write_snapshot(output_file, existing_snapshot)
+        return existing_snapshot
+
+    changed_files = [str(base / path) for path in sorted(changed_or_new_paths)]
+    changed_records, _ = collect_file_records(changed_files, project_path)
+    changed_chunks = build_chunks(changed_records)
+    changed_payload = build_index_files_payload(current_signatures, changed_chunks, changed_records)
+
+    next_chunks = [
+        chunk for chunk in previous_chunks
+        if chunk.get('path') not in changed_or_new_paths
+        and chunk.get('path') not in removed_paths
+    ]
+    next_chunks.extend(changed_chunks)
+
+    next_files_payload = {
+        path: meta for path, meta in previous_files.items()
+        if path not in changed_or_new_paths and path not in removed_paths and path in current_signatures
+    }
+    next_files_payload.update(changed_payload)
+
+    next_index_state = {
+        'version': INDEX_STATE_VERSION,
+        'generatedAt': utc_now_iso(),
+        'sourceFingerprint': source_fingerprint,
+        'files': next_files_payload,
+        'chunks': next_chunks,
+    }
+    save_index_state_payload(index_state_file, next_index_state)
+
+    existing_snapshot['generatedAt'] = utc_now_iso()
+    existing_snapshot['sourceFingerprint'] = source_fingerprint
+    existing_snapshot['freshness'] = {
+        'stale': False,
+        'reason': 'incremental index refreshed',
+        'newestSourceMtime': newest_source_mtime,
+        'snapshotPath': normalize_rel_path(str(output_file.relative_to(base))),
+        'hashedCandidateFiles': len(hashed_candidate_paths),
+        'hashAuditCursor': next_audit_cursor,
+    }
+    existing_snapshot['index'] = build_index_metadata(
+        base,
+        index_state_file,
+        existing_index_state,
+        current_signatures,
+        next_chunks,
+        reusing_snapshot=True,
+    )
+    existing_snapshot['chunkCatalog'] = build_chunk_catalog(
+        next_chunks,
+        existing_snapshot.get('importantFiles', []),
+    )
+    write_snapshot(output_file, existing_snapshot)
+    return existing_snapshot
 
 
 def read_query_input(
@@ -2774,7 +3458,7 @@ def read_query_input(
 def main():
     if len(sys.argv) < 2:
         print(
-            "Usage: python generate.py <project_path> [read|--read|report|--report] [--force] "
+            "Usage: python generate.py <project_path> [refresh|--refresh|read|--read|report|--report] "
             "[--task <task>] [--query <query> | --query-escaped <ascii_escaped_query> "
             "| --query-file <utf8_file> | --query-stdin]",
             file=sys.stderr,
@@ -2785,7 +3469,10 @@ def main():
     cli_args = sys.argv[2:]
     read_mode = '--read' in cli_args or (len(cli_args) > 0 and cli_args[0] == 'read')
     report_mode = '--report' in cli_args or (len(cli_args) > 0 and cli_args[0] == 'report')
-    force = '--force' in cli_args or '--refresh' in cli_args or (len(cli_args) > 0 and cli_args[0] == 'refresh')
+    refresh_mode = (
+        '--refresh' in cli_args
+        or (len(cli_args) > 0 and cli_args[0] == 'refresh')
+    )
     task = 'understand-project'
     query = None
     escaped_query = None
@@ -2825,8 +3512,8 @@ def main():
     if report_mode:
         base = Path(project_path)
         snapshot = load_existing_snapshot(base / 'repo' / 'progress' / 'miloya-codebase.json')
-        if not snapshot or force:
-            snapshot = generate_snapshot(project_path, force)
+        if not snapshot or refresh_mode:
+            snapshot = refresh_index(project_path) if refresh_mode else generate_snapshot(project_path, force=False)
 
         index_state = load_existing_index_state(base / 'repo' / 'progress' / 'miloya-codebase.index.json')
         write_json_stdout(build_report_payload(snapshot, index_state, task, query))
@@ -2835,9 +3522,17 @@ def main():
     if read_mode:
         base = Path(project_path)
         snapshot = load_existing_snapshot(base / 'repo' / 'progress' / 'miloya-codebase.json')
-        if not snapshot:
+        if not snapshot and not refresh_mode:
             print(
                 "Error: snapshot not found. Run /miloya-codebase or /miloya-codebase refresh first.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        if refresh_mode:
+            snapshot = refresh_index(project_path)
+        if snapshot is None:
+            print(
+                "Error: snapshot not found after refresh attempt.",
                 file=sys.stderr,
             )
             sys.exit(1)
@@ -2846,7 +3541,7 @@ def main():
         write_json_stdout(build_read_payload(snapshot, index_state, task, query))
         return
 
-    snapshot = generate_snapshot(project_path, force)
+    snapshot = refresh_index(project_path) if refresh_mode else generate_snapshot(project_path, force=False)
 
     if query:
         index_state = load_existing_index_state(Path(project_path) / 'repo' / 'progress' / 'miloya-codebase.index.json')
