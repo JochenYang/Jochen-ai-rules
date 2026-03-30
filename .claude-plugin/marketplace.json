@@ -70,8 +70,8 @@
       "skills": ["./"]
     },
     {
-      "name": "miloya-codebase",
-      "source": "./skills/miloya-codebase/",
+      "name": "context-codebase",
+      "source": "./skills/context-codebase/",
       "description": "Project context engine for repo orientation, cached handoff, and task-focused code retrieval.",
       "skills": ["./"]
     },

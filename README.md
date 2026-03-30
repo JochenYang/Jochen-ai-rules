@@ -55,7 +55,7 @@ Jochen AI Rules is a comprehensive Claude Code plugin that provides:
 /plugin install frontend-design@jochen-ai-rules
 /plugin install handoff@jochen-ai-rules
 /plugin install mcp-builder@jochen-ai-rules
-/plugin install miloya-codebase@jochen-ai-rules
+/plugin install context-codebase@jochen-ai-rules
 /plugin install performance-optimizer@jochen-ai-rules
 /plugin install phaser-build@jochen-ai-rules
 /plugin install product-manager@jochen-ai-rules
@@ -195,7 +195,7 @@ Rules:
 - **Phaser Build**: 2D HTML5 game development
 - **MCP Builder**: MCP server development
 - **Reflect**: Session reflection and learning extraction
-- **Miloya Codebase**: Project context engine for repo orientation, cached handoff, and task-focused code retrieval
+- **Context Codebase**: Project context engine for repo orientation, cached handoff, and task-focused code retrieval
 - **Claude Audit**: Audit .claude/ files for redundant instructions, verbose phrasing, and memory candidates
 - **Skills Audit**: List all skills with line counts, find overlapping scopes and optimization opportunities
 - **Artifacts Builder**: Create interactive Claude artifacts (charts, UI prototypes, tools)

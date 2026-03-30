@@ -55,7 +55,7 @@ Jochen AI Rules 是一个全面的 Claude Code 插件，提供：
 /plugin install frontend-design@jochen-ai-rules
 /plugin install handoff@jochen-ai-rules
 /plugin install mcp-builder@jochen-ai-rules
-/plugin install miloya-codebase@jochen-ai-rules
+/plugin install context-codebase@jochen-ai-rules
 /plugin install performance-optimizer@jochen-ai-rules
 /plugin install phaser-build@jochen-ai-rules
 /plugin install product-manager@jochen-ai-rules
@@ -191,7 +191,7 @@ python skills/handoff/scripts/handoff.py read --project-root /path/to/project
 - **Phaser Build**: 2D HTML5 游戏开发
 - **MCP Builder**: MCP 服务器开发
 - **Reflect**: 会话回顾和学习提取
-- **Miloya Codebase**: 项目上下文引擎，用于代码库定向、缓存交接和任务聚焦的代码检索
+- **Context Codebase**: 项目上下文引擎，用于代码库定向、缓存交接和任务聚焦的代码检索
 - **Claude Audit**: 审计 .claude/ 文件，检测冗余指令、冗长表述和可移至 memory 的内容
 - **Skills Audit**: 列出所有技能及其行数，检测重复作用域和优化机会
 - **Artifacts Builder**: 创建交互式 Claude 构件（图表、UI 原型、工具）
