@@ -44,7 +44,10 @@ The code-reviewer agent checks:
 # Code Review Report
 
 ## Summary
-[Pass / Request Changes / Block]
+- Recommendation: [SHIP / NEEDS WORK / BLOCKED]
+- Legacy Verdict: [Pass / Request Changes / Block]
+- Confidence: [High / Medium / Low]
+- Scope Reviewed: [files / modules / changes]
 
 ## Critical Issues (Must Fix)
 1. **[Security/Bug]** [Description] (File: line)
@@ -56,6 +59,15 @@ The code-reviewer agent checks:
 
 ## Nitpicks (Optional)
 - [Small style suggestions]
+
+## Security Audit
+- [ ] Input Validation
+- [ ] Auth Check
+- [ ] Data Leakage Check
+
+## Repair Guidance
+- Primary Repair Owner: [agent name]
+- Re-Review Required: [code-reviewer only / security-reviewer -> code-reviewer / etc.]
 
 ## Final Verdict
 [Clear statement on whether code is ready to merge]

@@ -119,7 +119,7 @@ jobs:
 ## Handoff Output Format (MANDATORY)
 
 ```markdown
-## HANDOFF: devops-engineer → [next-agent or user]
+## HANDOFF: devops-engineer -> [next-agent or user]
 
 ### Infrastructure Summary
 

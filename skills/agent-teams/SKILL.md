@@ -12,6 +12,9 @@ description: Create agent teams for parallel collaboration. Use when user mentio
 - **DO**: Directly describe the team you want to create in natural language. The platform spawns teammates natively.
 - **DO NOT**: Use `bash`, `subprocess`, or `claude` CLI to create parallel agents.
 - **DO NOT**: Simulate teams by running multiple shell commands.
+- **DO NOT**: Take over when the user explicitly invoked `/orchestrate`, unless
+  they also explicitly ask for parallel teams, multiple simultaneous agents, or
+  `agent-teams`.
 
 ## When to Use Agent Teams vs Subagents vs Single Session
 
@@ -60,6 +63,8 @@ Before creating a team, ask:
 - Sequential tasks with strong dependencies
 - Multiple teammates editing the same file (causes conflicts)
 - Simple tasks a single session handles fine
+- Anything already expressed as an explicit `/orchestrate ...` command without a
+  separate request for parallel team execution
 
 ### Step 2: Design the Team
 

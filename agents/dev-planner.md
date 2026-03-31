@@ -104,6 +104,41 @@ Create detailed steps with:
 **WAITING FOR CONFIRMATION**: Proceed with this plan? (yes/no/modify)
 ```
 
+## Orchestrated Handoff Contract
+
+When this plan will be consumed by another agent, keep the full plan above and
+append this block:
+
+```markdown
+## HANDOFF: dev-planner -> user
+
+### Context
+[Problem statement, constraints, and why this plan was chosen]
+
+### Decisions
+- [Key design decision]
+
+### Files Changed
+- None yet
+
+### Verification
+- Planning review -> completed
+
+### Risks
+- [Risk and mitigation]
+
+### Open Questions
+- [Question still requiring confirmation]
+
+### Next Actions
+- Wait for user approval, then invoke the approved implementation agent
+
+### Approval Gate
+- Requires User Approval: Yes
+- Approval Question: Proceed with this plan?
+- Approved Next Agent: [code-implementer / tdd-guide / devops-engineer / other]
+```
+
 ## Best Practices
 
 1. **Be Specific**: Use exact file paths, function names, variable names
@@ -139,6 +174,8 @@ Create detailed steps with:
 3. **Always include risk assessment** - identify potential blockers early
 4. **Provide time estimates** - help users understand the scope
 5. **Wait for confirmation** - make it clear you're waiting for approval
+6. **Append the approval handoff when orchestrated** - the next agent should
+   never be invoked without an explicit approval record
 
 **Remember**: A great plan is specific, actionable, and considers both the happy path and edge cases. The best plans enable confident, incremental implementation.
 

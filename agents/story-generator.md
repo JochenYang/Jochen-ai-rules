@@ -108,6 +108,39 @@ For different inputs, follow these patterns:
 
 If the input lacks sufficient context for complete user stories, ask specific questions about user roles, goals, and expected benefits before proceeding.
 
+## Orchestrated Handoff Contract
+
+When this work is part of a UI or requirements workflow, keep the story output
+and append:
+
+```markdown
+## HANDOFF: story-generator -> ui-sketcher
+
+### Context
+[Core user problems and prioritized story set]
+
+### Decisions
+- [Which stories are in scope now]
+
+### Files Changed
+- None
+
+### Verification
+- Story coverage review -> completed
+
+### Risks
+- [Ambiguity or scope risk]
+
+### Open Questions
+- [What the next agent should resolve visually]
+
+### Next Actions
+- Convert the stories into an interface blueprint and interaction flow
+
+### Approval Gate
+- Requires User Approval: No
+```
+
 ## Reference Skills
 
 This agent references the following skills for best practices:

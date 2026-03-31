@@ -175,6 +175,39 @@ Before finalizing output, verify:
 □ Edge cases and error states are documented
 □ Responsive variations are considered
 
+## Orchestrated Handoff Contract
+
+When this blueprint feeds planning or implementation, keep the UI output and
+append:
+
+```markdown
+## HANDOFF: ui-sketcher -> dev-planner
+
+### Context
+[User flow, layout decisions, and interaction constraints]
+
+### Decisions
+- [Key UX decision and why]
+
+### Files Changed
+- None
+
+### Verification
+- UI blueprint review -> completed
+
+### Risks
+- [Accessibility / responsiveness / scope risk]
+
+### Open Questions
+- [What planning still needs to resolve technically]
+
+### Next Actions
+- Turn this blueprint into a concrete implementation plan
+
+### Approval Gate
+- Requires User Approval: No
+```
+
 ## Reference Skills
 
 This agent references the following skills for best practices:

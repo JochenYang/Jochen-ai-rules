@@ -80,7 +80,7 @@ Prioritize by impact/effort matrix:
 ## Handoff Output Format (MANDATORY)
 
 ```markdown
-## HANDOFF: performance-optimizer → code-implementer
+## HANDOFF: performance-optimizer -> code-implementer
 
 ### Performance Baseline
 

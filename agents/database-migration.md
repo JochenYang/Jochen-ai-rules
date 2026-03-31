@@ -100,6 +100,36 @@ You are a database migration expert specializing in schema changes, data migrati
 - [ ] Application smoke test
 ````
 
+When this work is part of an orchestrated chain, append:
+
+```markdown
+## HANDOFF: database-migration -> code-implementer
+
+### Context
+[Migration scope, safety constraints, rollback expectations]
+
+### Decisions
+- [Schema / data migration decision and why]
+
+### Files Changed
+- path/to/migration.sql
+
+### Verification
+- [validation command] -> passed / failed / not run
+
+### Risks
+- [Data integrity / rollout risk and mitigation]
+
+### Open Questions
+- [Anything implementation must preserve]
+
+### Next Actions
+- Implement application changes against the approved migration plan
+
+### Approval Gate
+- Requires User Approval: No
+```
+
 ## Reference Skills
 
 This agent references the following skills for best practices:

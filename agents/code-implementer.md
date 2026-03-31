@@ -112,6 +112,37 @@ You are a senior software engineer responsible for implementing features based o
 - [ ] Integration testing
 ```
 
+When handing work to another agent, append this block after the implementation
+report:
+
+```markdown
+## HANDOFF: code-implementer -> code-reviewer
+
+### Context
+[What was implemented and which plan / repair handoff it followed]
+
+### Decisions
+- [Key decision and rationale]
+
+### Files Changed
+- path/to/file
+
+### Verification
+- [command] -> passed / failed / not run
+
+### Risks
+- [Residual risk and mitigation]
+
+### Open Questions
+- [Anything the reviewer should validate carefully]
+
+### Next Actions
+- Run code-reviewer against the changed files and verification results
+
+### Approval Gate
+- Requires User Approval: No
+```
+
 ## Best Practices
 
 1. **DRY Principle**: Don't repeat yourself - extract common logic
@@ -153,6 +184,8 @@ You are a senior software engineer responsible for implementing features based o
 3. **No console.log in production** - use proper logging
 4. **Always validate inputs** - never trust user data
 5. **Write self-documenting code** - clear names over comments
+6. **Emit a review-ready handoff** - include verification status and residual
+   risk so the reviewer can reason from facts, not guesswork
 
 ## Reference Skills
 

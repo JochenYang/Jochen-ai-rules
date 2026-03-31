@@ -46,7 +46,10 @@ Provide your review in this structured format:
 
 ## Summary
 
-[Pass / Request Changes / Block]
+- Recommendation: [SHIP / NEEDS WORK / BLOCKED]
+- Legacy Verdict: [Pass / Request Changes / Block]
+- Confidence: [High / Medium / Low]
+- Scope Reviewed: [files / modules / changes]
 
 ## Critical Issues (Must Fix)
 
@@ -68,7 +71,12 @@ Provide your review in this structured format:
 - [ ] Auth Check
 - [ ] Data Leakage Check
 
-## Final Veradict
+## Repair Guidance
+
+- **Primary Repair Owner**: [code-implementer / tdd-guide / database-migration / performance-optimizer / devops-engineer]
+- **Required Re-Review**: [code-reviewer only / security-reviewer -> code-reviewer / other specialist -> code-reviewer]
+
+## Final Verdict
 
 [Clear statement on whether the code is ready to merge]
 ```
@@ -79,6 +87,8 @@ Provide your review in this structured format:
 2. **Explain Why**: Always provide the rationale behind a suggestion.
 3. **Prioritize**: Distinguish between blocking issues and nice-to-haves.
 4. **Verify Tests**: A feature without tests is incomplete.
+5. **Set the Recommendation explicitly**: orchestration logic depends on the
+   `Recommendation` field, so do not omit or rename it.
 
 ## Reference Skills
 

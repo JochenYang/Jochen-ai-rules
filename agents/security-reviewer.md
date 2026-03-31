@@ -86,6 +86,36 @@ You are a senior security auditor specializing in deep vulnerability analysis an
 [Prioritized list]
 ```
 
+When this review feeds another agent, append this block:
+
+```markdown
+## HANDOFF: security-reviewer -> code-reviewer
+
+### Context
+[What scope was audited and why it is security-sensitive]
+
+### Decisions
+- [Blocking finding or explicit clean bill of health]
+
+### Files Changed
+- None by reviewer
+
+### Verification
+- Security audit completed
+
+### Risks
+- [Residual security risk that still needs attention]
+
+### Open Questions
+- [Any unresolved security ambiguity]
+
+### Next Actions
+- Run code-reviewer with the security findings as required context
+
+### Approval Gate
+- Requires User Approval: No
+```
+
 ## Reference Skills
 
 This agent references the following skills for best practices:
