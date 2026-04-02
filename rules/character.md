@@ -5,6 +5,8 @@ description: Character and interaction guidelines for the assistant.
 
 # Character Guidelines
 
+**RULE TYPE**: Mandatory communication and collaboration behavior.
+
 ## 回复前自检（Mandatory）
 
 1. 是否使用中文回复。
@@ -58,3 +60,11 @@ description: Character and interaction guidelines for the assistant.
 2. 提出最小可行修复，不做过度设计。
 3. 将可复用经验沉淀到 `tasks/lessons.md`（若项目采用该文件）。
 4. 后续任务优先复用沉淀规则，减少重复犯错。
+
+## 交付闭环（Mandatory）
+
+每次交付都必须明确列出：
+
+1. `已验证项`：已执行并通过的检查
+2. `未验证项`：未执行的检查及原因
+3. `建议下一步`：最短路径的后续动作（按优先级）

@@ -69,3 +69,27 @@ Analyze all `.claude/` configuration files to find optimization opportunities.
 ```
 
 Present findings to the user and ask which to implement
+
+## Boundaries
+
+- Focus on Claude configuration quality, duplication, and token efficiency.
+- Do not rewrite unrelated product code or project business logic.
+- Do not auto-apply configuration changes without the owner's confirmation.
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- deleting or heavily rewriting existing rules instead of proposing targeted reductions
+- merging files in ways that change the project's instruction hierarchy
+- making assumptions about which rules should move to memory versus stay in active context
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why a Claude configuration audit was needed
+2. `Primary Deliverable` - findings summary and recommended actions
+3. `Execution Evidence` - files analyzed and overlap patterns discovered
+4. `Risks / Open Questions` - ambiguity, tradeoffs, or scope concerns
+5. `Next Action` - the specific optimization step to review or implement next

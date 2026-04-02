@@ -46,3 +46,21 @@ Focus on MCP server development and tool design, not third-party API development
 - `./guides/python_mcp_server.md` - Python implementation guide
 - `./guides/node_mcp_server.md` - TypeScript implementation guide
 - `./guides/evaluation.md` - Evaluation creation guide
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- exposing tools that have overly broad permissions or weak schema boundaries
+- expanding server scope into generic third-party API integration work
+- shipping an MCP interface without at least a basic evaluation or validation path
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why an MCP server or tool design solution is needed
+2. `Primary Deliverable` - server design, tool schema, or implementation plan
+3. `Execution Evidence` - guides used, files changed, and evaluation steps prepared
+4. `Risks / Open Questions` - permission, schema, or agent-usage concerns
+5. `Next Action` - the next build, test, or review step

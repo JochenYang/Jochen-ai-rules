@@ -87,3 +87,21 @@ Focused skill for building Phaser-based 2D web games and guidance aligned with P
 ## Boundaries
 
 Focus on Phaser 2D web games. Do not recommend Phaser for 3D-first or console-native releases.
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- shifting the project toward non-web or non-Phaser technology choices
+- introducing heavy systems that do not fit lightweight browser delivery
+- expanding game scope in ways that materially change production feasibility
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why Phaser is the correct engine choice
+2. `Primary Deliverable` - gameplay/system design or implementation summary
+3. `Execution Evidence` - files changed, references consulted, and validation completed
+4. `Risks / Open Questions` - performance, asset, or scope concerns
+5. `Next Action` - the next build, playtest, or polish step

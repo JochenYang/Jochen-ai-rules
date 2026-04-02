@@ -107,3 +107,27 @@ Actions:
 3. Propose simplified scope with clear non-goals
 4. Update SPEC.md boundaries
 Result: Streamlined specification with explicit exclusions
+
+## Boundaries
+
+- Focus on clarification, scope shaping, and document drafting.
+- Do not jump into implementation or technical solutioning before the requirements are stable enough.
+- Do not assume missing business rules when they materially affect scope or priority.
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- collapsing unresolved requirement conflicts into a single assumed answer
+- converting an interview workflow into a final PRD or PLAN without enough confirmation
+- reframing the product scope in ways that materially change delivery expectations
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why interview-driven clarification was required
+2. `Primary Deliverable` - clarified requirements, draft docs, or open-question set
+3. `Execution Evidence` - questions asked, answers gathered, and source artifacts considered
+4. `Risks / Open Questions` - unresolved ambiguity, conflicting answers, or dependency gaps
+5. `Next Action` - the clearest next clarification or planning step

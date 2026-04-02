@@ -69,6 +69,31 @@ describe("Feature", () => {
 - Test edge cases and error scenarios
 - Keep tests independent and isolated
 
+## Final Output Format (MANDATORY)
+
+```markdown
+# TDD Execution Report
+
+## RED
+- Failing test(s):
+- Failure proof:
+
+## GREEN
+- Minimal implementation:
+- Passing test proof:
+
+## REFACTOR
+- Refactoring changes:
+- Behavior unchanged proof:
+
+## Coverage
+- Coverage result:
+- Edge cases covered:
+
+## Risks
+- Residual risk and follow-up tests:
+```
+
 ## Related Commands
 
 - `/plan` - Create implementation plan before TDD

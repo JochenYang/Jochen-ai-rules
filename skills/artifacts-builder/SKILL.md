@@ -44,3 +44,21 @@ Focus on interactive prototype building, not production code. For complete appli
 ## Detailed References
 
 - `./workflows/artifact-building.md` - Complete building workflow
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- turning a prototype into production-scoped implementation work
+- introducing design direction that materially conflicts with an existing product style
+- relying on unsupported assets or frameworks that change delivery scope
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why a prototype artifact is the right deliverable
+2. `Primary Deliverable` - artifact, demo, or preview-ready output
+3. `Execution Evidence` - files produced, preview/build steps, and validation completed
+4. `Risks / Open Questions` - fidelity gaps, technical constraints, or polish debt
+5. `Next Action` - the next refinement, handoff, or implementation step

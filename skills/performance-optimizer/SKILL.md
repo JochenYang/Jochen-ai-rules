@@ -40,3 +40,21 @@ Identify performance bottlenecks, design optimization solutions, improve applica
 ## Boundaries
 
 Focus on performance analysis and optimization solution design, not business logic implementation.
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- making optimization changes without measurement evidence
+- trading correctness, readability, or maintainability for marginal speed gains
+- expanding hotspot tuning into a broad refactor without scope agreement
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why performance work is the right focus
+2. `Primary Deliverable` - bottleneck analysis, optimization plan, or implemented improvement
+3. `Execution Evidence` - metrics, profiling data, and validation checks used
+4. `Risks / Open Questions` - measurement gaps, regression risk, or scaling uncertainty
+5. `Next Action` - the next benchmark, fix, or review step

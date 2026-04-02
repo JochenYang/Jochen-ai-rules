@@ -52,3 +52,19 @@ For complex tasks, use `tasks/todo.md`:
 2. Use product language, avoid unnecessary jargon.
 3. If path drifts from goal, raise concise pushback with options.
 4. Surface limitations early; do not over-promise.
+
+## Execution Checklist (Mandatory)
+
+- [ ] Goal, scope, and success criteria are explicit
+- [ ] MVP boundary is clear for current iteration
+- [ ] Milestones and acceptance criteria are testable
+- [ ] Risks/dependencies are visible before implementation
+- [ ] Handoff includes runnable next steps
+
+## Escalation Rules
+
+Require owner confirmation when:
+
+1. scope expansion changes delivery milestone or architecture boundary
+2. external dependency uncertainty blocks reliable estimation
+3. quality/schedule tradeoff requires dropping Must-have items

@@ -71,3 +71,27 @@ Actions:
 3. Note tools/approaches that worked well
 4. Extract reusable debugging strategy
 Result: Debugging pattern for future reference
+
+## Boundaries
+
+- Focus on extracting lessons, patterns, and improvement opportunities from completed work.
+- Do not rewrite history, hide failures, or fabricate successful verification.
+- Do not mutate code by default unless the owner explicitly asks for follow-up implementation.
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- turning reflection findings into direct code or rule changes
+- concluding that a repeated issue is systemic without enough evidence
+- writing retrospective notes to shared artifacts that could affect future workflows
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why reflection is useful for this session or sprint
+2. `Primary Deliverable` - lesson summary, patterns, and recommendations
+3. `Execution Evidence` - tasks reviewed, failures observed, and signals considered
+4. `Risks / Open Questions` - uncertain conclusions or missing evidence
+5. `Next Action` - the best improvement to adopt in the next cycle

@@ -50,3 +50,20 @@ Types: `feat`, `fix`, `refactor`, `docs`, `style`, `test`, `chore`, `perf`, `ci`
 - Include tests for behavior changes
 - Update docs for externally visible changes
 - Link related issue/task when available
+
+## Escalation Rules (Mandatory)
+
+Require explicit owner confirmation before:
+
+1. history-rewriting operations (`rebase`, `reset --hard`, force-push)
+2. destructive cleanup of branches/worktrees
+3. squashing commits that may hide meaningful review context
+
+## Delivery Output Contract
+
+When proposing Git actions, always provide:
+
+1. proposed branch name
+2. proposed commit message (`subject` + optional body summary)
+3. changed files summary
+4. clear confirmation question before irreversible actions

@@ -15,6 +15,12 @@ Comprehensive design guide for web and mobile applications. Contains 50+ styles,
   audits, and critique, while `frontend-design` can be used when implementation
   code is needed.
 
+## Boundaries
+
+- Focus on design reasoning, audit, and system-level UX guidance.
+- Do not drift into backend logic or database design.
+- Hand off implementation-first frontend work to `frontend-design` when code delivery is the main goal.
+
 ## When to Apply
 
 Reference these guidelines when:
@@ -358,3 +364,21 @@ Before delivering UI code, verify these items:
 - [ ] Form inputs have labels
 - [ ] Color is not the only indicator
 - [ ] `prefers-reduced-motion` respected
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- shifting visual direction away from established brand or product patterns
+- recommending design changes that significantly affect implementation scope
+- accepting accessibility or responsiveness tradeoffs without explicit owner approval
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why a design-direction or UX-audit skill is appropriate
+2. `Primary Deliverable` - audit, palette/type direction, or design-system recommendation
+3. `Execution Evidence` - screens, files, or references reviewed
+4. `Risks / Open Questions` - UX debt, accessibility gaps, or implementation tradeoffs
+5. `Next Action` - the next design or implementation decision to make

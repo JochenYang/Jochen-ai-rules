@@ -39,3 +39,19 @@ description: Mandatory UI/UX design standards.
 - Limit primary color count (recommended <= 3)
 - In dark mode, avoid pure black `#000`
 - Use design tokens for colors, spacing, and typography
+
+## Delivery Checklist (Mandatory)
+
+- [ ] Accessibility checks passed (contrast, keyboard, focus, semantics)
+- [ ] Responsive behavior validated on mobile and desktop
+- [ ] Uses existing design system/tokens unless exception is documented
+- [ ] Interaction states are complete (hover/focus/disabled/loading/error)
+- [ ] Performance impact from visual effects is acceptable
+
+## Escalation Rules
+
+Escalate for owner confirmation when:
+
+1. A change breaks or bypasses established design system constraints.
+2. Accessibility tradeoffs are unavoidable for product reasons.
+3. Motion/visual treatment may affect performance or readability.

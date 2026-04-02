@@ -3,6 +3,7 @@ name: database-migration
 description: Database migration specialist. Handles schema changes, data migration, and ensures data integrity during database upgrades or cross-database migrations.
 color: yellow
 model: sonnet
+tools: ["Read", "Bash", "Grep", "Glob", "Edit", "Write"]
 ---
 
 # Database Migration Specialist
@@ -129,6 +130,14 @@ When this work is part of an orchestrated chain, append:
 ### Approval Gate
 - Requires User Approval: No
 ```
+
+## Final Output Contract (MANDATORY)
+
+- MUST include migration type, risk level, and rollback plan
+- MUST include validation evidence (row counts/checksum/sample verification)
+- MUST list exact files/scripts to apply
+- MUST state unresolved data integrity risks explicitly
+- MUST NOT omit rollback instructions
 
 ## Reference Skills
 

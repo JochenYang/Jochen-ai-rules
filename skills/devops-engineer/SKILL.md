@@ -45,3 +45,21 @@ Focus on CI/CD and infrastructure, not business code development.
 
 - `./references/docker-best-practices.md` - Docker optimization guide
 - `./references/kubernetes-patterns.md` - Kubernetes best practices
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- making production-facing infrastructure changes without rollback clarity
+- broadening infra work into unrelated application logic changes
+- changing secrets, networking, domains, or runtime policies with user-facing impact
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why DevOps or infra work is appropriate
+2. `Primary Deliverable` - pipeline, deployment, or infra change summary
+3. `Execution Evidence` - configs edited, commands run, and checks performed
+4. `Risks / Open Questions` - rollout, reliability, or security concerns
+5. `Next Action` - the next safe validation or release step

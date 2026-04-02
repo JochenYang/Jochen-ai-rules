@@ -93,3 +93,13 @@ automation.
 ### Open Questions
 ### Next Actions
 ```
+
+## Execution Checklist (Mandatory)
+
+Before finishing any agent-driven task, confirm:
+
+- [ ] Agent choice matches responsibility and workflow stage
+- [ ] Required approval gates were respected
+- [ ] Required specialist re-checks were executed
+- [ ] Final reviewer recommendation is present and machine-readable
+- [ ] Handoff chain is complete and traceable

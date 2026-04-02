@@ -337,3 +337,15 @@ recommendation is not `SHIP`.
    and deploy workflows are not review-once-only flows.
 4. **Custom chains must be explicit**: if ownership or repair routing is
    unclear, stop and ask instead of guessing.
+
+## Final Output Format (MANDATORY)
+
+Every `/orchestrate` completion message must include:
+
+1. `Workflow Summary` - workflow type, task, and executed agent chain
+2. `Approval Events` - where user confirmation was required and the decision
+3. `Review Timeline` - each review iteration and recommendation result
+4. `Files Changed` - deduplicated list from handoffs/reports
+5. `Verification` - tests/checks run with pass/fail/not-run
+6. `Final Recommendation` - exactly one of `SHIP`, `NEEDS WORK`, `BLOCKED`
+7. `Next Action` - concrete next step when recommendation is not `SHIP`

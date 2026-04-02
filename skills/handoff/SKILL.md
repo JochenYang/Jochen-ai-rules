@@ -230,3 +230,27 @@ Read only as needed:
 - `scripts/handoff.py`
 - `references/handoff-template.md`
 - `references/handoff-vs-compact.md`
+
+## Boundaries
+
+- Focus on preserving state and resumability, not on implementing new feature work inside the handoff itself.
+- Prefer explicit status capture over speculative future planning.
+- Do not replace a normal compact or active implementation flow unless handoff is actually needed.
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- overwriting an existing handoff artifact with materially different state
+- choosing handoff instead of compact when thread continuity is still sufficient
+- marking uncertain implementation details as confirmed facts
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why a handoff artifact is needed now
+2. `Primary Deliverable` - handoff path and captured status summary
+3. `Execution Evidence` - resolver result, files written, and state included
+4. `Risks / Open Questions` - missing evidence, pending checks, or resume hazards
+5. `Next Action` - the exact resume instruction or next operator step

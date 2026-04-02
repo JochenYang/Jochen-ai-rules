@@ -56,3 +56,21 @@ Focus on API design and documentation standards, not specific business logic imp
 - `./guides/rest-api.md` - REST API design guide
 - `./guides/graphql.md` - GraphQL API design guide
 - `./guides/grpc.md` - gRPC API design guide
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- locking in an API style, auth model, or versioning strategy that has broad product impact
+- expanding from interface design into implementation details outside this skill's boundary
+- making compatibility assumptions that could break existing clients
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why API design work was needed
+2. `Primary Deliverable` - interface design, spec, or contract summary
+3. `Execution Evidence` - references used, files produced, and validation performed
+4. `Risks / Open Questions` - compatibility, auth, or rollout concerns
+5. `Next Action` - the concrete documentation, review, or implementation step

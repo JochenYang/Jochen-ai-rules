@@ -84,3 +84,27 @@ Focus on _what_ the code does, not _how_ it does it. This makes your tests more 
 - [ ] Was the code refactored and linted after passing?
 - [ ] Is test coverage >80% for the modified areas?
 - [ ] Are all tests passing after the final implementation?
+
+## Boundaries
+
+- Focus on RED-GREEN-REFACTOR-VERIFY discipline for new behavior and bugfixes.
+- Do not skip the failing-test reproduction step for bug work unless the owner explicitly accepts the risk.
+- Do not use TDD ritualistically when the task is documentation-only or otherwise non-executable.
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- proceeding when the bug cannot be reproduced with a failing test
+- broadening a narrow fix into a large refactor during the GREEN phase
+- closing the task with partial verification on high-risk paths
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why TDD is the right workflow here
+2. `Primary Deliverable` - RED/GREEN/REFACTOR progress and changed tests
+3. `Execution Evidence` - failing test, passing test, and verification commands
+4. `Risks / Open Questions` - flaky tests, missing coverage, or blocked environments
+5. `Next Action` - the next verification or implementation step

@@ -113,3 +113,21 @@ Focus on database-level design and optimization, not application-layer business 
 - `./guides/postgres-guide.md` - PostgreSQL database guide
 - `./guides/mongodb-guide.md` - MongoDB database guide
 - `./workflows/database-optimization.md` - Performance optimization workflow
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- proposing destructive schema or migration operations without rollback confidence
+- broadening database work into application-layer refactors
+- changing durability, consistency, or availability tradeoffs with product impact
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why database-focused work is required
+2. `Primary Deliverable` - schema plan, optimization proposal, or migration guidance
+3. `Execution Evidence` - scripts, queries, references, and checks used
+4. `Risks / Open Questions` - migration safety, performance uncertainty, or data integrity concerns
+5. `Next Action` - the next safe validation or implementation step

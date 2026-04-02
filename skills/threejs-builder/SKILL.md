@@ -419,3 +419,27 @@ Effective Three.js apps:
 **Claude is capable of creating elegant, performant 3D web experiences. These patterns guide the way—they don't limit the result.**
 
 For specific topics, see the **Reference Files** table at the top of this document.
+
+## Boundaries
+
+- Focus on Three.js-based 3D web experiences.
+- Do not switch to Phaser, Unity, or backend-heavy architecture unless the task clearly exceeds this skill's scope.
+- Prefer modern ES module patterns and web delivery constraints.
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- introducing heavy dependencies, advanced rendering stacks, or non-web deployment assumptions
+- changing visual direction in a way that conflicts with an established product style
+- making performance-costly scene design decisions without a clear user-facing benefit
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why Three.js is the right implementation path
+2. `Primary Deliverable` - scene/app design or implementation artifact
+3. `Execution Evidence` - files touched, references consulted, and validation performed
+4. `Risks / Open Questions` - rendering, asset, or performance concerns
+5. `Next Action` - the next concrete build, polish, or verification step

@@ -37,6 +37,13 @@ Create commit messages that follow Conventional Commits.
 6. Ask for final user confirmation before commit.
 7. Validate that subject/body/footer contain no emoji.
 
+## Safety Rules (MANDATORY)
+
+- NEVER commit without explicit user confirmation.
+- NEVER use `git commit --amend` unless user explicitly requests it.
+- NEVER skip hooks unless user explicitly passes `--no-verify`.
+- NEVER include secrets or credentials in staged files.
+
 ## Message Format
 
 Simple:
@@ -102,3 +109,26 @@ Suggest split commits when:
 2. unrelated modules are changed together
 3. dependency updates are mixed with functional changes
 4. one commit is too large to review safely
+
+## Final Output Format (MANDATORY)
+
+```markdown
+# Commit Proposal
+
+## Pre-commit Checks
+- lint:
+- build:
+- skipped checks:
+
+## Staging Summary
+- staged files:
+- split-commit suggestion (if any):
+
+## Proposed Commit Message
+- Subject: `<type>[optional scope]: <subject>`
+- Body (if --style=full): `<why and what changed>`
+- Footer (if --style=full): `<issue links / breaking change>`
+
+## Confirmation
+- Requires user confirmation before `git commit`: Yes
+```

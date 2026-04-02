@@ -50,6 +50,32 @@ Clean up dead code and improve code organization.
 - Document removed code in commit message
 - Keep deprecated code marked with @deprecated
 
+## Final Output Format (MANDATORY)
+
+```markdown
+# Refactor Cleanup Report
+
+## Summary
+- Scope:
+- Cleanup strategy:
+
+## Removed / Simplified Items
+1. file/path - [what removed]
+2. file/path - [what simplified]
+
+## Safety Verification
+- import/build checks:
+- tests:
+- behavior regression check:
+
+## Not Removed (With Reason)
+- item:
+- reason:
+
+## Risks
+- residual risk + mitigation:
+```
+
 ## Related Commands
 
 - `/review` - Review refactoring changes

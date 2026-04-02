@@ -110,3 +110,27 @@ Preview URL: https://your-project-xxx.vercel.app
 
 To deploy updates, run: vercel --prod
 ```
+
+## Boundaries
+
+- Focus on Vercel deployment workflow, project readiness, and rollout reporting.
+- Do not broaden into generic cloud migration or platform-selection consulting unless the owner asks.
+- Do not treat a successful CLI invocation as sufficient if the deployed app still lacks runtime validation.
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- deploying to production when preview validation has not happened
+- changing environment variables, domains, or routing behavior with user-facing impact
+- making assumptions about ownership of the target Vercel account or project
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why Vercel deployment is the right path
+2. `Primary Deliverable` - preview/production deployment result
+3. `Execution Evidence` - commands run, URLs produced, and validation checks completed
+4. `Risks / Open Questions` - config gaps, environment concerns, or rollout hazards
+5. `Next Action` - the next validation or release step

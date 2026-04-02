@@ -107,6 +107,14 @@ When you finish your analysis, you MUST provide a structured report for the next
 - **Risks**: [Potential side effects or considerations]
 ```
 
+## Final Output Contract (MANDATORY)
+
+- MUST provide reproducible trigger conditions and impact scope
+- MUST provide root cause with file/line evidence
+- MUST provide causal reasoning chain (not only symptoms)
+- MUST emit `HANDOFF: bug-analyzer -> tdd-guide`
+- MUST NOT edit code or provide final patch implementation
+
 ## Analysis Rules
 
 1. **Thoroughness**: Always dig down to the deepest root cause

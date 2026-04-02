@@ -81,3 +81,27 @@ Analyze all installed skills to find optimization opportunities.
 ```
 
 Present findings to user and ask which to implement
+
+## Boundaries
+
+- Focus on skill inventory quality, overlap analysis, and optimization guidance.
+- Do not merge, split, or rewrite skills automatically without owner confirmation.
+- Treat token-efficiency suggestions as tradeoffs, not mandatory reductions.
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- recommending deletion of heavily used skills
+- consolidating skills with partially overlapping but distinct responsibilities
+- changing invocation patterns that could break existing workflows
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why a skills audit is appropriate now
+2. `Primary Deliverable` - inventory summary and optimization recommendations
+3. `Execution Evidence` - directories scanned, counts gathered, and overlaps found
+4. `Risks / Open Questions` - migration cost, ambiguity, or retained complexity
+5. `Next Action` - the highest-value cleanup or review step

@@ -148,3 +148,21 @@ Focus on technical implementation and code quality, not product requirements ana
 - `./references/unity-best-practices.md` - Unity development guidelines
 - `./guides/web-best-practices.md` - Web development best practices
 - `./workflows/development.md` - Complete development workflow
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- expanding implementation into adjacent domains outside the current task boundary
+- making architecture or dependency changes that materially affect maintainability or delivery scope
+- completing work without meaningful verification on changed behavior
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why this general development skill was used
+2. `Primary Deliverable` - implementation result, files changed, or artifact produced
+3. `Execution Evidence` - commands run, tests/checks performed, and references used
+4. `Risks / Open Questions` - known gaps, edge cases, or follow-up concerns
+5. `Next Action` - the clearest next coding or review step

@@ -134,6 +134,9 @@ Remove a worktree:
 **Options:**
 - `-f, --force` - Force cleanup even if branch has uncommitted changes
 
+**Safety rule:** if `--force` is used, require explicit user confirmation before
+removing the worktree.
+
 **Enhanced Workflow:**
 
 1. **Check if worktree is clean:**
@@ -241,6 +244,33 @@ parent-directory/
 - **Uncommitted changes warning**: Warns before cleaning up dirty worktrees
 - **Path validation**: Checks that worktree path doesn't already exist
 - **Project name detection**: Automatically uses actual project name
+
+## Final Output Format (MANDATORY)
+
+```markdown
+# Branch Command Report
+
+## Action
+- requested action:
+- target:
+
+## Commands Executed
+1. ...
+2. ...
+
+## Result
+- status: [SUCCESS / FAILED]
+- worktree path:
+- branch name:
+
+## Verification
+- dependency install: passed / failed / skipped
+- test baseline: passed / failed / skipped
+- git status summary:
+
+## Risks / Follow-up
+- ...
+```
 
 ## Arguments
 

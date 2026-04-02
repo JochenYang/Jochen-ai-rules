@@ -323,3 +323,27 @@ Solution:
 - Always specify exact output file paths and format in role definitions
 - Lead agent should create consolidation template before spawning team
 - Review intermediate outputs before final consolidation
+
+## Boundaries
+
+- Use `agent-teams` only for explicit parallel or multi-perspective work.
+- Do not replace sequential workflows such as `/orchestrate` unless the user also asks for parallel execution.
+- Do not simulate native teams with shell subprocesses or ad hoc scripts.
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- creating a team when the task can be completed by one agent or a simpler subagent chain
+- assigning overlapping write ownership across teammates
+- allowing parallel work on security-sensitive or destructive operations
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why team orchestration was appropriate
+2. `Team Design` - roles, ownership, and coordination shape
+3. `Execution Evidence` - artifacts, files, or checkpoints produced by teammates
+4. `Risks / Open Questions` - coordination gaps, blockers, or unresolved conflicts
+5. `Next Action` - the concrete consolidation or follow-up step

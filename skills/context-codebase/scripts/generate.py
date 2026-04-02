@@ -24,6 +24,9 @@ from context_engine.csr import build_csr_read_enhancement
 from context_engine.external_context import collect_external_context
 from context_engine.graph import build_code_graph
 from context_engine.retrieval import build_retrieval_artifacts, retrieve_chunks
+from context_engine.semantic_chunker import SemanticChunker
+from context_engine.chunk_tracker import ChunkTracker
+from context_engine.sqlite_index import SQLiteIndex
 
 try:
     import tomllib
@@ -47,6 +50,11 @@ SNAPSHOT_FILENAME = f'{SKILL_NAME}.json'
 INDEX_STATE_FILENAME = f'{SKILL_NAME}.index.json'
 LEGACY_SNAPSHOT_FILENAMES = [f'{legacy_name}.json' for legacy_name in LEGACY_SKILL_NAMES]
 LEGACY_INDEX_STATE_FILENAMES = [f'{legacy_name}.index.json' for legacy_name in LEGACY_SKILL_NAMES]
+
+# Feature flags for advanced chunking modes
+USE_SEMANTIC_CHUNKING = False
+USE_INCREMENTAL_MODE = False
+USE_SQLITE_INDEX = False
 
 EXCLUDE_DIRS = {
     'node_modules', '.git', 'dist', 'build', 'venv', '__pycache__',
@@ -948,6 +956,10 @@ def clip_chunk_preview(lines: list[str], start_line: int, end_line: int) -> str:
 
 
 def build_chunks(file_records: list[dict]) -> list[dict]:
+    # Use semantic chunking when enabled
+    if USE_SEMANTIC_CHUNKING:
+        return build_chunks_semantic(file_records)
+
     chunks = []
 
     for record in file_records:
@@ -1017,6 +1029,59 @@ def build_chunks(file_records: list[dict]) -> list[dict]:
             })
             window_index += 1
             window_start = window_end + 1
+
+    return chunks
+
+
+def build_chunks_semantic(file_records: list[dict]) -> list[dict]:
+    """
+    Semantic chunking using AST-aware SemanticChunker.
+    Produces higher-quality chunks based on code structure.
+    """
+    chunks = []
+    chunker = SemanticChunker()
+
+    for record in file_records:
+        content = record.get('content')
+        if not content:
+            continue
+
+        # SemanticChunker uses lowercase language names
+        language = record.get('language', 'unknown')
+        lang_map = {
+            'Python': 'python',
+            'JavaScript': 'javascript',
+            'TypeScript': 'typescript',
+            'TSX': 'typescript',
+            'JSX': 'javascript',
+            'Go': 'go',
+            'Rust': 'rust',
+            'Java': 'java',
+        }
+        chunker_lang = lang_map.get(language, language.lower())
+
+        try:
+            semantic_chunks = chunker.chunk_file(content, record['path'], chunker_lang)
+        except Exception:
+            # Fallback to original behavior on error
+            semantic_chunks = []
+
+        for chunk in semantic_chunks:
+            # Normalize to match original chunk format
+            chunks.append({
+                'id': chunk.get('id', make_chunk_id(record['path'], chunk.get('kind', 'section'), chunk.get('startLine', 1), chunk.get('endLine', 1))),
+                'path': chunk.get('path', record['path']),
+                'kind': chunk.get('kind', 'section'),
+                'language': language,
+                'startLine': chunk.get('startLine', 1),
+                'endLine': chunk.get('endLine', 1),
+                'signals': chunk.get('signals', []),
+                'preview': chunk.get('preview', ''),
+                'name': chunk.get('name', ''),
+                'content': chunk.get('content', ''),
+                'analysisEngine': record.get('analysisEngine'),
+                'analysisConfidence': record.get('analysisConfidence'),
+            })
 
     return chunks
 
@@ -1277,6 +1342,7 @@ def save_index_state(
     file_records: list[dict],
     source_fingerprint: str,
 ) -> None:
+    global USE_INCREMENTAL_MODE
     payload = {
         'version': INDEX_STATE_VERSION,
         'generatedAt': utc_now_iso(),
@@ -1284,6 +1350,63 @@ def save_index_state(
         'files': build_index_files_payload(current_signatures, chunks, file_records),
         'chunks': chunks,
     }
+
+    # Add incremental tracking when enabled
+    if USE_INCREMENTAL_MODE:
+        try:
+            tracker = ChunkTracker()
+            existing_index_state = load_existing_index_state(index_state_file)
+
+            if existing_index_state and 'chunkStates' in existing_index_state:
+                # Load old chunk states
+                old_states = {}
+                for chunk_id, state_data in existing_index_state.get('chunkStates', {}).items():
+                    from context_engine.chunk_tracker import ChunkState
+                    old_states[chunk_id] = ChunkState(
+                        chunk_id=state_data['chunk_id'],
+                        content_hash=state_data['content_hash'],
+                        version=state_data.get('version', 1)
+                    )
+
+                # Track new chunks
+                new_states = tracker.track(chunks)
+
+                # Merge states with version tracking
+                merged_states = tracker.merge_states(old_states, new_states)
+
+                # Add change set info to payload
+                change_set = tracker.diff(old_states, new_states)
+                payload['_incremental'] = {
+                    'added': len(change_set.added),
+                    'modified': len(change_set.modified),
+                    'deleted': len(change_set.deleted),
+                    'unchanged': len(change_set.unchanged),
+                }
+
+                # Convert merged states back to dict format for JSON serialization
+                payload['chunkStates'] = {
+                    chunk_id: {
+                        'chunk_id': state.chunk_id,
+                        'content_hash': state.content_hash,
+                        'version': state.version
+                    }
+                    for chunk_id, state in merged_states.items()
+                }
+            else:
+                # First run - initialize chunk states
+                new_states = tracker.track(chunks)
+                payload['chunkStates'] = {
+                    chunk_id: {
+                        'chunk_id': state.chunk_id,
+                        'content_hash': state.content_hash,
+                        'version': state.version
+                    }
+                    for chunk_id, state in new_states.items()
+                }
+        except Exception:
+            print(f'WARNING: ChunkTracker failed, disabling incremental mode')
+            USE_INCREMENTAL_MODE = False
+
     save_index_state_payload(index_state_file, payload)
 
 
@@ -1300,6 +1423,38 @@ def load_existing_snapshot(output_file: Path) -> dict | None:
 def write_snapshot(output_file: Path, snapshot: dict) -> None:
     output_file.parent.mkdir(parents=True, exist_ok=True)
     output_file.write_text(json.dumps(snapshot, indent=2, ensure_ascii=False), encoding='utf-8')
+
+    # Write to SQLite index when enabled
+    if USE_SQLITE_INDEX:
+        try:
+            db_path = str(output_file.parent / f'{SKILL_NAME}.db')
+            sqlite_index = SQLiteIndex(db_path)
+
+            chunks = snapshot.get('chunks', [])
+            if chunks:
+                # Normalize chunk format for SQLiteIndex
+                normalized_chunks = []
+                for chunk in chunks:
+                    normalized_chunks.append({
+                        'id': chunk.get('id', ''),
+                        'path': chunk.get('path', ''),
+                        'startLine': chunk.get('startLine'),
+                        'endLine': chunk.get('endLine'),
+                        'kind': chunk.get('kind', ''),
+                        'name': chunk.get('name', ''),
+                        'language': chunk.get('language', ''),
+                        'signals': chunk.get('signals', []),
+                        'preview': chunk.get('preview', ''),
+                    })
+                sqlite_index.upsert_chunks(normalized_chunks)
+
+                # Delete stale chunks (not in current snapshot)
+                valid_ids = {chunk['id'] for chunk in chunks if chunk.get('id')}
+                sqlite_index.delete_stale(valid_ids)
+
+            sqlite_index.close()
+        except Exception:
+            print(f'WARNING: SQLiteIndex failed, snapshot written without index update')
 
 
 def summarize_modules_from_records(file_records: list[dict]) -> dict[str, str]:
@@ -1478,13 +1633,16 @@ def build_read_payload(
     graph = snapshot.get('graph', {})
     important_files = snapshot.get('importantFiles', [])
     representative_snippets = snapshot.get('representativeSnippets', [])
-    csr_context = build_csr_read_enhancement(
-        snapshot,
-        index_state,
-        selected_task,
-        normalized_query,
-        base_query_intent,
-    )
+    try:
+        csr_context = build_csr_read_enhancement(
+            snapshot,
+            index_state,
+            selected_task,
+            normalized_query,
+            base_query_intent,
+        )
+    except Exception:
+        csr_context = {}
     query_intent = enrich_query_intent_with_snapshot(
         snapshot,
         merge_query_intent(base_query_intent, csr_context),
@@ -3487,7 +3645,8 @@ def main():
         print(
             "Usage: python generate.py <project_path> [refresh|--refresh|read|--read|report|--report] "
             "[--task <task>] [--query <query> | --query-escaped <ascii_escaped_query> "
-            "| --query-file <utf8_file> | --query-stdin]",
+            "| --query-file <utf8_file> | --query-stdin] "
+            "[--semantic] [--incremental] [--sqlite]",
             file=sys.stderr,
         )
         sys.exit(1)
@@ -3505,6 +3664,12 @@ def main():
     escaped_query = None
     query_file = None
     query_stdin = '--query-stdin' in cli_args
+
+    # Advanced chunking mode flags
+    global USE_SEMANTIC_CHUNKING, USE_INCREMENTAL_MODE, USE_SQLITE_INDEX
+    USE_SEMANTIC_CHUNKING = '--semantic' in cli_args
+    USE_INCREMENTAL_MODE = '--incremental' in cli_args
+    USE_SQLITE_INDEX = '--sqlite' in cli_args
 
     if '--task' in cli_args:
         task_index = cli_args.index('--task')

@@ -84,3 +84,19 @@ Topic file at `~/.claude/projects/[project-encoded-path]/memory/[pattern-name].m
 - Focus on patterns that will save time in future sessions
 - Keep topic files focused — one theme per file, multiple patterns per theme is fine
 - `MEMORY.md` is auto-loaded (first 200 lines); topic files are loaded on demand — keep the index concise
+
+## Final Output Format (MANDATORY)
+
+Before any write operation, the response must include:
+
+1. `Pattern Candidate` - what reusable pattern was found and why it is reusable
+2. `Target Decision` - merge into existing topic vs create new topic
+3. `Planned File Operations` - exact files to write/update
+4. `Confirmation Gate` - explicit yes/no question before writing
+
+After user confirmation and write completion, the response must include:
+
+1. `Write Result` - created/updated file list
+2. `Index Sync` - what changed in `MEMORY.md`
+3. `Reusable Trigger` - when this pattern should be reused in future sessions
+4. `Validation` - quick check that target files exist and content sections are complete

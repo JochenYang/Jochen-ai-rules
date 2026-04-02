@@ -136,10 +136,9 @@ Agent (dev-planner):
 - [ ] System handles 10,000 notifications/hour
 
 ## Estimated Complexity: MEDIUM
-- Backend: 4-6 hours
-- Frontend: 3-4 hours
-- Testing: 2-3 hours
-- Total: 9-13 hours
+- Scope level: MEDIUM
+- Main uncertainty: notification volume spike and queue backpressure
+- Verification intensity: HIGH (queue reliability + delivery correctness)
 
 **WAITING FOR CONFIRMATION**: Proceed with this plan? (yes/no/modify)
 ```
@@ -152,6 +151,29 @@ If you want changes, respond with:
 - "modify: [your changes]"
 - "different approach: [alternative]"
 - "skip phase 2 and do phase 3 first"
+
+## Final Output Format (MANDATORY)
+
+```markdown
+# Plan Output
+
+## Requirements Restatement
+- ...
+
+## Implementation Phases
+1. ...
+2. ...
+
+## Risks & Mitigations
+- ...
+
+## Complexity
+- [HIGH / MEDIUM / LOW]
+
+## Approval Gate
+- WAITING FOR CONFIRMATION
+- Required user response: yes / proceed / modify
+```
 
 ## Integration with Other Commands
 

@@ -211,3 +211,21 @@ Focus on code quality, testing, and security. Not responsible for product requir
 - `./workflows/security-audit.md` - Security audit methodology
 - `./references/owasp-top-10.md` - OWASP Top 10 vulnerabilities guide
 - `./references/testing-patterns.md` - Common testing patterns and anti-patterns
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- declaring code ready when blocking findings or unverified risks remain
+- broadening a review into implementation changes without explicit agreement
+- waiving testing or security expectations on high-risk changes
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why QA or review work is needed
+2. `Primary Deliverable` - findings report, test plan, or audit result
+3. `Execution Evidence` - files reviewed, checks run, and standards applied
+4. `Risks / Open Questions` - unresolved findings, coverage gaps, or environment blockers
+5. `Next Action` - the next fix, re-check, or release decision

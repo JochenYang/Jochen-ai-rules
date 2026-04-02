@@ -89,3 +89,17 @@ The code-reviewer agent checks:
 ## Related Agent
 
 This command invokes: `.claude/agents/code-reviewer.md`
+
+## Final Output Format (MANDATORY)
+
+Every `/review` result must include:
+
+1. `Recommendation` - exactly one of `SHIP`, `NEEDS WORK`, `BLOCKED`
+2. `Confidence` - `High/Medium/Low` with scope statement
+3. `Findings by Severity` - prioritized list with `file:line` references
+4. `Security Audit` - explicit pass/fail or not-assessed per checklist item
+5. `Repair Guidance` - primary repair owner and re-review path
+6. `Verification Snapshot` - commands executed and pass/fail status
+
+If no issues are found, state `No blocking findings` explicitly and still provide
+security and verification sections.

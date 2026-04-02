@@ -1,5 +1,5 @@
 ---
-description: Analyze and fix build errors. Run build, parse errors, and implement fixes. Can invoke explorer agent for complex issues.
+description: Analyze and fix build errors. Run build, parse errors, and implement fixes via bug-analyzer + code-implementer workflow when needed.
 ---
 
 # Build Fix Command
@@ -22,8 +22,9 @@ Analyze and fix build/compilation errors.
 4. **Implement fixes** - Fix the identified issues
 5. **Verify fix** - Run build again to confirm success
 
-**For complex build issues**, this command may invoke the **explorer** agent (`.claude/agents/explorer.md`) to perform deep analysis.
-If `explorer` is unavailable, fallback to `bug-analyzer` for root cause analysis, then `code-implementer` for fixes.
+**For complex build issues**, this command should invoke the **bug-analyzer**
+agent (`.claude/agents/bug-analyzer.md`) for root cause analysis, then hand off
+to `code-implementer` for fixes.
 
 ## Common Build Errors
 
@@ -46,6 +47,31 @@ If `explorer` is unavailable, fallback to `bug-analyzer` for root cause analysis
 5. Verify build succeeds
 ```
 
+## Final Output Format (MANDATORY)
+
+```markdown
+# Build Fix Report
+
+## Summary
+- Build command used:
+- Current status: [PASS / FAIL]
+
+## Root Cause
+- Primary cause:
+- Affected files:
+
+## Fixes Applied
+1. [change]
+2. [change]
+
+## Verification
+- [command] -> passed / failed
+- Remaining errors (if any):
+
+## Risks
+- [risk + mitigation]
+```
+
 ## Best Practices
 
 - Fix root causes, not symptoms
@@ -61,6 +87,5 @@ If `explorer` is unavailable, fallback to `bug-analyzer` for root cause analysis
 
 ## Related Agents
 
-- `.claude/agents/explorer.md` - For deep root cause analysis
-- `.claude/agents/bug-analyzer.md` - Fallback root cause analysis when explorer is unavailable
+- `.claude/agents/bug-analyzer.md` - Root cause analysis
 - `.claude/agents/code-implementer.md` - For implementing fixes

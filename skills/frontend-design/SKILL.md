@@ -20,6 +20,12 @@ performant, and ready to ship.
 - Keep media generation tied to the frontend deliverable. Do not drift into
   unrelated art, video, or audio production unless the user explicitly asks.
 
+## Boundaries
+
+- Focus on implementation-first frontend delivery with strong visual direction.
+- Do not absorb backend or broad product-planning work unless another skill explicitly takes over.
+- Keep generated media, motion, and copy tied to the frontend deliverable.
+
 ## When To Use
 
 Use this skill when the user asks to:
@@ -249,6 +255,24 @@ Read these when needed:
 - `references/minimax-music-guide.md`
 - `references/minimax-voice-catalog.md`
 - `references/env-setup.md`
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- changing established brand or design-system direction in a major way
+- introducing asset generation or motion choices that materially increase delivery risk
+- shipping frontend work without responsive and accessibility validation
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why implementation-first frontend design is the right path
+2. `Primary Deliverable` - page, component set, or asset-backed frontend output
+3. `Execution Evidence` - files changed, preview/build steps, and validation completed
+4. `Risks / Open Questions` - responsiveness, performance, or polish concerns
+5. `Next Action` - the next implementation or review step
 
 ## Copywriting
 

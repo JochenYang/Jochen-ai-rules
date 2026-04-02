@@ -30,3 +30,20 @@ description: Mandatory security baseline for all code changes.
 3. Rotate leaked credentials immediately.
 4. Search codebase for similar patterns and patch globally.
 5. Trigger `security-reviewer` when scope includes auth/payment/PII/secrets.
+
+## High-Risk Escalation (Mandatory)
+
+Immediately escalate and require explicit owner decision when:
+
+1. credential leakage is confirmed or strongly suspected
+2. production data exposure risk exists
+3. auth/permission boundaries can be bypassed
+4. legal/compliance-sensitive data handling is uncertain
+
+## Verification Output Contract
+
+For security-relevant changes, delivery must explicitly list:
+
+1. `Verified` - checks completed with evidence
+2. `Not Verified` - checks not executed and why
+3. `Next Mitigation` - the highest-priority follow-up action

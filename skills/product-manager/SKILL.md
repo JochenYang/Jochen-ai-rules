@@ -87,3 +87,21 @@ Focus on requirements analysis and product planning, not UI design or technical 
 
 - `./workflows/prd-template.md` - PRD template guide
 - `./workflows/user-story-mapping.md` - User story mapping workshop guide
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- reframing roadmap or priority decisions that materially change product direction
+- filling in missing market or user evidence as if it were confirmed fact
+- expanding planning work into design or implementation commitments outside this skill's boundary
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why product planning is the right mode
+2. `Primary Deliverable` - PRD, prioritization, roadmap, or story output
+3. `Execution Evidence` - assumptions, inputs, and analysis used
+4. `Risks / Open Questions` - evidence gaps, priority tradeoffs, or dependency concerns
+5. `Next Action` - the next clarification, review, or execution step
