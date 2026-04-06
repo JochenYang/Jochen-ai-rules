@@ -69,6 +69,23 @@ Manual handoff is not a total replacement for automatic compact.
 The point of handoff is to reset into a cleaner context while keeping a
 reviewable, explicit, file-backed artifact.
 
+## Language Adaptation
+
+The handoff document should be written in the same language as the current
+conversation/interaction:
+
+| Conversation Language | Handoff Document Language   |
+|-----------------------|-----------------------------|
+| 中文                  | 中文                        |
+| English               | English                     |
+| 日本語                | 日本語                      |
+| Other                 | Match conversation language |
+
+**Implementation rule**: Detect the language of the current conversation from
+system context (user's input language, conversation history). Write all handoff
+content in that language. Section headers, field names, and body text should all
+be in the detected language.
+
 ## Modes
 
 ### Write Mode
@@ -133,6 +150,16 @@ Do not:
 - omit blockers, broken attempts, or risky assumptions
 - write a handoff that lacks a concrete next action
 
+### Session End Checklist (MANDATORY)
+
+Before finalizing the handoff, confirm:
+
+- [ ] **Environment clean**: No uncommitted changes that break the build
+- [ ] **Tests run**: At least basic sanity tests executed, results recorded
+- [ ] **Errors documented**: Any known failures or TODOs are in the handoff
+- [ ] **Next action clear**: The next session knows exactly what to do first
+- [ ] **Git status**: Working tree state captured (staged/unstaged/commit)
+
 ### Read Mode
 
 Resume from a handoff document after reset.
@@ -192,6 +219,83 @@ A good handoff should answer these questions quickly:
 
 If the next session still needs to reconstruct basic status from scratch, the
 handoff is not good enough.
+
+## Good vs Bad Examples
+
+### Good Handoff
+
+```md
+# Handoff: User auth refactor
+
+## Task
+- Objective: Refactor auth module to support OAuth2
+- Current phase: Core implementation 70% done
+- Requested outcome: Complete auth flow by EOD
+
+## Repository State
+- Repo: d:/codes/myapp
+- Branch: feat/oauth-refactor
+- Working tree: 3 modified files staged
+- Relevant commit: a3f2b1c "add auth base structure"
+
+## Current Status
+- Completed: Token generation, user lookup
+- In progress: OAuth callback handler
+- Not started: Integration tests, docs
+
+## Key Files
+- src/auth/token.ts: Token generation logic
+- src/auth/oauth.ts: OAuth flow (work here next)
+- src/db/user.ts: User model
+
+## Decisions Already Made
+- Decision: Use JWT for tokens, not sessions
+  Reason: Stateless, better for API auth
+- Decision: Store OAuth tokens encrypted
+  Reason: Security requirement
+
+## Verification
+- Commands run:
+  - npm test -> passed
+  - npm run lint -> passed
+- Tests: 12/15 passing for auth module
+
+## Risks And Blockers
+- Risk: OAuth callback URL may need ngrok for dev
+  Impact: Medium
+  Mitigation: Already have ngrok config ready
+
+## Resume Order
+1. Read src/auth/oauth.ts and confirm callback handler structure
+2. Run npm test to verify current state
+3. Implement callback handler in oauth.ts
+
+## Next Action
+- Implement OAuth callback handler in src/auth/oauth.ts
+```
+
+### Bad Handoff (Don't Do This)
+
+```md
+# Handoff: Auth work
+
+## Task
+Working on auth, it's mostly done but some stuff left.
+
+## Current Status
+Did some auth stuff, might need more tests.
+
+## Next Action
+Keep working on auth.
+```
+
+| Aspect       | Good                     | Bad                |
+|--------------|--------------------------|--------------------|
+| Specificity  | Exact file paths         | Vague "auth stuff" |
+| Verification | Test results listed      | Not mentioned      |
+| Resume path  | Clear 1-2-3 steps        | "keep working"     |
+| State        | Branch, working tree     | Unknown            |
+| Blockers     | Explicit with mitigation | Hidden             |
 
 ## Recommended Structure
 
