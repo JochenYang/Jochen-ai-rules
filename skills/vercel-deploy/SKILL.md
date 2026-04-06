@@ -117,6 +117,12 @@ To deploy updates, run: vercel --prod
 - Do not broaden into generic cloud migration or platform-selection consulting unless the owner asks.
 - Do not treat a successful CLI invocation as sufficient if the deployed app still lacks runtime validation.
 
+## When NOT to Use
+
+- Non-Vercel deployment targets (AWS/GCP/Azure/K8s) requiring broader infra work
+- Application feature implementation/debugging not related to deployment
+- Production rollouts without explicit owner approval and validation intent
+
 ## Escalation Rules
 
 Pause and ask the owner before:

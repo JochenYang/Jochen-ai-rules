@@ -41,6 +41,12 @@ The following scripts can be run directly without reading source code:
 
 Focus on interactive prototype building, not production code. For complete applications, use developer skill.
 
+## When NOT to Use
+
+- Shipping production-grade frontend/backend systems (use `developer`)
+- Pure UX audit or style-direction critique without prototype output (use `ui-ux-pro-max`)
+- Database, API, or infrastructure tasks outside prototype scope
+
 ## Detailed References
 
 - `./workflows/artifact-building.md` - Complete building workflow

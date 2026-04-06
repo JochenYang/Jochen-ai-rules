@@ -80,9 +80,14 @@ class SQLiteIndex:
         cursor = conn.cursor()
 
         # Normalize query for FTS5 (escape quotes, split words)
-        safe_query = " ".join([f'"{word.replace('"', "")}"' for word in query.split() if word.strip()])
+        sanitized_words = [word.replace('"', '').strip() for word in query.split() if word.strip()]
+        safe_query = " ".join([f'"{word}"' for word in sanitized_words if word])
         if not safe_query:
-             safe_query = f'"{query.replace('"', "")}"'
+            fallback = query.replace('"', '').strip()
+            if not fallback:
+                conn.close()
+                return []
+            safe_query = f'"{fallback}"'
 
         try:
             cursor.execute("""
@@ -118,9 +123,13 @@ class SQLiteIndex:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
-        safe_path = f'"{path.replace('"', "")}"'
+        normalized_path = path.replace('"', '').strip()
+        if not normalized_path:
+            conn.close()
+            return []
         try:
-            cursor.execute("SELECT * FROM chunks WHERE path MATCH ?", (safe_path,))
+            # Path is an exact key-like field; prefer exact equality over full-text MATCH.
+            cursor.execute("SELECT * FROM chunks WHERE path = ?", (normalized_path,))
             
             results = []
             for row in cursor.fetchall():
@@ -154,12 +163,6 @@ class SQLiteIndex:
         cursor.execute("SELECT id FROM chunks")
         all_ids = {row["id"] for row in cursor.fetchall()}
         
-        # Safety check: skip deletion if none of valid_ids exist in DB
-        # Prevents accidental full DB wipe (e.g., when valid_ids is stale)
-        if not (valid_ids & all_ids):
-            conn.close()
-            return
-
         to_delete = all_ids - valid_ids
         for stale_id in to_delete:
             cursor.execute("DELETE FROM chunks WHERE id = ?", (stale_id,))

@@ -99,6 +99,12 @@ Focus on database architecture design, performance optimization, data migration,
 
 Focus on database-level design and optimization, not application-layer business logic implementation.
 
+## When NOT to Use
+
+- Frontend/UI implementation tasks (use `frontend-design` or `developer`)
+- General backend feature coding without DB architecture/performance scope (use `developer`)
+- Product planning or requirement discovery work (use `product-manager` or `requirements-interview`)
+
 ## Helper Scripts
 
 **Always run `--help` first** to see usage.

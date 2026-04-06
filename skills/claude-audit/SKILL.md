@@ -76,6 +76,12 @@ Present findings to the user and ask which to implement
 - Do not rewrite unrelated product code or project business logic.
 - Do not auto-apply configuration changes without the owner's confirmation.
 
+## When NOT to Use
+
+- Editing product/application code instead of auditing `.claude` instructions
+- Running broad refactors without first producing an audit report
+- Applying configuration deletions/merges without owner approval
+
 ## Escalation Rules
 
 Pause and ask the owner before:

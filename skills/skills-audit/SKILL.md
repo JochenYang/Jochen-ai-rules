@@ -88,6 +88,12 @@ Present findings to user and ask which to implement
 - Do not merge, split, or rewrite skills automatically without owner confirmation.
 - Treat token-efficiency suggestions as tradeoffs, not mandatory reductions.
 
+## When NOT to Use
+
+- Implementing code features unrelated to skill inventory analysis
+- Running destructive skill cleanup actions without explicit owner decision
+- Replacing hands-on quality/security review with inventory-only metrics
+
 ## Escalation Rules
 
 Pause and ask the owner before:

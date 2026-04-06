@@ -114,6 +114,12 @@ Result: Streamlined specification with explicit exclusions
 - Do not jump into implementation or technical solutioning before the requirements are stable enough.
 - Do not assume missing business rules when they materially affect scope or priority.
 
+## When NOT to Use
+
+- Requirements are already clear and implementation can start directly
+- User only needs coding execution without interview rounds (use `developer`)
+- User only needs roadmap/prioritization output from stable requirements (use `product-manager`)
+
 ## Escalation Rules
 
 Pause and ask the owner before:

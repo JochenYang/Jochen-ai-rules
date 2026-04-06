@@ -246,3 +246,27 @@ Read these only when needed:
 - Prefer cached artifacts over rescanning whenever the mode allows it
 - Use `read` for focused retrieval and `report` for deep-pack generation
 - Keep the parent thread lightweight in `report` mode when delegation exists
+
+## Boundaries
+
+- Focus on repo orientation, snapshot maintenance, and targeted retrieval.
+- Do not expand into broad implementation work unless another skill or agent explicitly takes over.
+- Prefer cached context artifacts over unnecessary rescans.
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- forcing a full refresh when cached artifacts are still adequate
+- broadening retrieval into a repository-wide rewrite or redesign exercise
+- delegating deep-pack work when the added token and coordination cost is not justified
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why `context-codebase` was the right retrieval path
+2. `Primary Deliverable` - snapshot/read/report artifact or answer package
+3. `Execution Evidence` - cache usage, files indexed, or retrieval sources
+4. `Risks / Open Questions` - stale cache risk, missing context, or unresolved ambiguity
+5. `Next Action` - the recommended follow-up retrieval or implementation step

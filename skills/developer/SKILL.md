@@ -104,6 +104,14 @@ General development entry point responsible for all development and maintenance 
 
 Focus on technical implementation and code quality, not product requirements analysis or UI/UX visual design.
 
+## When NOT to Use
+
+- Design-direction or UX-audit-only tasks with no implementation-code deliverable (use `ui-ux-pro-max`)
+- Frontend delivery tasks that explicitly require implemented UI code/pages (use `frontend-design`)
+- Two-step flows where UX audit should happen before code implementation (use `ui-ux-pro-max` first, then `frontend-design`)
+- Architecture-planning-only work before implementation (use `dev-planner`)
+- Requirements clarification interviews before implementation scope is ready (use `requirements-interview`)
+
 ## Platform-Specific Guidelines
 
 ### Web Development

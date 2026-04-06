@@ -106,9 +106,9 @@ class TestSQLiteIndex:
         # 删除不存在的
         self.index.delete_stale({"nonexistent"})
 
-        # 验证仍然在
+        # 无交集时应清理为0（避免陈旧数据残留）
         results = self.index.search("foo")
-        assert len(results) == 1
+        assert len(results) == 0
 
     def test_replace_existing(self):
         """替换已存在的 chunk"""
@@ -134,3 +134,73 @@ class TestSQLiteIndex:
         results = self.index.search("updated")
         assert len(results) == 1
         assert results[0]["signals"] == ["updated"]
+
+    def test_search_handles_quoted_query(self):
+        """查询里包含引号时也能正常检索"""
+        chunk = {
+            "id": "src/router.py:1-10",
+            "path": "src/router.py",
+            "startLine": 1,
+            "endLine": 10,
+            "kind": "function",
+            "name": "route_message",
+            "signals": ["route", "message"],
+            "preview": "def route_message(payload): return payload",
+            "language": "python",
+        }
+        self.index.upsert_chunks([chunk])
+
+        results = self.index.search('"message" route')
+        assert len(results) == 1
+        assert results[0]["id"] == "src/router.py:1-10"
+
+    def test_get_by_path_handles_wrapped_quotes(self):
+        """路径参数带包裹引号时仍可命中"""
+        chunk = {
+            "id": "src/app.py:1-5",
+            "path": "src/app.py",
+            "startLine": 1,
+            "endLine": 5,
+            "kind": "function",
+            "name": "main",
+            "signals": ["entry"],
+            "preview": "def main(): pass",
+            "language": "python",
+        }
+        self.index.upsert_chunks([chunk])
+
+        results = self.index.get_by_path('"src/app.py"')
+        assert len(results) == 1
+        assert results[0]["path"] == "src/app.py"
+
+    def test_get_by_path_is_exact_match(self):
+        """路径查询应是精确匹配，避免误命中相似路径"""
+        chunks = [
+            {
+                "id": "src/app.py:1-5",
+                "path": "src/app.py",
+                "startLine": 1,
+                "endLine": 5,
+                "kind": "function",
+                "name": "main",
+                "signals": ["entry"],
+                "preview": "def main(): pass",
+                "language": "python",
+            },
+            {
+                "id": "src/app.py.bak:1-5",
+                "path": "src/app.py.bak",
+                "startLine": 1,
+                "endLine": 5,
+                "kind": "function",
+                "name": "main_backup",
+                "signals": ["backup"],
+                "preview": "def main_backup(): pass",
+                "language": "python",
+            },
+        ]
+        self.index.upsert_chunks(chunks)
+
+        results = self.index.get_by_path("src/app.py")
+        assert len(results) == 1
+        assert results[0]["path"] == "src/app.py"

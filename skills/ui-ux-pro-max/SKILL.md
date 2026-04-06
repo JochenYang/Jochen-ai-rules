@@ -21,6 +21,12 @@ Comprehensive design guide for web and mobile applications. Contains 50+ styles,
 - Do not drift into backend logic or database design.
 - Hand off implementation-first frontend work to `frontend-design` when code delivery is the main goal.
 
+## When NOT to Use
+
+- Backend/API/database implementation tasks (use `developer` or `database-engineer`)
+- End-to-end frontend coding requests where the output is implementation code (use `frontend-design`)
+- Infrastructure/deployment planning and release operations
+
 ## When to Apply
 
 Reference these guidelines when:

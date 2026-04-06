@@ -78,6 +78,12 @@ Result: Debugging pattern for future reference
 - Do not rewrite history, hide failures, or fabricate successful verification.
 - Do not mutate code by default unless the owner explicitly asks for follow-up implementation.
 
+## When NOT to Use
+
+- Active implementation tasks that require writing/fixing code now
+- Requirement discovery sessions that need structured Q&A (use `requirements-interview`)
+- Code/security audits that need defect-level findings (use `quality-assurance`)
+
 ## Escalation Rules
 
 Pause and ask the owner before:
