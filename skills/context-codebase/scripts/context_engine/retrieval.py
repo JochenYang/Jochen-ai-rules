@@ -272,19 +272,26 @@ def score_chunk(
     documentation_like = is_documentation_path(path)
 
     overlap = sorted(token for token in query_tokens if token in haystack)
+    overlap_count = len(overlap)
+    token_count = max(len(query_tokens), 1)
     if overlap:
-        score += len(overlap) * 12
+        score += overlap_count * 12
         reasons.append(f'keyword overlap: {", ".join(overlap[:4])}')
+    coverage = overlap_count / token_count
+    score += int(coverage * 20)
+    if token_count >= 3 and overlap_count <= 1:
+        score -= 24
+        reasons.append('low query coverage')
 
     path_rank = important_ranks.get(chunk['path'])
     if path_rank is not None:
-        score += max(0, 30 - path_rank * 3)
+        score += max(0, 14 - path_rank)
         reasons.append('important file')
 
     if chunk['path'] in recent_changed:
-        boost = 18 if task in {'bugfix-investigation', 'code-review'} else 8
-        score += boost
-        reasons.append('recently changed')
+        if task in {'bugfix-investigation', 'code-review'}:
+            score += 18
+            reasons.append('recently changed')
 
     if task == 'understand-project' and kind in {'section', 'model', 'function'}:
         score += 10
@@ -309,6 +316,9 @@ def score_chunk(
         if documentation_like:
             score -= 16
             reasons.append('documentation downrank for config query')
+    elif documentation_like and token_count >= 3 and overlap_count <= 1:
+        score -= 20
+        reasons.append('documentation downrank')
 
     if is_probably_test_path(path):
         if task == 'feature-delivery':

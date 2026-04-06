@@ -139,16 +139,6 @@ def build_csr_read_enhancement(
         for item in cast(list[SnapshotDict], graph.get('fileDependencies', []))
         if item.get('path')
     }
-    module_file_map = {
-        cast(str, item.get('module')): [
-            cast(str, file_item.get('path'))
-            for file_item in cast(list[SnapshotDict], item.get('files', []))
-            if file_item.get('path')
-        ]
-        for item in cast(list[SnapshotDict], graph.get('pathIndex', []))
-        if item.get('module')
-    }
-
     route = build_route_metadata(
         task,
         query_intent,
@@ -169,8 +159,8 @@ def build_csr_read_enhancement(
     files = collect_related_files(
         merged_matches,
         dependency_map,
-        module_file_map,
         cast(list[str], cast(SnapshotDict, snapshot.get('summary', {})).get('entryPoints', [])),
+        query_intent,
     )
     search_scope = {
         'preferPaths': files[:10],
@@ -256,7 +246,11 @@ def build_query_variants(
         variants.append(query)
     if blueprint_query:
         variants.append(' '.join([blueprint_query, *expanded_terms[:10]]).strip())
-    route_variant = ' '.join([*expanded_terms[:12], *route.get('routeTerms', [])[:8]]).strip()
+    route_terms = [term for term in route.get('routeTerms', []) if term]
+    expanded_lower = {term.lower() for term in expanded_terms}
+    overlapping_route_terms = [term for term in route_terms if term.lower() in expanded_lower]
+    route_tail = overlapping_route_terms[:6]
+    route_variant = ' '.join([*expanded_terms[:12], *route_tail]).strip()
     if route_variant:
         variants.append(route_variant)
 
@@ -329,26 +323,32 @@ def score_csr_match(
     exact_terms = set(cast(list[str], query_intent.get('terms', [])))
     route_terms = set(route.get('routeTerms', []))
     path_terms = extract_terms(path)
+    haystack_terms = extract_terms(haystack)
+    query_overlap_terms = query_terms | exact_terms
+    lexical_overlap = len(haystack_terms & query_overlap_terms)
 
     score = int(match.get('score', 0))
-    if kind in set(route.get('preferredKinds', [])):
-        score += 14
-    if any(token.lower() in path for token in route.get('routeTerms', [])[:6]):
-        score += 12
-    if any(token.lower() in path for token in route.get('pathHints', [])):
+    if kind in set(route.get('preferredKinds', [])) and lexical_overlap > 0:
+        score += 10
+    if lexical_overlap > 0 and any(token.lower() in path for token in route.get('routeTerms', [])[:6]):
         score += 8
-    score += min(len(exact_terms & extract_terms(haystack)), 3) * 10
-    score += min(len(query_terms & extract_terms(haystack)), 4) * 5
-    score += min(len(route_terms & extract_terms(haystack)), 3) * 7
+    if lexical_overlap > 0 and any(token.lower() in path for token in route.get('pathHints', [])):
+        score += 6
+    score += min(len(exact_terms & haystack_terms), 3) * 10
+    score += min(len(query_terms & haystack_terms), 4) * 5
+    score += min(len(route_terms & haystack_terms), 3) * 6
     score += min(len(path_terms & exact_terms), 3) * 10
     score += min(len(path_terms & query_terms), 4) * 6
 
     for index, hint in enumerate(cast(list[str], query_intent.get('dynamicPathHints', []))[:6]):
         normalized_hint = normalize_path(hint).lower()
-        if path == normalized_hint or path.startswith(normalized_hint.rstrip('/') + '/'):
+        if lexical_overlap > 0 and (path == normalized_hint or path.startswith(normalized_hint.rstrip('/') + '/')):
             score += max(24 - index * 4, 8)
-        elif normalized_hint and normalized_hint in path:
+        elif lexical_overlap > 0 and normalized_hint and normalized_hint in path:
             score += max(14 - index * 2, 4)
+
+    if query_overlap_terms and lexical_overlap == 0:
+        score -= 26
 
     if match.get('path') in recent_changed and route.get('task') in {'bugfix-investigation', 'code-review'}:
         score += 12
@@ -365,8 +365,8 @@ def score_csr_match(
 def collect_related_files(
     matches: list[ChunkMatch],
     dependency_map: dict[str, list[str]],
-    module_file_map: dict[str, list[str]],
     entry_points: list[str],
+    query_intent: SnapshotDict,
 ) -> list[str]:
     ordered = []
     seen = set()
@@ -378,23 +378,36 @@ def collect_related_files(
         seen.add(normalized)
         ordered.append(normalized)
 
-    for match in matches[:10]:
+    query_terms = set(cast(list[str], query_intent.get('keywords', []))) | set(cast(list[str], query_intent.get('terms', [])))
+
+    def match_coverage(match: ChunkMatch) -> float:
+        if not query_terms:
+            return 1.0
+        haystack = ' '.join([
+            cast(str, match.get('path', '') or ''),
+            cast(str, match.get('kind', '') or ''),
+            cast(str, match.get('preview', '') or ''),
+            ' '.join(cast(list[str], match.get('signals', [])) or []),
+        ])
+        overlap = len(extract_terms(haystack) & query_terms)
+        return min(1.0, overlap / max(len(query_terms), 1))
+
+    seed_matches = [match for match in matches[:12] if match_coverage(match) >= 0.35]
+    if not seed_matches:
+        seed_matches = matches[:4]
+
+    for match in seed_matches:
         path = cast(str | None, match.get('path'))
         add(path)
         if path:
-            for dependency in dependency_map.get(path, [])[:4]:
+            dep_limit = 2 if match_coverage(match) >= 0.55 else 1
+            for dependency in dependency_map.get(path, [])[:dep_limit]:
                 add(dependency)
 
-    matched_modules = {
-        infer_path_module(cast(str, item.get('path', '')))
-        for item in matches[:8]
-    }
-    for module_name in matched_modules:
-        for path in module_file_map.get(module_name, [])[:4]:
+    # Keep entry points as sparse fallback only when seed evidence is thin.
+    if len(ordered) < 4:
+        for path in entry_points[:2]:
             add(path)
-
-    for path in entry_points[:4]:
-        add(path)
 
     return ordered
 
@@ -404,6 +417,10 @@ def infer_subfocus(query_terms: list[str]) -> tuple[str, list[str]]:
     for triggers, name, route_terms in SUBFOCUS_PATTERNS:
         if lowered_terms & triggers:
             return name, route_terms
+        for trigger in triggers:
+            for term in lowered_terms:
+                if trigger in term or term in trigger:
+                    return name, route_terms
     return 'general', []
 
 

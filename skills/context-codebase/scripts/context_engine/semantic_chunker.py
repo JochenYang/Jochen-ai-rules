@@ -25,15 +25,22 @@ class SemanticChunker:
         if total_lines < SMALL_FILE_LINES:
             return [self._create_chunk(filepath, 1, total_lines, "section", "", content, language)]
 
-        # Parse AST
-        try:
-            tree = ast.parse(content)
-        except SyntaxError:
-            # Parse failed, fallback to fixed-line chunking
-            return self._chunk_by_lines(content, filepath, language)
+        # Use AST for Python
+        if language == 'python':
+            try:
+                tree = ast.parse(content)
+                ast_chunks = self._chunk_by_ast_boundaries(tree, content, filepath, language)
+                if ast_chunks:
+                    return ast_chunks
+            except SyntaxError:
+                pass
+                
+        # Use Regex for JS/TS/Go etc
+        regex_chunks = self._chunk_by_regex_boundaries(content, filepath, language)
+        if regex_chunks:
+            return regex_chunks
 
-        # Choose chunking strategy based on file size
-        return self._chunk_by_ast_boundaries(tree, content, filepath, language)
+        return self._chunk_by_lines(content, filepath, language)
 
     def _chunk_by_ast_boundaries(self, tree: ast.AST, content: str, filepath: str, language: str) -> list[dict]:
         """Split by AST boundaries, only top-level nodes"""
@@ -70,8 +77,41 @@ class SemanticChunker:
 
         # No AST nodes, split by lines
         if not chunks:
-            return self._chunk_by_lines(content, filepath, language)
+            return []
 
+        return chunks
+
+    def _chunk_by_regex_boundaries(self, content: str, filepath: str, language: str) -> list[dict]:
+        """Split by regex boundaries for JS/TS/Go"""
+        import re
+        chunks = []
+        lines = content.splitlines()
+        
+        # Matches JS/TS/Go/Java classes and functions
+        pattern = re.compile(
+            r'^(?:export\s+)?(?:default\s+)?(?:async\s+)?(?:function|class|func)\s+([a-zA-Z0-9_]+)'
+            r'|^(?:export\s+)?(?:const|let|var)\s+([a-zA-Z0-9_]+)\s*[:=].*?(?:=>|function)',
+            re.MULTILINE
+        )
+        
+        matches = list(pattern.finditer(content))
+        if not matches:
+            return []
+            
+        for i, match in enumerate(matches):
+            start_pos = match.start()
+            start_line = content.count('\n', 0, start_pos) + 1
+            name = match.group(1) or match.group(2) or "unknown"
+            kind = "class" if "class" in match.group() else "function"
+            
+            end_line = len(lines)
+            if i + 1 < len(matches):
+                end_pos = matches[i+1].start()
+                end_line = content.count('\n', 0, end_pos)
+                
+            chunk_content = '\n'.join(lines[start_line-1:end_line])
+            chunks.append(self._create_chunk(filepath, start_line, end_line, kind, name, chunk_content, language))
+            
         return chunks
 
     def _chunk_by_lines(self, content: str, filepath: str, language: str) -> list[dict]:

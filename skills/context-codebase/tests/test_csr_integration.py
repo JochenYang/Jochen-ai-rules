@@ -364,6 +364,85 @@ class CSRIntegrationTests(unittest.TestCase):
         self.assertEqual(payload['snippets'][0]['path'], 'ops/release-workflow.yml')
         json.dumps(payload, ensure_ascii=False)
 
+    def test_read_payload_uses_sqlite_matches_when_index_chunks_missing(self) -> None:
+        snapshot, index_state = make_snapshot()
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            base = Path(tmp_dir)
+            progress_dir = base / 'repo' / 'progress'
+            progress_dir.mkdir(parents=True)
+            sqlite_path = progress_dir / 'context-codebase.db'
+            sqlite_index = generate.SQLiteIndex(str(sqlite_path))
+            sqlite_index.upsert_chunks([
+                {
+                    'id': 'router:1',
+                    'path': 'src/main/router.ts',
+                    'startLine': 8,
+                    'endLine': 30,
+                    'kind': 'route',
+                    'name': 'dispatchMessage',
+                    'language': 'TypeScript',
+                    'signals': ['dispatchMessage', 'route', 'message'],
+                    'preview': 'export async function dispatchMessage(message) {\n  return routeIncomingMessage(message)\n}',
+                },
+                {
+                    'id': 'service:1',
+                    'path': 'src/services/message-service.ts',
+                    'startLine': 12,
+                    'endLine': 40,
+                    'kind': 'function',
+                    'name': 'handleMessage',
+                    'language': 'TypeScript',
+                    'signals': ['handleMessage', 'routing'],
+                    'preview': 'export function handleMessage(message) {\n  return runRoutingStrategy(message)\n}',
+                },
+            ])
+
+            payload = generate.build_read_payload(
+                snapshot,
+                {'files': index_state['files'], 'chunks': []},
+                'understand-project',
+                'message routing',
+                sqlite_db_path=str(sqlite_path),
+            )
+
+        self.assertEqual(payload['files'][0]['path'], 'src/services/message-service.ts')
+        self.assertEqual(payload['snippets'][0]['path'], 'src/services/message-service.ts')
+        json.dumps(payload, ensure_ascii=False)
+
+    def test_generate_snapshot_writes_sqlite_index_by_default(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            base = Path(tmp_dir)
+            src_dir = base / 'src'
+            src_dir.mkdir()
+            (src_dir / 'main.py').write_text('def main():\n    return 1\n', encoding='utf-8')
+
+            generate.generate_snapshot(str(base), force=False)
+
+            sqlite_path = base / 'repo' / 'progress' / 'context-codebase.db'
+            self.assertTrue(sqlite_path.exists())
+            sqlite_index = generate.SQLiteIndex(str(sqlite_path))
+            results = sqlite_index.get_by_path('src/main.py')
+            self.assertTrue(any('return 1' in result['preview'] for result in results))
+
+    def test_refresh_updates_sqlite_index_by_default(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            base = Path(tmp_dir)
+            src_dir = base / 'src'
+            src_dir.mkdir()
+            source = src_dir / 'main.py'
+            source.write_text('def main():\n    return 1\n', encoding='utf-8')
+
+            generate.generate_snapshot(str(base), force=False)
+            source.write_text('def main():\n    return 2\n', encoding='utf-8')
+
+            generate.refresh_index(str(base))
+
+            sqlite_path = base / 'repo' / 'progress' / 'context-codebase.db'
+            sqlite_index = generate.SQLiteIndex(str(sqlite_path))
+            results = sqlite_index.get_by_path('src/main.py')
+            self.assertTrue(any('return 2' in result['preview'] for result in results))
+
     def test_refresh_updates_index_incrementally_without_rebuilding_snapshot_structure(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             base = Path(tmp_dir)

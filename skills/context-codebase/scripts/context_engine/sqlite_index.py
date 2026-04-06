@@ -10,53 +10,56 @@ from typing import Optional
 
 
 class SQLiteIndex:
-    """SQLite-based chunk index"""
+    """SQLite-based chunk index using FTS5 for high-speed full text search"""
 
     def __init__(self, db_path: str):
         self.db_path = db_path
         self._init_db()
 
     def _init_db(self):
-        """Initialize database schema"""
+        """Initialize database schema with FTS5"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
+        # FTS5 table
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS chunks (
-                id TEXT PRIMARY KEY,
-                path TEXT NOT NULL,
-                start_line INTEGER,
-                end_line INTEGER,
-                kind TEXT,
-                name TEXT,
-                language TEXT,
-                content_hash TEXT,
-                signals TEXT,
-                preview TEXT
+            CREATE VIRTUAL TABLE IF NOT EXISTS chunks USING fts5(
+                id UNINDEXED,
+                path,
+                start_line UNINDEXED,
+                end_line UNINDEXED,
+                kind,
+                name,
+                language,
+                signals,
+                preview,
+                content_hash UNINDEXED,
+                tokenize="unicode61"
             )
         """)
-
-        cursor.execute("CREATE INDEX IF NOT EXISTS idx_path ON chunks(path)")
-        cursor.execute("CREATE INDEX IF NOT EXISTS idx_kind ON chunks(kind)")
-        cursor.execute("CREATE INDEX IF NOT EXISTS idx_language ON chunks(language)")
 
         conn.commit()
         conn.close()
 
     def upsert_chunks(self, chunks: list[dict]) -> None:
-        """Batch insert or update chunks"""
+        """Batch insert or update chunks, clearing old ones first"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
         for chunk in chunks:
+            chunk_id = chunk["id"]
             signals_json = json.dumps(chunk.get("signals", []))
-
+            
+            # FTS5 doesn't support UPSERT or INSERT OR REPLACE simply based on an unindexed column constraints
+            # We must delete existing matching id first manually
+            cursor.execute("DELETE FROM chunks WHERE id = ?", (chunk_id,))
+            
             cursor.execute("""
-                INSERT OR REPLACE INTO chunks
+                INSERT INTO chunks
                 (id, path, start_line, end_line, kind, name, language, signals, preview)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
-                chunk["id"],
+                chunk_id,
                 chunk["path"],
                 chunk.get("startLine"),
                 chunk.get("endLine"),
@@ -71,33 +74,40 @@ class SQLiteIndex:
         conn.close()
 
     def search(self, query: str, limit: int = 10) -> list[dict]:
-        """Search chunks"""
+        """Search chunks using FTS5 MATCH with BM25 ranking"""
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
-        # Simple keyword matching
-        like_pattern = f"%{query}%"
+        # Normalize query for FTS5 (escape quotes, split words)
+        safe_query = " ".join([f'"{word.replace('"', "")}"' for word in query.split() if word.strip()])
+        if not safe_query:
+             safe_query = f'"{query.replace('"', "")}"'
 
-        cursor.execute("""
-            SELECT * FROM chunks
-            WHERE path LIKE ? OR signals LIKE ? OR preview LIKE ? OR name LIKE ?
-            LIMIT ?
-        """, (like_pattern, like_pattern, like_pattern, like_pattern, limit))
-
-        results = []
-        for row in cursor.fetchall():
-            results.append({
-                "id": row["id"],
-                "path": row["path"],
-                "startLine": row["start_line"],
-                "endLine": row["end_line"],
-                "kind": row["kind"],
-                "name": row["name"],
-                "language": row["language"],
-                "signals": json.loads(row["signals"]) if row["signals"] else [],
-                "preview": row["preview"]
-            })
+        try:
+            cursor.execute("""
+                SELECT * FROM chunks
+                WHERE chunks MATCH ?
+                ORDER BY rank
+                LIMIT ?
+            """, (safe_query, limit))
+            
+            results = []
+            for row in cursor.fetchall():
+                results.append({
+                    "id": row["id"],
+                    "path": row["path"],
+                    "startLine": row["start_line"],
+                    "endLine": row["end_line"],
+                    "kind": row["kind"],
+                    "name": row["name"],
+                    "language": row["language"],
+                    "signals": json.loads(row["signals"]) if row["signals"] else [],
+                    "preview": row["preview"]
+                })
+        except sqlite3.OperationalError:
+            # Fallback if query syntax is invalid
+            results = []
 
         conn.close()
         return results
@@ -108,21 +118,25 @@ class SQLiteIndex:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM chunks WHERE path = ?", (path,))
-
-        results = []
-        for row in cursor.fetchall():
-            results.append({
-                "id": row["id"],
-                "path": row["path"],
-                "startLine": row["start_line"],
-                "endLine": row["end_line"],
-                "kind": row["kind"],
-                "name": row["name"],
-                "language": row["language"],
-                "signals": json.loads(row["signals"]) if row["signals"] else [],
-                "preview": row["preview"]
-            })
+        safe_path = f'"{path.replace('"', "")}"'
+        try:
+            cursor.execute("SELECT * FROM chunks WHERE path MATCH ?", (safe_path,))
+            
+            results = []
+            for row in cursor.fetchall():
+                results.append({
+                    "id": row["id"],
+                    "path": row["path"],
+                    "startLine": row["start_line"],
+                    "endLine": row["end_line"],
+                    "kind": row["kind"],
+                    "name": row["name"],
+                    "language": row["language"],
+                    "signals": json.loads(row["signals"]) if row["signals"] else [],
+                    "preview": row["preview"]
+                })
+        except sqlite3.OperationalError:
+            results = []
 
         conn.close()
         return results
@@ -133,20 +147,22 @@ class SQLiteIndex:
             return
 
         conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
+        # Need to read all IDs since FTS5 doesn't easily support NOT IN for unindexed columns like standard tables
+        cursor.execute("SELECT id FROM chunks")
+        all_ids = {row["id"] for row in cursor.fetchall()}
+        
         # Safety check: skip deletion if none of valid_ids exist in DB
         # Prevents accidental full DB wipe (e.g., when valid_ids is stale)
-        placeholders = ','.join('?' * len(valid_ids))
-        cursor.execute(f"SELECT COUNT(*) FROM chunks WHERE id IN ({placeholders})", tuple(valid_ids))
-        count = cursor.fetchone()[0]
-
-        if count == 0:
-            # None of valid_ids exist in DB, skip deletion
+        if not (valid_ids & all_ids):
             conn.close()
             return
 
-        cursor.execute(f"DELETE FROM chunks WHERE id NOT IN ({placeholders})", tuple(valid_ids))
+        to_delete = all_ids - valid_ids
+        for stale_id in to_delete:
+            cursor.execute("DELETE FROM chunks WHERE id = ?", (stale_id,))
 
         conn.commit()
         conn.close()

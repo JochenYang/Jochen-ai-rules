@@ -167,10 +167,13 @@ class JavaScriptAnalyzer:
         )
 
 
+from .multi_lang_analyzer import MultiLangAnalyzer
+
 class AnalyzerRegistry:
     def __init__(self, bridge_path: Path):
         self.python = PythonAstAnalyzer()
         self.javascript = JavaScriptAnalyzer(bridge_path)
+        self.multi = MultiLangAnalyzer()
 
     def analyze_file(self, content: str | None, rel_path: str, project_path: str) -> FileAnalysis:
         if content is None:
@@ -181,6 +184,8 @@ class AnalyzerRegistry:
             return self.python.analyze(content, rel_path)
         if self.javascript.supports(ext):
             return self.javascript.analyze(content, rel_path, project_path)
+        if self.multi.supports(ext):
+            return self.multi.analyze(content, rel_path)
         return FileAnalysis()
 
 
