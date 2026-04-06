@@ -41,6 +41,14 @@ Design and implement CI/CD processes, manage containerized deployments and monit
 
 Focus on CI/CD and infrastructure, not business code development.
 
+## When NOT to Use
+
+- Writing application code → use `developer`
+- Frontend UI development → use `frontend-design`
+- API design → use `api-designer`
+- Database schema design → use `database-engineer`
+- Performance optimization → use `performance-optimizer`
+
 ## Detailed References
 
 - `./references/docker-best-practices.md` - Docker optimization guide

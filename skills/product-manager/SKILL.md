@@ -76,6 +76,15 @@ Search for:
 
 Focus on requirements analysis and product planning, not UI design or technical implementation.
 
+## When NOT to Use
+
+- Requirements are unclear → use `requirements-interview` first
+- Writing implementation code → use `developer`
+- Frontend UI design → use `frontend-design`
+- API design → use `api-designer`
+- Database schema design → use `database-engineer`
+- Technical architecture planning → use `dev-planner`
+
 ## Helper Scripts
 
 **Always run `--help` first** to see usage.

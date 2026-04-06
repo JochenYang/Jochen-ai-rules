@@ -91,6 +91,14 @@ Focus on _what_ the code does, not _how_ it does it. This makes your tests more 
 - Do not skip the failing-test reproduction step for bug work unless the owner explicitly accepts the risk.
 - Do not use TDD ritualistically when the task is documentation-only or otherwise non-executable.
 
+## When NOT to Use
+
+- Pure architecture or design planning → use `dev-planner`
+- Frontend UI implementation → use `frontend-design`
+- API design → use `api-designer`
+- Database schema design → use `database-engineer`
+- Security auditing → use `quality-assurance`
+
 ## Escalation Rules
 
 Pause and ask the owner before:

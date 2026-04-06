@@ -39,6 +39,14 @@ The following scripts can be run directly without reading source code:
 
 Focus on MCP server development and tool design, not third-party API development or client integration.
 
+## When NOT to Use
+
+- Writing general business logic code → use `developer`
+- Frontend UI development → use `frontend-design`
+- API design → use `api-designer`
+- Database schema design → use `database-engineer`
+- Product planning or requirements → use `product-manager`
+
 ## Detailed References
 
 - `./workflows/mcp-development.md` - Complete development workflow

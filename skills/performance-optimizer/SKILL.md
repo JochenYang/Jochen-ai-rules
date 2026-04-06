@@ -41,6 +41,14 @@ Identify performance bottlenecks, design optimization solutions, improve applica
 
 Focus on performance analysis and optimization solution design, not business logic implementation.
 
+## When NOT to Use
+
+- Writing new features → use `developer`
+- Frontend UI implementation → use `frontend-design`
+- API design → use `api-designer`
+- Database schema design → use `database-engineer`
+- Security auditing → use `quality-assurance`
+
 ## Escalation Rules
 
 Pause and ask the owner before:

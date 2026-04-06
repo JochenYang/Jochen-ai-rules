@@ -44,7 +44,23 @@ Design high-quality API interfaces and output standardized interface documentati
 
 Focus on API design and documentation standards, not specific business logic implementation.
 
-## Helper Scripts
+## When NOT to Use
+
+- Writing implementation code → use `developer`
+- Database schema design → use `database-engineer`
+- Frontend UI development → use `frontend-design`
+- Infrastructure or DevOps setup → use `devops-engineer`
+
+## When To Use
+
+Use this skill when the user asks to:
+
+- design a new API or endpoint structure
+- document existing APIs with OpenAPI/Swagger
+- plan API versioning or migration strategy
+- establish authentication/authorization patterns for APIs
+
+## Quick Reference
 
 **Always run `--help` first** to see usage.
 

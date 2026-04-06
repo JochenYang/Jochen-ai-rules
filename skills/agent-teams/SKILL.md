@@ -21,7 +21,7 @@ description: Create agent teams for parallel collaboration. Use when user mentio
 Agent teams add coordination overhead and use significantly more tokens. Choose wisely:
 
 | Scenario                                                      | Use                | Why                                                |
-| ------------------------------------------------------------- | ------------------ | -------------------------------------------------- |
+|---------------------------------------------------------------|--------------------|----------------------------------------------------|
 | Teammates need to **share findings and challenge each other** | **Agent Teams**    | Peer-to-peer messaging, shared task list           |
 | Quick, focused workers that **report back independently**     | **Subagents**      | Lower overhead, no inter-agent coordination needed |
 | Sequential tasks, same-file edits, many dependencies          | **Single Session** | No parallelism benefit                             |
@@ -205,7 +205,7 @@ security_guy: "Check security stuff"
 As lead agent, manage using:
 
 | Action            | How                            | When                                   |
-| ----------------- | ------------------------------ | -------------------------------------- |
+|-------------------|--------------------------------|----------------------------------------|
 | Direct a teammate | `Ask [teammate]`               | Assign specific work or ask for status |
 | Message all       | `Broadcast`                    | Share updates affecting everyone       |
 | Wait              | `Wait for teammates to finish` | Before consolidating results — always  |
@@ -329,6 +329,13 @@ Solution:
 - Use `agent-teams` only for explicit parallel or multi-perspective work.
 - Do not replace sequential workflows such as `/orchestrate` unless the user also asks for parallel execution.
 - Do not simulate native teams with shell subprocesses or ad hoc scripts.
+
+## When NOT to Use
+
+- Simple single-task work → use single session or direct agent
+- Sequential tasks with dependencies → use `/orchestrate`
+- Quick lookups or questions → use `context-codebase`
+- Implementation-only tasks → use `developer` directly
 
 ## Escalation Rules
 

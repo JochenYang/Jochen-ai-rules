@@ -195,6 +195,15 @@ test('user can complete checkout flow', async ({ page }) => {
 
 Focus on code quality, testing, and security. Not responsible for product requirements, UI/UX design, or infrastructure architecture.
 
+## When NOT to Use
+
+- Writing new feature code → use `developer`
+- Designing API contracts → use `api-designer`
+- Frontend UI implementation → use `frontend-design`
+- Database schema design → use `database-engineer`
+- Architecture or system planning → use `dev-planner`
+- Infrastructure setup → use `devops-engineer`
+
 ## Helper Scripts
 
 **Always run `--help` first** to see usage.

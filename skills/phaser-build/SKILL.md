@@ -88,6 +88,13 @@ Focused skill for building Phaser-based 2D web games and guidance aligned with P
 
 Focus on Phaser 2D web games. Do not recommend Phaser for 3D-first or console-native releases.
 
+## When NOT to Use
+
+- 3D web development → use `threejs-builder`
+- Native mobile apps → use `developer`
+- Backend or API development → use `developer`
+- Console game development → use `developer`
+
 ## Escalation Rules
 
 Pause and ask the owner before:

@@ -26,6 +26,14 @@ performant, and ready to ship.
 - Do not absorb backend or broad product-planning work unless another skill explicitly takes over.
 - Keep generated media, motion, and copy tied to the frontend deliverable.
 
+## When NOT to Use
+
+- Pure backend or API development → use `developer`
+- Database design or schema work → use `database-engineer`
+- Product planning or requirements analysis → use `product-manager` or `requirements-interview`
+- Architecture design or system planning → use `dev-planner`
+- Security auditing or vulnerability review → use `quality-assurance`
+
 ## When To Use
 
 Use this skill when the user asks to:

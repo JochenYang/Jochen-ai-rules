@@ -14,15 +14,15 @@ A focused skill for creating simple, performant Three.js web applications using 
 
 > **Important**: Read the appropriate reference file when working on specific topics.
 
-| Topic | File | Use When |
-|-------|------|----------|
-| **GLTF Models** | [gltf-loading-guide.md](references/gltf-loading-guide.md) | Loading, caching, cloning 3D models, SkeletonUtils |
-| **Reference Frames** | [reference-frame-contract.md](references/reference-frame-contract.md) | Calibration, anchoring, axis correctness, debugging |
-| **Game Development** | [game-patterns.md](references/game-patterns.md) | State machines, animation switching, parallax, object pooling |
-| **Advanced Topics** | [advanced-topics.md](references/advanced-topics.md) | Post-processing, shaders, physics, instancing |
-| **Anti-Patterns** | [anti-patterns.md](references/anti-patterns.md) | Common mistakes, performance issues, code organization |
-| **Variation Guidance** | [variation-guidance.md](references/variation-guidance.md) | Visual variety, color palettes, animation styles |
-| **Calibration Helpers** | [scripts/README.md](scripts/README.md) | GLTF calibration helper installation and usage |
+| Topic                   | File                                                                  | Use When                                                      |
+|-------------------------|-----------------------------------------------------------------------|---------------------------------------------------------------|
+| **GLTF Models**         | [gltf-loading-guide.md](references/gltf-loading-guide.md)             | Loading, caching, cloning 3D models, SkeletonUtils            |
+| **Reference Frames**    | [reference-frame-contract.md](references/reference-frame-contract.md) | Calibration, anchoring, axis correctness, debugging           |
+| **Game Development**    | [game-patterns.md](references/game-patterns.md)                       | State machines, animation switching, parallax, object pooling |
+| **Advanced Topics**     | [advanced-topics.md](references/advanced-topics.md)                   | Post-processing, shaders, physics, instancing                 |
+| **Anti-Patterns**       | [anti-patterns.md](references/anti-patterns.md)                       | Common mistakes, performance issues, code organization        |
+| **Variation Guidance**  | [variation-guidance.md](references/variation-guidance.md)             | Visual variety, color palettes, animation styles              |
+| **Calibration Helpers** | [scripts/README.md](scripts/README.md)                                | GLTF calibration helper installation and usage                |
 
 ---
 
@@ -63,13 +63,13 @@ Understanding Three.js's right-handed coordinate system is **essential** to avoi
 
 **Memory aid**: Point your thumb (+X), index finger (+Y), middle finger (+Z) - that's right-handed coordinates.
 
-| Axis | Direction | Common Usage |
-|------|-----------|--------------|
-| +X   | Right     | Strafe right, spawn right |
-| -X   | Left      | Strafe left, spawn left |
-| +Y   | Up        | Jump, height |
-| -Y   | Down      | Fall, gravity |
-| +Z   | Toward camera | Approach viewer, "forward" in many setups |
+| Axis | Direction        | Common Usage                                |
+|------|------------------|---------------------------------------------|
+| +X   | Right            | Strafe right, spawn right                   |
+| -X   | Left             | Strafe left, spawn left                     |
+| +Y   | Up               | Jump, height                                |
+| -Y   | Down             | Fall, gravity                               |
+| +Z   | Toward camera    | Approach viewer, "forward" in many setups   |
 | -Z   | Away from camera | Retreat, **GLTF models face -Z by default** |
 
 ### GLTF Model Default Orientation
@@ -425,6 +425,13 @@ For specific topics, see the **Reference Files** table at the top of this docume
 - Focus on Three.js-based 3D web experiences.
 - Do not switch to Phaser, Unity, or backend-heavy architecture unless the task clearly exceeds this skill's scope.
 - Prefer modern ES module patterns and web delivery constraints.
+
+## When NOT to Use
+
+- 2D game development → use `phaser-build`
+- Native mobile 3D apps → use `developer`
+- Backend or API development → use `developer`
+- Console game development → use `developer`
 
 ## Escalation Rules
 
