@@ -87,7 +87,9 @@ takeaway or action.
 1. Identify page type, audience, and technical constraints.
 2. Confirm framework and styling stack from the repo before importing
    dependencies.
-3. Choose a strong visual direction and motion intensity.
+3. **Style anchoring**: if user specifies a brand/style (e.g., "Airbnb feel",
+   "Claude aesthetic", "Linear-style"), immediately load `design-md/<brand>/DESIGN.md`
+   and treat it as the authoritative spec — do not improvise from scratch.
 
 ### 2. Plan Layout, Motion, And Assets Together
 
@@ -279,8 +281,10 @@ Every use of this skill should end with:
 1. `Skill Fit` - why implementation-first frontend design is the right path
 2. `Primary Deliverable` - page, component set, or asset-backed frontend output
 3. `Execution Evidence` - files changed, preview/build steps, and validation completed
-4. `Risks / Open Questions` - responsiveness, performance, or polish concerns
-5. `Next Action` - the next implementation or review step
+4. `Design System Alignment` - when using `design-md/`, confirm which Do's/Don'ts
+   were followed and any intentional deviations
+5. `Risks / Open Questions` - responsiveness, performance, or polish concerns
+6. `Next Action` - the next implementation or review step
 
 ## Copywriting
 
@@ -320,6 +324,58 @@ Before delivering:
 - the first screen has one unmistakable visual anchor
 - the brand or product is unmistakable in the first screen
 - each section has one job and cards are used only when they earn their place
+
+## Design System Reference Library
+
+When the user specifies a target style (e.g., "Airbnb aesthetic", "Claude's design language", "Figma-like interface"), use the `design-md/` folder as an authoritative reference.
+
+### Format: Stitch DESIGN.md
+
+Each design system follows a 9-section structure:
+1. **Visual Theme & Atmosphere** — mood, material, energy
+2. **Color Palette & Roles** — hex values with semantic names
+3. **Typography Rules** — font families, sizes, weights, line-heights
+4. **Component Stylings** — buttons, cards, inputs with exact specs
+5. **Layout Principles** — spacing scale, grid, container
+6. **Depth & Elevation** — shadow system with values
+7. **Do's and Don'ts** — explicit design constraints
+8. **Responsive Behavior** — breakpoints and collapsing strategy
+9. **Agent Prompt Guide** — copy-paste component prompts
+
+### Available Design Systems (58 total)
+
+| Category | Examples |
+|----------|----------|
+| AI/ML | claude, cohere, elevenlabs, minimax, replicate, together.ai |
+| Developer Tools | cursor, expo, framer, linear.app, lovable, raycast, vercel |
+| Design/Productivity | figma, miro, notion, sanity |
+| Fintech | coinbase, kraken, revolut, stripe |
+| Enterprise | airbnb, airtable, apple, intercom, superhuman |
+| Automotive | bmw, ferrari, lamborghini |
+| Infrastructure | clickhouse, hashicorp, ibm, mongodb, supabase |
+
+### Style Anchoring Workflow
+
+When user specifies a brand/style:
+
+1. **Locate** — find the matching folder in `design-md/<brand>/`
+2. **Read** — load `DESIGN.md` for specifications
+3. **Translate** — convert specs into component-level implementation
+4. **Verify** — check Do's/Don'ts against implementation
+
+Example:
+```
+User: "做成 Linear app 那种风格"
+→ Read design-md/linear.app/DESIGN.md
+→ Apply: Near Black #heimdallr, Linear Sans font, 5px radius, thin borders
+→ Ship with precise specs, not vague "clean/minimal"
+```
+
+### Why Use Design MD Over Free-form?
+
+- **Component-level precision**: padding, radius, shadow values are exact
+- **Do's/Don'ts prevent drift**: explicit constraints keep implementation on-brand
+- **Agent Prompt Guide**: pre-built prompts for common components
 
 ## References
 
