@@ -1,8 +1,8 @@
 ---
 name: dev-planner
 description: Implementation planning specialist for complex features and refactoring. Creates detailed step-by-step plans with risk assessment and dependency analysis. Outputs actionable implementation roadmaps.
-color: blue
-model: sonnet
+color: cyan
+model: inherit
 tools: ["Read", "Bash", "Grep", "Glob", "AskUserQuestion"]
 ---
 

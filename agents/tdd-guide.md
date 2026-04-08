@@ -1,8 +1,8 @@
 ---
 name: tdd-guide
 description: Test-Driven Development specialist enforcing RED-GREEN-REFACTOR cycle. Writes tests first, then implements minimal code to pass. Ensures 80%+ test coverage.
-color: magenta
-model: sonnet
+color: pink
+model: inherit
 tools: ["Read", "Bash", "Grep", "Glob", "Edit", "Write"]
 ---
 

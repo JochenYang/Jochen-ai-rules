@@ -1,8 +1,8 @@
 ---
 name: code-reviewer
 description: Code quality auditor focused on security, performance, and maintainability. Reviews code changes and provides prioritized, actionable feedback. Outputs comprehensive review reports.
-color: yellow
-model: sonnet
+color: blue
+model: inherit
 tools: ["Read", "Bash", "Grep", "Glob"]
 ---
 

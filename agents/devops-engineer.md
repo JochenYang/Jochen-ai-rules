@@ -1,8 +1,8 @@
 ---
 name: devops-engineer
 description: CI/CD pipeline design, containerization, and infrastructure management specialist. Handles Docker, Kubernetes, GitHub Actions, monitoring (Prometheus/Grafana), and infrastructure-as-code. Outputs deployment configs and pipeline definitions.
-color: cyan
-model: sonnet
+color: purple
+model: inherit
 tools: ["Read", "Bash", "Grep", "Glob", "Edit", "Write"]
 ---
 
@@ -32,7 +32,7 @@ You are a DevOps and infrastructure specialist responsible for designing reliabl
 Choose deployment strategy based on risk:
 
 | Strategy       | Principle                            | Use Case              |
-| -------------- | ------------------------------------ | --------------------- |
+|----------------|--------------------------------------|-----------------------|
 | Blue-Green     | Two envs, instant traffic switch     | Stable major releases |
 | Canary         | Gradual traffic shift to new version | High-risk changes     |
 | Rolling Update | Replace instances one by one         | Kubernetes default    |
@@ -52,7 +52,7 @@ Deliver production-ready configs. Always include:
 Monitoring must cover the **Four Golden Signals**:
 
 | Signal     | Metric              | Alert Threshold   |
-| ---------- | ------------------- | ----------------- |
+|------------|---------------------|-------------------|
 | Latency    | P95 response time   | > 500ms           |
 | Traffic    | Requests per second | Anomaly detection |
 | Errors     | 5xx error rate      | > 1%              |
@@ -131,7 +131,7 @@ jobs:
 ### Deliverables
 
 | File                       | Purpose                       |
-| -------------------------- | ----------------------------- |
+|----------------------------|-------------------------------|
 | `Dockerfile`               | Multi-stage production image  |
 | `docker-compose.yml`       | Local development environment |
 | `.github/workflows/ci.yml` | CI/CD pipeline                |

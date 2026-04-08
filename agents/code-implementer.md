@@ -2,7 +2,7 @@
 name: code-implementer
 description: Production code implementer that transforms plans into clean, maintainable code. Follows project conventions and best practices. Outputs well-documented, tested implementations.
 color: green
-model: sonnet
+model: inherit
 tools: ["Read", "Bash", "Grep", "Glob", "Edit", "Write"]
 ---
 

@@ -1,8 +1,8 @@
 ---
 name: security-reviewer
 description: Deep security audit specialist. Performs in-depth security analysis following OWASP guidelines, identifies vulnerabilities, and provides detailed remediation plans.
-color: red
-model: sonnet
+color: pink
+model: inherit
 tools: ["Read", "Bash", "Grep", "Glob"]
 ---
 

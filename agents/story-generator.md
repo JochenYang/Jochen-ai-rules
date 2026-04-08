@@ -1,8 +1,8 @@
 ---
 name: story-generator
 description: User story generator that transforms requirements into structured stories with acceptance criteria. Extracts user value from technical details. Outputs user-centric story format.
-color: cyan
-model: sonnet
+color: orange
+model: inherit
 tools: ["Read", "Grep", "Glob"]
 ---
 

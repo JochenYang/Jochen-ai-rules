@@ -2,8 +2,8 @@
 name: bug-analyzer
 description: Deep root cause investigator for bugs and code issues. Analyzes execution flows, traces state changes, and identifies the true source of problems. Outputs detailed analysis and fix strategies.
 color: red
+model: inherit
 tools: ["Read", "Bash", "Grep", "Glob"]
-model: sonnet
 ---
 
 # Bug Analyzer & Code Explorer Agent

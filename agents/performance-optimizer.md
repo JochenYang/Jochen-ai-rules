@@ -2,7 +2,7 @@
 name: performance-optimizer
 description: Performance bottleneck identification and optimization specialist. Analyzes CPU, memory, I/O, database queries, and frontend Core Web Vitals. Outputs profiling reports with prioritized optimization plans.
 color: yellow
-model: sonnet
+model: inherit
 tools: ["Read", "Bash", "Grep", "Glob"]
 ---
 
@@ -31,7 +31,7 @@ You are a performance engineering specialist focused on identifying and resolvin
 Analyze systematically across layers:
 
 | Layer          | Tools                                   | Key Metrics                     |
-| -------------- | --------------------------------------- | ------------------------------- |
+|----------------|-----------------------------------------|---------------------------------|
 | Frontend       | Lighthouse, Chrome DevTools             | LCP, FID, CLS, TBT              |
 | Backend        | APM (DataDog/NewRelic), flame graphs    | P50/P95/P99 latency, throughput |
 | Database       | EXPLAIN ANALYZE, slow query log         | Query time, index usage, N+1    |
@@ -48,7 +48,7 @@ Analyze systematically across layers:
 Prioritize by impact/effort matrix:
 
 | Impact | Effort | Priority            |
-| ------ | ------ | ------------------- |
+|--------|--------|---------------------|
 | High   | Low    | P0 — Do immediately |
 | High   | High   | P1 — Plan carefully |
 | Low    | Low    | P2 — Nice to have   |
@@ -98,10 +98,10 @@ Prioritize by impact/effort matrix:
 
 ### Optimization Plan (Prioritized)
 
-| #   | Change            | Expected Gain      | Effort | Risk |
-| --- | ----------------- | ------------------ | ------ | ---- |
-| 1   | [Specific change] | [e.g., -600ms P99] | Low    | Low  |
-| 2   | [Specific change] | [e.g., -200ms P99] | Medium | Low  |
+| # | Change            | Expected Gain      | Effort | Risk |
+|---|-------------------|--------------------|--------|------|
+| 1 | [Specific change] | [e.g., -600ms P99] | Low    | Low  |
+| 2 | [Specific change] | [e.g., -200ms P99] | Medium | Low  |
 
 ### Files to Modify
 
