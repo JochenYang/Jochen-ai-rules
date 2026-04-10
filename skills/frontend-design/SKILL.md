@@ -20,12 +20,6 @@ performant, and ready to ship.
 - Keep media generation tied to the frontend deliverable. Do not drift into
   unrelated art, video, or audio production unless the user explicitly asks.
 
-## Boundaries
-
-- Focus on implementation-first frontend delivery with strong visual direction.
-- Do not absorb backend or broad product-planning work unless another skill explicitly takes over.
-- Keep generated media, motion, and copy tied to the frontend deliverable.
-
 ## When NOT to Use
 
 - Pure backend or API development → use `developer`
@@ -68,6 +62,42 @@ Before building, also write three anchors:
 Each section should have one job, one dominant visual idea, and one primary
 takeaway or action.
 
+## Clarification First
+
+If the user's request does not clearly specify a direction, do not guess the
+style too early.
+
+- Use `AskUserQuestion` when the user has not made the visual direction,
+  reference style, or interaction ambition clear enough to build confidently.
+  If the host runtime exposes the tool as `askuserquestion`, treat it as the
+  same tool.
+- Prefer one focused question at a time. Ask about the biggest design unknown
+  first instead of dumping a long questionnaire.
+- Prefer multiple-choice framing when possible so the user can answer quickly.
+- Fall back to a short conversational question only if `AskUserQuestion` is not
+  available.
+- Skip clarification only when the repo already has a strong established design
+  system or the user explicitly says to choose the direction for them.
+
+When clarifying visual direction, prioritize this order:
+
+1. **Reference anchor** — a brand/product/style from `design-md/` or another
+   explicit reference
+2. **Mood and tone** — calm, bold, premium, playful, technical, editorial, etc.
+3. **Interface type** — landing page, dashboard, docs site, app shell, promo
+   page
+4. **Constraints** — light/dark preference, motion intensity, accessibility,
+   performance, device priority
+
+Recommended question patterns:
+
+- "Which direction should we anchor to: a specific brand in `design-md/`, a
+  mood adjective, or should I propose 2-3 options?"
+- "Do you want this to feel more editorial, product-polished, experimental, or
+  operational?"
+- "Should motion stay subtle, medium, or high-impact?"
+- "Is there an existing brand/design system I must preserve?"
+
 ## Core Principles
 
 - Avoid generic AI aesthetics, especially default font stacks, timid palettes,
@@ -87,9 +117,20 @@ takeaway or action.
 1. Identify page type, audience, and technical constraints.
 2. Confirm framework and styling stack from the repo before importing
    dependencies.
-3. **Style anchoring**: if user specifies a brand/style (e.g., "Airbnb feel",
-   "Claude aesthetic", "Linear-style"), immediately load `design-md/<brand>/DESIGN.md`
-   and treat it as the authoritative spec — do not improvise from scratch.
+3. If the requested solution or style is ambiguous, use `AskUserQuestion`
+   before designing. Do not invent a direction just to get moving.
+4. **Style anchoring**:
+   - if the user specifies a brand/style (e.g., "Airbnb feel", "Claude
+     aesthetic", "Linear-style"), immediately load
+     `design-md/<brand>/DESIGN.md` and treat it as the authoritative spec
+   - if the user does not specify one, use `AskUserQuestion` to gather a
+     reference anchor or mood, then map the answer to the closest relevant
+     `design-md/` folder when possible
+   - if no `design-md/` reference fits, summarize the confirmed style in a
+     short visual thesis before implementation
+5. When you offer options, keep them opinionated and concrete. Recommend 2-3
+   directions max, and tie each option to a known brand, mood, or interaction
+   model.
 
 ### 2. Plan Layout, Motion, And Assets Together
 
@@ -131,10 +172,31 @@ Rules:
 
 ### 7. Run Quality Gates
 
-- Validate responsive behavior.
-- Validate reduced-motion handling.
-- Validate loading, empty, and error states when applicable.
-- Validate that media is local and dependencies are real.
+- Run the checks in `Quality Gates` before delivery.
+
+## Reference Routing
+
+Do not load every reference file by default. Read only the files that match the
+current task.
+
+- **Layout, hero composition, visual hierarchy, or section rhythm**: read
+  `references/composition-playbook.md`
+- **Motion, scroll choreography, reveals, or animation sequencing**: read
+  `references/motion-recipes.md`
+- **Image, video, audio, or voice generation**: read
+  `references/asset-prompt-guide.md` first, then the relevant minimax reference
+  for the asset type you are generating
+- **Tooling trouble, asset script failures, or local environment issues**: read
+  `references/troubleshooting.md` and `references/env-setup.md`
+
+Asset-specific routing:
+
+- images → `references/minimax-image-guide.md`
+- video → `references/minimax-video-guide.md`
+- TTS / spoken voice → `references/minimax-tts-guide.md` and
+  `references/minimax-voice-catalog.md`
+- music → `references/minimax-music-guide.md`
+- CLI flags or invocation details → `references/minimax-cli-reference.md`
 
 ## Design Rules
 
@@ -228,11 +290,7 @@ Rules:
 - Remove motion that is ornamental only; motion should improve hierarchy,
   atmosphere, or affordance in a quick recording.
 
-Read these when needed:
-
-- `references/motion-recipes.md`
-- `references/composition-playbook.md`
-- `references/troubleshooting.md`
+For motion work, follow `Reference Routing` before reading support files.
 
 ## Asset Generation
 
@@ -255,16 +313,7 @@ Asset workflow:
 5. Prefer WebP for images, compressed MP4 for video, and normalized audio when
    possible.
 
-Read these when needed:
-
-- `references/asset-prompt-guide.md`
-- `references/minimax-cli-reference.md`
-- `references/minimax-image-guide.md`
-- `references/minimax-video-guide.md`
-- `references/minimax-tts-guide.md`
-- `references/minimax-music-guide.md`
-- `references/minimax-voice-catalog.md`
-- `references/env-setup.md`
+For asset work, follow `Reference Routing` before reading support files.
 
 ## Escalation Rules
 
@@ -327,7 +376,9 @@ Before delivering:
 
 ## Design System Reference Library
 
-When the user specifies a target style (e.g., "Airbnb aesthetic", "Claude's design language", "Figma-like interface"), use the `design-md/` folder as an authoritative reference.
+When the user specifies a target style, or selects one after clarification
+(e.g., "Airbnb aesthetic", "Claude's design language", "Figma-like
+interface"), use the `design-md/` folder as an authoritative reference.
 
 ### Format: Stitch DESIGN.md
 
@@ -356,12 +407,21 @@ Each design system follows a 9-section structure:
 
 ### Style Anchoring Workflow
 
-When user specifies a brand/style:
+When user specifies a brand/style, or chooses one after clarification:
 
 1. **Locate** — find the matching folder in `design-md/<brand>/`
 2. **Read** — load `DESIGN.md` for specifications
 3. **Translate** — convert specs into component-level implementation
 4. **Verify** — check Do's/Don'ts against implementation
+
+When the user does not specify a brand/style:
+
+1. **Ask** — use `AskUserQuestion` to narrow the direction before coding
+2. **Recommend** — suggest 2-3 relevant anchors from `design-md/` based on page
+   type and product tone
+3. **Map** — once the user chooses, load that folder's `DESIGN.md`
+4. **Only then implement** — do not freehand the aesthetic while key design
+   choices are still unresolved
 
 Example:
 ```
@@ -369,6 +429,15 @@ User: "做成 Linear app 那种风格"
 → Read design-md/linear.app/DESIGN.md
 → Apply: Near Black #heimdallr, Linear Sans font, 5px radius, thin borders
 → Ship with precise specs, not vague "clean/minimal"
+```
+
+Example when style is unclear:
+```
+User: "帮我设计一个产品页"
+→ AskUserQuestion: "你更想靠近哪种方向：Linear 式冷静产品感、Stripe 式品牌叙事感，还是 Notion 式编辑感？"
+→ User selects one
+→ Read the matching `design-md/<brand>/DESIGN.md`
+→ Implement against that anchor instead of guessing
 ```
 
 ### Why Use Design MD Over Free-form?

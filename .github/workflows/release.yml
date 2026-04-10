@@ -28,15 +28,48 @@ jobs:
         run: |
           if [[ -n "${{ inputs.tag }}" ]]; then
             TAG="${{ inputs.tag }}"
-          else
+          elif [[ "${GITHUB_REF:-}" == refs/tags/* ]]; then
             TAG="${GITHUB_REF#refs/tags/}"
+          else
+            echo "::error::workflow_dispatch requires an explicit tag input like v1.3.1"
+            exit 1
+          fi
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Invalid tag format: $TAG"
+            exit 1
           fi
           echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Verify tag exists
+        run: |
+          git fetch --tags --force
+          TAG="${{ steps.tag.outputs.tag }}"
+          if ! git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "::error::Tag $TAG does not exist in the repository"
+            exit 1
+          fi
+
+      - name: Verify marketplace version matches tag
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import os
+
+          tag = os.environ["TAG"]
+          version = json.loads(Path(".claude-plugin/marketplace.json").read_text(encoding="utf-8"))["metadata"]["version"]
+          expected = f"v{version}"
+          if tag != expected:
+              raise SystemExit(f"::error::Tag {tag} does not match marketplace version {expected}")
+          print(f"Validated marketplace version {version} against tag {tag}")
+          PY
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
 
       - name: Get previous tag
         id: prevtag
         run: |
-          git fetch --tags --force
           CURRENT_TAG="${{ steps.tag.outputs.tag }}"
           PREV_TAG=$(git tag --sort=-version:refname | grep -vx "$CURRENT_TAG" | head -n 1 || true)
           echo "prev_tag=$PREV_TAG" >> $GITHUB_OUTPUT

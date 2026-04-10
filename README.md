@@ -151,6 +151,34 @@ Rules:
 > This repository keeps `agents/`, `commands/`, `hooks/`, `rules/`, `skills/` at the repo root for development,
 > but documentation may reference `.claude/...` paths because that is the runtime location.
 
+## Releasing
+
+This repository publishes releases from Git tags through
+[`release.yml`](.github/workflows/release.yml).
+
+1. Update `.claude-plugin/marketplace.json` `metadata.version` to the target
+   version, for example `1.3.1`.
+2. Commit the release-ready changes.
+3. Create a matching Git tag in the form `vX.Y.Z`, for example `v1.3.1`.
+4. Push the commit and tag to GitHub.
+5. GitHub Actions automatically generates the release notes and publishes the
+   release.
+
+Release guardrails:
+
+- the tag must match the `vX.Y.Z` format
+- the tag must already exist in the repository
+- the tag must match `.claude-plugin/marketplace.json` `metadata.version`
+- manual workflow runs must provide an explicit tag input
+
+Example:
+
+```bash
+git tag v1.3.1
+git push origin main
+git push origin v1.3.1
+```
+
 ## Commands
 
 | Command           | Description                                      |

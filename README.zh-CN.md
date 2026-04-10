@@ -147,6 +147,33 @@ python skills/handoff/scripts/handoff.py read --project-root /path/to/project
 > 这个仓库为了便于开发，把 `agents/`、`commands/`、`hooks/`、`rules/`、`skills/` 放在仓库根目录；
 > 但文档里仍可能使用 `.claude/...` 路径，因为那是运行时的真实位置。
 
+## 发布流程
+
+本仓库通过 [`.github/workflows/release.yml`](.github/workflows/release.yml)
+基于 Git tag 自动发布 Release。
+
+1. 先把 `.claude-plugin/marketplace.json` 里的 `metadata.version` 更新为目
+   标版本，例如 `1.3.1`。
+2. 提交所有准备发布的改动。
+3. 创建与版本一致的 Git tag，格式必须是 `vX.Y.Z`，例如 `v1.3.1`。
+4. 把提交和 tag 一起推送到 GitHub。
+5. GitHub Actions 会自动生成变更说明并发布 Release。
+
+发布校验规则：
+
+- tag 必须符合 `vX.Y.Z` 格式
+- tag 必须已经存在于仓库中
+- tag 必须与 `.claude-plugin/marketplace.json` 中的 `metadata.version` 一致
+- 手动触发 workflow 时，必须显式填写 tag
+
+示例：
+
+```bash
+git tag v1.3.1
+git push origin main
+git push origin v1.3.1
+```
+
 ## 命令 (Commands)
 
 | 命令              | 说明                     |
