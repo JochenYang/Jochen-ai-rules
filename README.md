@@ -167,9 +167,11 @@ This repository publishes releases from Git tags through
 Release guardrails:
 
 - the tag must match the `vX.Y.Z` format
-- the tag must already exist in the repository
 - the tag must match `.claude-plugin/marketplace.json` `metadata.version`
-- manual workflow runs must provide an explicit tag input
+- manual workflow runs may leave `tag` empty to infer it from
+  `.claude-plugin/marketplace.json`
+- if a manual workflow run targets a commit without that tag yet, the workflow
+  creates and pushes the missing tag automatically
 
 Example:
 

@@ -162,9 +162,11 @@ python skills/handoff/scripts/handoff.py read --project-root /path/to/project
 发布校验规则：
 
 - tag 必须符合 `vX.Y.Z` 格式
-- tag 必须已经存在于仓库中
 - tag 必须与 `.claude-plugin/marketplace.json` 中的 `metadata.version` 一致
-- 手动触发 workflow 时，必须显式填写 tag
+- 手动触发 workflow 时，可以留空 `tag`，让它自动从
+  `.claude-plugin/marketplace.json` 推导
+- 如果手动触发时目标提交还没有这个 tag，workflow 会自动创建并推送缺失的
+  tag
 
 示例：
 
