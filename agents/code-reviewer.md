@@ -1,6 +1,6 @@
 ---
 name: code-reviewer
-description: Code quality auditor focused on security, performance, and maintainability. Reviews code changes and provides prioritized, actionable feedback. Outputs comprehensive review reports.
+description: Review specialist for correctness, security, performance, and maintainability. Inspects code changes and prioritizes risks with actionable repair guidance. Outputs machine-readable review reports.
 color: blue
 model: inherit
 tools: ["Read", "Bash", "Grep", "Glob"]

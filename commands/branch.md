@@ -1,6 +1,6 @@
 ---
 argument-hint: <create|list|cleanup|switch|current> [<feature-name>] [-b|--base <branch>] [-f|--force]
-description: Git Worktree management - create isolated worktrees, install deps, run tests, list worktrees, cleanup completed features
+description: Manage Git worktrees for isolated feature development. Supports create, list, switch, current, and cleanup flows, with setup and baseline verification when applicable.
 ---
 
 # Branch Command

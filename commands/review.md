@@ -1,6 +1,6 @@
 ---
 argument-hint: [task-description]
-description: Expert code review for quality, security, and maintainability. Invokes the code-reviewer agent.
+description: Run a structured code review focused on correctness, security, performance, and maintainability. Invokes the code-reviewer agent and returns prioritized findings with a recommendation.
 ---
 
 # Review Command

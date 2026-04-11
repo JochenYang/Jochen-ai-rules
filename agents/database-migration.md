@@ -1,6 +1,6 @@
 ---
 name: database-migration
-description: Database migration specialist. Handles schema changes, data migration, and ensures data integrity during database upgrades or cross-database migrations.
+description: Schema and data migration specialist for database changes. Plans safe migrations, rollback paths, and integrity checks across upgrades or backfills. Outputs migration artifacts and implementation handoff.
 color: orange
 model: inherit
 tools: ["Read", "Bash", "Grep", "Glob", "Edit", "Write"]

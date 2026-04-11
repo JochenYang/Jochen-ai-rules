@@ -1,6 +1,6 @@
 ---
 name: tdd-guide
-description: Test-Driven Development specialist enforcing RED-GREEN-REFACTOR cycle. Writes tests first, then implements minimal code to pass. Ensures 80%+ test coverage.
+description: TDD implementation specialist enforcing the RED-GREEN-REFACTOR-VERIFY cycle. Writes failing tests first, applies minimal code changes, and preserves verification evidence. Outputs tested changes with a review handoff.
 color: pink
 model: inherit
 tools: ["Read", "Bash", "Grep", "Glob", "Edit", "Write"]

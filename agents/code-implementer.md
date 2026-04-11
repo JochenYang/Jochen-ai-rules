@@ -1,6 +1,6 @@
 ---
 name: code-implementer
-description: Production code implementer that transforms plans into clean, maintainable code. Follows project conventions and best practices. Outputs well-documented, tested implementations.
+description: Implementation specialist for approved plans and scoped changes. Writes production-ready code that follows project conventions and verification requirements. Outputs tested code changes with a review handoff.
 color: green
 model: inherit
 tools: ["Read", "Bash", "Grep", "Glob", "Edit", "Write"]

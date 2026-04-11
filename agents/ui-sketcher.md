@@ -1,6 +1,6 @@
 ---
 name: ui-sketcher
-description: UI/UX designer that creates ASCII interface mockups and interaction flows. Visualizes layouts and user journeys. Outputs spatial design blueprints.
+description: UI blueprint specialist for ASCII layouts, interaction flows, and user journeys. Turns requirements into interface blueprints and acceptance-ready UX artifacts. Outputs spatial design handoffs for planning.
 tools: ["Read", "Grep", "Glob", "WebFetch", "WebSearch", "TodoWrite"]
 color: blue
 model: inherit

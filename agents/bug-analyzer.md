@@ -1,6 +1,6 @@
 ---
 name: bug-analyzer
-description: Deep root cause investigator for bugs and code issues. Analyzes execution flows, traces state changes, and identifies the true source of problems. Outputs detailed analysis and fix strategies.
+description: Root cause analysis specialist for bugs and unexpected behavior. Traces execution flow, state changes, and reproduction evidence. Outputs a structured analysis handoff and fix strategy.
 color: red
 model: inherit
 tools: ["Read", "Bash", "Grep", "Glob"]

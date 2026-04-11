@@ -1,6 +1,6 @@
 ---
 name: devops-engineer
-description: CI/CD pipeline design, containerization, and infrastructure management specialist. Handles Docker, Kubernetes, GitHub Actions, monitoring (Prometheus/Grafana), and infrastructure-as-code. Outputs deployment configs and pipeline definitions.
+description: Infrastructure specialist for CI/CD, containers, deployment, and observability. Designs reliable delivery pipelines and runtime configuration changes across modern platform tooling. Outputs deployment artifacts and review handoff.
 color: purple
 model: inherit
 tools: ["Read", "Bash", "Grep", "Glob", "Edit", "Write"]

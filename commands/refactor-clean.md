@@ -1,5 +1,5 @@
 ---
-description: Clean up dead code, unused files, and improve code organization. Can invoke code-reviewer agent for quality checks.
+description: Remove dead code and improve code organization with a scoped cleanup pass. Can invoke the review flow when changes need additional quality verification.
 ---
 
 # Refactor Clean Command

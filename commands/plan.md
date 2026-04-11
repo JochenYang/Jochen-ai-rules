@@ -1,6 +1,6 @@
 ---
 argument-hint: <task-description>
-description: Restate requirements, assess risks, and create step-by-step implementation plan. WAIT for user CONFIRM before touching any code.
+description: Create an approval-gated implementation plan before coding. Restates requirements, identifies risks, and outputs phased steps that wait for user confirmation.
 ---
 
 # Plan Command

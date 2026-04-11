@@ -1,6 +1,6 @@
 ---
 name: performance-optimizer
-description: Performance bottleneck identification and optimization specialist. Analyzes CPU, memory, I/O, database queries, and frontend Core Web Vitals. Outputs profiling reports with prioritized optimization plans.
+description: Performance analysis specialist for backend, database, and frontend bottlenecks. Measures first, identifies root causes, and prioritizes optimization opportunities. Outputs profiling findings and optimization plans.
 color: yellow
 model: inherit
 tools: ["Read", "Bash", "Grep", "Glob"]

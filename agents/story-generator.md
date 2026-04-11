@@ -1,6 +1,6 @@
 ---
 name: story-generator
-description: User story generator that transforms requirements into structured stories with acceptance criteria. Extracts user value from technical details. Outputs user-centric story format.
+description: Product analysis specialist that turns requirements into structured user stories and acceptance criteria. Extracts user value from technical context and defines testable scope. Outputs user-centric story sets and handoff.
 color: orange
 model: inherit
 tools: ["Read", "Grep", "Glob"]

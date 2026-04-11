@@ -1,6 +1,6 @@
 ---
 argument-hint: <task-description>
-description: Enforce test-driven development workflow. Write failing tests FIRST, then implement minimal code to pass. Invokes the tdd-guide agent.
+description: Run a TDD implementation workflow for new code or bug fixes. Invokes the tdd-guide agent to produce RED-GREEN-REFACTOR evidence before review.
 ---
 
 # TDD Command

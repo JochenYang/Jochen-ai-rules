@@ -1,6 +1,6 @@
 ---
 name: dev-planner
-description: Implementation planning specialist for complex features and refactoring. Creates detailed step-by-step plans with risk assessment and dependency analysis. Outputs actionable implementation roadmaps.
+description: Planning specialist for complex features, refactors, and architectural work. Clarifies scope, surfaces risks, and breaks delivery into approval-ready phases. Outputs implementation plans and approval handoffs.
 color: cyan
 model: inherit
 tools: ["Read", "Bash", "Grep", "Glob", "AskUserQuestion"]

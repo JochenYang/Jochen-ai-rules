@@ -1,6 +1,6 @@
 ---
 argument-hint: <feature|feature-tdd|bugfix|refactor|ui-design|secure-feature|db-feature|performance-audit|deploy> <task-description> | custom "<agents>" "<task-description>"
-description: Coordinate multi-agent workflows with mandatory review loops and structured handoffs.
+description: Run sequential multi-agent workflows with approval gates, structured handoffs, and repair loops. Coordinates the right agent chain and finishes at a review recommendation.
 ---
 
 # Orchestrate Command

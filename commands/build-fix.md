@@ -1,5 +1,5 @@
 ---
-description: Analyze and fix build errors. Run build, parse errors, and implement fixes via bug-analyzer + code-implementer workflow when needed.
+description: Diagnose and fix build or compilation failures. Runs the relevant build, analyzes root causes, and applies fixes directly or through the bugfix workflow when needed.
 ---
 
 # Build Fix Command
