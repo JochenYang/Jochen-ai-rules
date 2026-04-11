@@ -85,7 +85,6 @@ Jochen AI Rules 是一个全面的 Claude Code 插件，提供：
 /plugin install command-branch@jochen-ai-rules
 /plugin install command-build-fix@jochen-ai-rules
 /plugin install command-commit@jochen-ai-rules
-/plugin install command-learn@jochen-ai-rules
 /plugin install command-orchestrate@jochen-ai-rules
 /plugin install command-plan@jochen-ai-rules
 /plugin install command-refactor-clean@jochen-ai-rules
@@ -188,8 +187,6 @@ git push origin v1.3.1
 | `/branch`         | Git Worktree 管理        |
 | `/build-fix`      | 修复构建错误             |
 | `/refactor-clean` | 清理死代码               |
-| `/learn`          | 提取可复用模式           |
-
 ## 智能体 (Agents)
 
 | Agent                   | 说明                                   |
@@ -250,9 +247,8 @@ git push origin v1.3.1
 
 ## 钩子 (Hooks)
 
-内置两个生产可用的钩子，提供跨平台配置：
+内置一个生产可用的钩子，提供跨平台配置：
 
-- **Self-improvement**：每次会话工具调用 8+ 次后，提示使用 `/learn` 总结模式
 - **Prompt Linter**：提示词超过 50 词时，提醒确认目标
 
 ### 配置方式
@@ -267,8 +263,7 @@ git push origin v1.3.1
 ```json
 {
   "hooks": {
-    "UserPromptSubmit": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "powershell -File hooks/prompt-linter.ps1" }] }],
-    "Stop":            [{ "matcher": "*", "hooks": [{ "type": "command", "command": "powershell -File hooks/self-improvement.ps1" }] }]
+    "UserPromptSubmit": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "powershell -File hooks/prompt-linter.ps1" }] }]
   }
 }
 ```
@@ -278,8 +273,7 @@ git push origin v1.3.1
 ```json
 {
   "hooks": {
-    "UserPromptSubmit": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "bash hooks/prompt-linter.sh" }] }],
-    "Stop":            [{ "matcher": "*", "hooks": [{ "type": "command", "command": "bash hooks/self-improvement.sh" }] }]
+    "UserPromptSubmit": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "bash hooks/prompt-linter.sh" }] }]
   }
 }
 ```

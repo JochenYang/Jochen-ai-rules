@@ -7,7 +7,7 @@ description: Mandatory security baseline for all code changes.
 
 **RULE TYPE**: Mandatory security baseline for all code changes.
 
-## Pre-Commit Security Checks
+## Core Security Checks
 
 - [ ] No hardcoded secrets (keys, tokens, passwords)
 - [ ] External input validation is enforced

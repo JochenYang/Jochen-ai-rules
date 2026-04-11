@@ -226,12 +226,6 @@
       "commands": ["./commands/commit.md"]
     },
     {
-      "name": "command-learn",
-      "source": "./commands/",
-      "description": "Extract reusable patterns from sessions and save to memory.",
-      "commands": ["./commands/learn.md"]
-    },
-    {
       "name": "command-orchestrate",
       "source": "./commands/",
       "description": "Coordinate multi-agent workflows with review loops and structured handoffs.",

@@ -94,7 +94,7 @@ automation.
 ### Next Actions
 ```
 
-## Execution Checklist (Mandatory)
+## Agent Orchestration Checklist (Mandatory)
 
 Before finishing any agent-driven task, confirm:
 

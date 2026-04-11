@@ -13,18 +13,6 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "powershell -File hooks/self-improvement.ps1"
-          }
-        ]
-      }
     ]
   }
 }
-

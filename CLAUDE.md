@@ -12,7 +12,7 @@ The project is organized into several core components:
 
 - **agents/** - Specialized subagents for delegation (dev-planner, code-reviewer, tdd-guide, etc.)
 - **skills/** - Workflow definitions and domain knowledge (coding standards, patterns, testing)
-- **commands/** - Slash commands invoked by users (/tdd, /plan, /branch, /learn, etc.)
+- **commands/** - Slash commands invoked by users (/tdd, /plan, /branch, etc.)
 - **hooks/** - Trigger-based automations (prompt linting, session self-improvement)
 - **rules/** - Always-follow guidelines (security, coding style, testing requirements)
 
@@ -24,7 +24,6 @@ The project is organized into several core components:
 - `/tdd` - Test-driven development workflow
 - `/code-review` - Quality review
 - `/build-fix` - Fix build errors
-- `/learn` - Extract patterns from sessions
 - `/refactor-clean` - Clean up dead code
 - `/orchestrate` - Orchestrate multi-agent workflows
 

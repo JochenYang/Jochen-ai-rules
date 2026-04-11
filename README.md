@@ -85,7 +85,6 @@ Jochen AI Rules is a comprehensive Claude Code plugin that provides:
 /plugin install command-branch@jochen-ai-rules
 /plugin install command-build-fix@jochen-ai-rules
 /plugin install command-commit@jochen-ai-rules
-/plugin install command-learn@jochen-ai-rules
 /plugin install command-orchestrate@jochen-ai-rules
 /plugin install command-plan@jochen-ai-rules
 /plugin install command-refactor-clean@jochen-ai-rules
@@ -193,8 +192,6 @@ git push origin v1.3.1
 | `/branch`         | Git worktree management                          |
 | `/build-fix`      | Fix build errors                                 |
 | `/refactor-clean` | Clean up dead code                               |
-| `/learn`          | Extract reusable patterns                        |
-
 ## Agents
 
 | Agent                   | Description                                              |
@@ -255,9 +252,8 @@ git push origin v1.3.1
 
 ## Hooks
 
-Two production-ready hooks are included with platform-specific configurations:
+One production-ready hook is included with platform-specific configurations:
 
-- **Self-improvement**: Prompts `/learn` after 8+ tool calls per session
 - **Prompt Linter**: Warns when prompt > 50 words and asks for goal confirmation
 
 ### Setup
@@ -272,8 +268,7 @@ Copy the `hooks` section from the appropriate file into your Claude settings:
 ```json
 {
   "hooks": {
-    "UserPromptSubmit": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "powershell -File hooks/prompt-linter.ps1" }] }],
-    "Stop":            [{ "matcher": "*", "hooks": [{ "type": "command", "command": "powershell -File hooks/self-improvement.ps1" }] }]
+    "UserPromptSubmit": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "powershell -File hooks/prompt-linter.ps1" }] }]
   }
 }
 ```
@@ -283,8 +278,7 @@ Copy the `hooks` section from the appropriate file into your Claude settings:
 ```json
 {
   "hooks": {
-    "UserPromptSubmit": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "bash hooks/prompt-linter.sh" }] }],
-    "Stop":            [{ "matcher": "*", "hooks": [{ "type": "command", "command": "bash hooks/self-improvement.sh" }] }]
+    "UserPromptSubmit": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "bash hooks/prompt-linter.sh" }] }]
   }
 }
 ```

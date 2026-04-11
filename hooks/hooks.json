@@ -13,17 +13,6 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash hooks/self-improvement.sh"
-          }
-        ]
-      }
     ]
   }
 }
