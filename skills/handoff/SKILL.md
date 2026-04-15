@@ -21,6 +21,9 @@ Path resolution rule:
   relative to the active repository root.
 - Do not try `python scripts/handoff.py ...` from the project root unless that
   repository really contains its own copy of the script.
+- Pass the active project path with `--project-root`. If `repo/progress/`
+  exists only in a parent workspace directory, the resolver should use the
+  nearest ancestor that already contains it.
 - Preferred invocation shape:
   - `cd <installed-handoff-skill-dir> && python scripts/handoff.py ... --project-root <active-repo-root>`
   - or call the installed script by absolute path directly.
@@ -40,6 +43,8 @@ cd <installed-handoff-skill-dir> && python3 scripts/handoff.py <write|read> [tar
 The script is the source of truth for:
 
 - the handoff directory: `repo/progress/handoffs/`
+- whether the requested project path should stay in place or resolve upward to
+  a parent workspace that already owns `repo/progress/`
 - whether `write` creates a new file or updates an existing one
 - which file `read` should load by default
 - whether the provided project root accidentally points at the installed skill
@@ -50,8 +55,11 @@ If the script result conflicts with intuition, trust the script.
 Critical path rule:
 
 - The script path belongs to the installed `handoff` skill.
-- `--project-root` must point to the active repository root, not the skill
+- `--project-root` must point to the active project path, not the skill
   installation directory.
+- If implementation work happens in a nested subproject but `repo/progress/`
+  belongs to a parent workspace, passing the subproject path is valid; the
+  resolver should lift to the nearest matching ancestor automatically.
 - Do not treat `~/.claude/skills/handoff` or any similar install path as the
   project root.
 - Do not treat the active repository root as the location of

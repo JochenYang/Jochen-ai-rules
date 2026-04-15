@@ -31,8 +31,36 @@ def slugify(value: str) -> str:
     return text or DEFAULT_TOPIC
 
 
+def get_progress_dir(project_root: Path) -> Path:
+    return project_root / "repo" / "progress"
+
+
+def resolve_handoff_root(project_root: Path) -> tuple[Path, str]:
+    project_root = project_root.resolve()
+
+    if get_progress_dir(project_root).exists():
+        return project_root, "project_root"
+
+    for ancestor in project_root.parents:
+        if get_progress_dir(ancestor).exists():
+            return ancestor, "ancestor_repo_progress"
+
+    return project_root, "project_root_fallback"
+
+
 def get_handoff_dir(project_root: Path) -> Path:
-    return project_root / "repo" / "progress" / "handoffs"
+    resolved_root, _ = resolve_handoff_root(project_root)
+    return resolved_root / "repo" / "progress" / "handoffs"
+
+
+def build_resolution_payload(project_root: Path) -> dict[str, str]:
+    resolved_root, resolution = resolve_handoff_root(project_root)
+    return {
+        "requested_project_root": str(project_root.resolve()),
+        "project_root": str(resolved_root),
+        "project_root_resolution": resolution,
+        "handoff_dir": str(get_handoff_dir(project_root).resolve()),
+    }
 
 
 def resolve_existing_file(project_root: Path, candidate: str | None) -> Path | None:
@@ -107,8 +135,7 @@ def handle_write(project_root: Path, target: str | None) -> int:
             {
                 "mode": "write",
                 "action": "update",
-                "project_root": str(project_root.resolve()),
-                "handoff_dir": str(get_handoff_dir(project_root).resolve()),
+                **build_resolution_payload(project_root),
                 "path": str(existing),
             }
         )
@@ -118,8 +145,7 @@ def handle_write(project_root: Path, target: str | None) -> int:
         {
             "mode": "write",
             "action": "create",
-            "project_root": str(project_root.resolve()),
-            "handoff_dir": str(get_handoff_dir(project_root).resolve()),
+            **build_resolution_payload(project_root),
             "path": str(created),
         }
     )
@@ -133,8 +159,7 @@ def handle_read(project_root: Path, target: str | None) -> int:
                 {
                     "mode": "read",
                     "error": "specified_handoff_not_found",
-                    "project_root": str(project_root.resolve()),
-                    "handoff_dir": str(get_handoff_dir(project_root).resolve()),
+                    **build_resolution_payload(project_root),
                     "requested": target,
                 },
                 status=2,
@@ -144,8 +169,7 @@ def handle_read(project_root: Path, target: str | None) -> int:
             {
                 "mode": "read",
                 "source": "specified",
-                "project_root": str(project_root.resolve()),
-                "handoff_dir": str(get_handoff_dir(project_root).resolve()),
+                **build_resolution_payload(project_root),
                 "path": str(existing),
             }
         )
@@ -156,8 +180,7 @@ def handle_read(project_root: Path, target: str | None) -> int:
             {
                 "mode": "read",
                 "error": "no_handoff_found",
-                "project_root": str(project_root.resolve()),
-                "handoff_dir": str(get_handoff_dir(project_root).resolve()),
+                **build_resolution_payload(project_root),
             },
             status=3,
         )
@@ -166,8 +189,7 @@ def handle_read(project_root: Path, target: str | None) -> int:
         {
             "mode": "read",
             "source": "latest",
-            "project_root": str(project_root.resolve()),
-            "handoff_dir": str(get_handoff_dir(project_root).resolve()),
+            **build_resolution_payload(project_root),
             "path": str(latest),
         }
     )
@@ -182,7 +204,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--project-root",
         default=".",
-        help="Project root used for repo/progress/handoffs resolution.",
+        help=(
+            "Active project path used for handoff resolution. If repo/progress "
+            "exists only in an ancestor directory, the resolver will use the "
+            "nearest matching ancestor."
+        ),
     )
     return parser.parse_args()
 

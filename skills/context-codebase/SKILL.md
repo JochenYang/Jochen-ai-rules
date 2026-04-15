@@ -263,10 +263,23 @@ Pause and ask the owner before:
 
 ## Final Output Contract (MANDATORY)
 
-Every use of this skill should end with:
+Output style is mode-specific:
 
-1. `Skill Fit` - why `context-codebase` was the right retrieval path
-2. `Primary Deliverable` - snapshot/read/report artifact or answer package
-3. `Execution Evidence` - cache usage, files indexed, or retrieval sources
-4. `Risks / Open Questions` - stale cache risk, missing context, or unresolved ambiguity
-5. `Next Action` - the recommended follow-up retrieval or implementation step
+- `read`:
+  - Answer the user's concrete code question directly.
+  - Prefer a compact summary of the code location, call entry, core files, and
+    implementation flow.
+  - Do not append the explicit headings `Skill Fit`, `Primary Deliverable`,
+    `Execution Evidence`, `Risks / Open Questions`, or `Next Action` in normal
+    successful reads.
+  - Only surface execution evidence or risks when they materially affect answer
+    quality, such as cache staleness, fallback retrieval, low-confidence hits,
+    or missing source coverage.
+
+- `report` and `refresh`:
+  - End with a visible structured closeout containing:
+    1. `Skill Fit` - why `context-codebase` was the right retrieval path
+    2. `Primary Deliverable` - snapshot/read/report artifact or answer package
+    3. `Execution Evidence` - cache usage, files indexed, or retrieval sources
+    4. `Risks / Open Questions` - stale cache risk, missing context, or unresolved ambiguity
+    5. `Next Action` - the recommended follow-up retrieval or implementation step
