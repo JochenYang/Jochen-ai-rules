@@ -185,8 +185,51 @@ class AnalyzerRegistry:
         if self.javascript.supports(ext):
             return self.javascript.analyze(content, rel_path, project_path)
         if self.multi.supports(ext):
-            return self.multi.analyze(content, rel_path)
+            return self._normalize_multi_result(self.multi.analyze(content, rel_path))
         return FileAnalysis()
+
+    def _normalize_multi_result(self, payload: object) -> FileAnalysis:
+        if isinstance(payload, FileAnalysis):
+            return payload
+        if not isinstance(payload, dict):
+            return FileAnalysis(engine='multi-lang-fallback', confidence='low')
+
+        normalized_key_functions = []
+        for item in payload.get('key_functions', []):
+            if isinstance(item, dict):
+                name = item.get('name')
+                line = item.get('line')
+                if not isinstance(name, str) or not name.strip():
+                    continue
+                if not isinstance(line, int) or line <= 0:
+                    line = 1
+                normalized_key_functions.append({
+                    'name': name,
+                    'file': item.get('file') or payload.get('path'),
+                    'line': line,
+                })
+                continue
+
+            name = str(item).strip()
+            if not name:
+                continue
+            normalized_key_functions.append({
+                'name': name,
+                'file': payload.get('path'),
+                'line': 1,
+            })
+
+        return FileAnalysis(
+            imports=_prioritize_imports(payload.get('imports', [])),
+            exports=[item for item in payload.get('exports', []) if isinstance(item, str)][:8],
+            api_routes=[item for item in payload.get('api_routes', []) if isinstance(item, dict)],
+            data_models=[item for item in payload.get('data_models', []) if isinstance(item, dict)],
+            key_functions=normalized_key_functions[:12],
+            framework_hints=[item for item in payload.get('framework_hints', []) if isinstance(item, str)][:8],
+            engine='multi-lang-regex',
+            confidence='medium',
+            warnings=[],
+        )
 
 
 def _framework_hints_from_python_import(module: str) -> set[str]:

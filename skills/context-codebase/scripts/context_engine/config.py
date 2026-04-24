@@ -27,7 +27,12 @@ USE_SQLITE_INDEX = True
 EXCLUDE_DIRS = {
     'node_modules', '.git', 'dist', 'build', 'venv', '__pycache__',
     '.venv', 'env', '.env', 'coverage', '.next', '.nuxt', '.cache',
-    '.svn', '.hg', 'vendor', 'target', 'out', '.idea', '.vscode'
+    '.svn', '.hg', 'vendor', 'target', 'out', '.idea', '.vscode',
+    'site-packages', 'dist-packages', '.tox', '.nox', '.pytest_cache',
+    '.mypy_cache', '.ruff_cache', '.hypothesis', '.eggs', '.yarn',
+    '.pnpm-store', '.turbo', '.parcel-cache', '.sass-cache', '.gradle',
+    '.terraform', '.serverless', '.aws-sam', '.docusaurus', '.expo',
+    '.vercel', '.svelte-kit'
 }
 
 EXCLUDE_PATH_PREFIXES = {

@@ -61,7 +61,12 @@ USE_SQLITE_INDEX = True
 EXCLUDE_DIRS = {
     'node_modules', '.git', 'dist', 'build', 'venv', '__pycache__',
     '.venv', 'env', '.env', 'coverage', '.next', '.nuxt', '.cache',
-    '.svn', '.hg', 'vendor', 'target', 'out', '.idea', '.vscode'
+    '.svn', '.hg', 'vendor', 'target', 'out', '.idea', '.vscode',
+    'site-packages', 'dist-packages', '.tox', '.nox', '.pytest_cache',
+    '.mypy_cache', '.ruff_cache', '.hypothesis', '.eggs', '.yarn',
+    '.pnpm-store', '.turbo', '.parcel-cache', '.sass-cache', '.gradle',
+    '.terraform', '.serverless', '.aws-sam', '.docusaurus', '.expo',
+    '.vercel', '.svelte-kit'
 }
 
 EXCLUDE_PATH_PREFIXES = {
@@ -131,6 +136,25 @@ MODULE_ROLE_HINTS = {
     'config': 'Configuration files',
 }
 
+NOISY_QUERY_EXPANSION_TERMS = {
+    'const', 'let', 'var', 'function', 'return', 'string', 'number', 'boolean',
+    'array', 'object', 'type', 'types', 'value', 'values', 'item', 'items',
+    'data', 'result', 'results', 'list', 'dict', 'map', 'set', 'module',
+    'modules', 'file', 'files', 'path', 'paths', 'line', 'lines', 'class',
+    'method', 'methods', 'param', 'params', 'argument', 'arguments',
+}
+
+LOW_SIGNAL_RETRIEVAL_TERMS = {
+    'core', 'call', 'chain', 'entry', 'main', 'flow',
+    'module', 'modules', 'handler', 'controller', 'service', 'router', 'route',
+}
+
+CODE_LIKE_EXTENSIONS = {
+    '.py', '.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs', '.go', '.rs', '.java',
+    '.kt', '.swift', '.cs', '.php', '.rb', '.scala', '.lua', '.sh', '.ps1',
+    '.json', '.yml', '.yaml', '.toml', '.ini', '.cfg', '.md', '.mdx',
+}
+
 SOURCE_EXTENSIONS = {'.py', '.js', '.jsx', '.ts', '.tsx'}
 MONOREPO_MARKERS = {'pnpm-workspace.yaml', 'turbo.json', 'nx.json'}
 IMPORTANT_FILE_NAMES = {
@@ -145,10 +169,27 @@ def normalize_rel_path(path: str) -> str:
     return path.replace('\\', '/')
 
 
+def is_generated_env_dir(name: str) -> bool:
+    normalized = (name or '').strip().lower()
+    if not normalized:
+        return False
+    if normalized in EXCLUDE_DIRS:
+        return True
+    if re.fullmatch(r'(?:\.?venv|env)(?:[-_.]?\d+(?:\.\d+)*)?', normalized):
+        return True
+    if normalized.endswith('.egg-info'):
+        return True
+    return normalized.startswith('python') and normalized[6:].replace('.', '').isdigit()
+
+
 def is_excluded_path(rel_path: str) -> bool:
     normalized = normalize_rel_path(rel_path).strip('./')
     if not normalized:
         return False
+
+    parts = [part.strip().lower() for part in normalized.split('/') if part.strip()]
+    if any(is_generated_env_dir(part) for part in parts):
+        return True
 
     return any(
         normalized == prefix or normalized.startswith(prefix + '/')
@@ -987,7 +1028,15 @@ def build_chunks(file_records: list[dict]) -> list[dict]:
             if line_no:
                 anchor_lines.append((line_no, 'model', [model.get('type', ''), model.get('name', '')]))
         for func in record.get('keyFunctions', []):
-            anchor_lines.append((func['line'], 'function', [func['name']]))
+            if not isinstance(func, dict):
+                continue
+            line_no = func.get('line')
+            name = func.get('name')
+            if not isinstance(line_no, int) or line_no <= 0:
+                continue
+            if not isinstance(name, str) or not name.strip():
+                continue
+            anchor_lines.append((line_no, 'function', [name]))
         anchor_lines.extend(build_semantic_anchor_lines(record, lines))
 
         if anchor_lines:
@@ -1607,7 +1656,8 @@ def build_focus_context_pack(
         task=task,
         limit=36,
     )
-    matches = rerank_read_matches(matches, query_intent, read_profile)[:14]
+    matches = rerank_read_matches(matches, query_intent, read_profile)
+    matches = prioritize_matches_by_coverage(matches, query_intent, min_coverage=0.2)[:14]
     related_paths = []
     for match in matches:
         related_paths.append(match['path'])
@@ -1623,16 +1673,28 @@ def build_focus_context_pack(
 
 
 def expand_query_terms_for_retrieval(query_intent: dict, retrieval: dict) -> list[str]:
-    expanded_terms = list(dict.fromkeys([
+    base_terms = list(dict.fromkeys([
         *query_intent.get('terms', []),
         *query_intent.get('keywords', []),
     ]))
+    if len(base_terms) >= 3:
+        return base_terms[:36]
+
+    expanded_terms = list(base_terms)
     related_terms = (retrieval.get('projectVocabulary') or {}).get('relatedTerms', {})
 
-    for term in list(expanded_terms):
-        for related in related_terms.get(term.lower(), [])[:4]:
-            if related not in expanded_terms:
-                expanded_terms.append(related)
+    for term in list(base_terms)[:12]:
+        additions = 0
+        for related in related_terms.get(term.lower(), [])[:6]:
+            normalized = related.strip().lower()
+            if not normalized or normalized in expanded_terms:
+                continue
+            if not should_keep_related_expansion(term, normalized):
+                continue
+            expanded_terms.append(normalized)
+            additions += 1
+            if additions >= 2:
+                break
 
     return expanded_terms[:36]
 
@@ -1677,11 +1739,21 @@ def load_sqlite_query_chunks(
     if not deduped_terms:
         return [], diagnostics
 
+    prioritized_terms: list[str] = []
+    deferred_terms: list[str] = []
+    for term in deduped_terms:
+        lowered = term.lower()
+        if len(deduped_terms) >= 3 and lowered in LOW_SIGNAL_RETRIEVAL_TERMS:
+            deferred_terms.append(term)
+            continue
+        prioritized_terms.append(term)
+    ordered_terms = prioritized_terms + deferred_terms
+
     collected: dict[str, dict] = {}
 
     try:
         sqlite_index = SQLiteIndex(str(db_path))
-        for term in deduped_terms[:12]:
+        for term in ordered_terms[:12]:
             for chunk in sqlite_index.search(term, limit=limit):
                 chunk_id = chunk.get('id')
                 if not chunk_id or chunk_id in collected:
@@ -2044,7 +2116,7 @@ def blend_match_sources(
     return ranked
 
 
-def prioritize_matches_by_coverage(matches: list[dict], query_intent: dict, min_coverage: float = 0.4) -> list[dict]:
+def prioritize_matches_by_coverage(matches: list[dict], query_intent: dict, min_coverage: float = 0.2) -> list[dict]:
     query_terms = query_term_set(query_intent)
     if len(query_terms) < 2:
         return matches
@@ -2063,7 +2135,14 @@ def prioritize_matches_by_coverage(matches: list[dict], query_intent: dict, min_
             if structural_only and len(query_terms) >= 2:
                 enriched['score'] = float(enriched.get('score', 0) or 0) - 48.0
             low.append(enriched)
-    low.sort(key=lambda item: (-float(item.get('score', 0) or 0), item.get('path') or '', item.get('startLine') or 0))
+    low.sort(
+        key=lambda item: (
+            -float(item.get('coverage', 0) or 0),
+            -float(item.get('score', 0) or 0),
+            item.get('path') or '',
+            item.get('startLine') or 0,
+        ),
+    )
     return high + low
 
 
@@ -2071,7 +2150,7 @@ def prioritize_files_by_coverage(
     file_paths: list[str],
     snippet_items: list[dict],
     query_intent: dict,
-    min_coverage: float = 0.35,
+    min_coverage: float = 0.2,
 ) -> list[str]:
     query_terms = query_term_set(query_intent)
     if len(query_terms) < 2:
@@ -2768,6 +2847,9 @@ def rerank_read_matches(matches: list[dict], query_intent: dict, read_profile: d
             bonus -= 14
         if is_probably_test_path(path) and not test_query:
             bonus -= 90
+        suffix = Path(path).suffix.lower()
+        if suffix and suffix not in CODE_LIKE_EXTENSIONS and not is_documentation_file(path):
+            bonus -= 28
 
         keyword_overlap = len(haystack_terms & query_terms)
         if keyword_overlap:
@@ -2780,6 +2862,10 @@ def rerank_read_matches(matches: list[dict], query_intent: dict, read_profile: d
         exact_symbol_overlap = len(symbol_terms & exact_terms)
         if exact_symbol_overlap:
             bonus += min(exact_symbol_overlap, 2) * 18
+        if exact_terms and fuzzy_exact_overlap == 0 and keyword_overlap == 0:
+            bonus -= 64
+        elif exact_terms and fuzzy_exact_overlap == 0:
+            bonus -= 24
 
         bonus += score_match_with_profile(path, symbol_terms, query_intent, read_profile)
 
@@ -2907,6 +2993,25 @@ def count_fuzzy_term_overlap(left: set[str], right: set[str]) -> int:
                 matched += 1
                 break
     return matched
+
+
+def should_keep_related_expansion(base_term: str, related_term: str) -> bool:
+    base = (base_term or '').strip().lower()
+    related = (related_term or '').strip().lower()
+    if not base or not related or related == base:
+        return False
+    if len(related) < 3 or related in NOISY_QUERY_EXPANSION_TERMS:
+        return False
+
+    base_variants = build_term_variants(base)
+    related_variants = build_term_variants(related)
+    if base_variants & related_variants:
+        return True
+
+    if len(base) >= 4 and (base in related or related in base):
+        return True
+
+    return False
 
 
 def build_term_variants(token: str) -> set[str]:
@@ -3392,7 +3497,7 @@ def scan_files(project_path: str) -> list[str]:
         # Filter out excluded directories in-place
         filtered_dirs = []
         for dir_name in dirs:
-            if dir_name in EXCLUDE_DIRS:
+            if is_generated_env_dir(dir_name):
                 continue
             rel_dir = dir_name if not rel_root else f'{rel_root}/{dir_name}'
             if is_excluded_path(rel_dir):
@@ -3847,10 +3952,50 @@ def refresh_index(project_path: str) -> dict:
     if not existing_snapshot or not existing_index_state:
         return generate_snapshot(project_path, force=False)
 
-    files = scan_files(project_path)
     previous_files = existing_index_state.get('files', {})
     previous_commit = (existing_snapshot.get('git') or {}).get('commit')
     current_commit = run_git_command(project_path, ['rev-parse', 'HEAD'])
+    git_status = run_git_command(project_path, ['status', '--porcelain'])
+
+    # Fast path: when git commit is unchanged and worktree is clean, skip expensive
+    # repo scan/signature rebuild and directly reuse cached snapshot + index.
+    if (
+        previous_commit
+        and current_commit
+        and previous_commit == current_commit
+        and git_status is None
+    ):
+        cached_chunks = existing_index_state.get('chunks', [])
+        existing_snapshot['generatedAt'] = utc_now_iso()
+        existing_snapshot['sourceFingerprint'] = (
+            existing_index_state.get('sourceFingerprint')
+            or existing_snapshot.get('sourceFingerprint')
+        )
+        previous_freshness = existing_snapshot.get('freshness') or {}
+        existing_snapshot['freshness'] = {
+            'stale': False,
+            'reason': 'incremental refresh skipped (git unchanged)',
+            'newestSourceMtime': previous_freshness.get('newestSourceMtime'),
+            'snapshotPath': normalize_rel_path(str(output_file.relative_to(base))),
+            'hashedCandidateFiles': 0,
+            'hashAuditCursor': previous_freshness.get('hashAuditCursor', 0),
+        }
+        existing_snapshot['index'] = build_index_metadata(
+            base,
+            index_state_file,
+            existing_index_state,
+            previous_files,
+            cached_chunks,
+            reusing_snapshot=True,
+        )
+        existing_snapshot['chunkCatalog'] = build_chunk_catalog(
+            cached_chunks,
+            existing_snapshot.get('importantFiles', []),
+        )
+        write_snapshot(output_file, existing_snapshot, chunks=cached_chunks)
+        return existing_snapshot
+
+    files = scan_files(project_path)
     audit_cursor = int((existing_snapshot.get('freshness') or {}).get('hashAuditCursor') or 0)
     current_signatures, hashed_candidate_paths, next_audit_cursor = build_incremental_file_signatures(
         files,

@@ -106,6 +106,14 @@ STOPWORDS = {
     'when', 'read', 'mode', 'task', 'help', 'need', 'please', 'about', 'into',
 }
 
+NOISY_QUERY_EXPANSION_TERMS = {
+    'const', 'let', 'var', 'function', 'return', 'string', 'number', 'boolean',
+    'array', 'object', 'type', 'types', 'value', 'values', 'item', 'items',
+    'data', 'result', 'results', 'list', 'dict', 'map', 'set', 'module',
+    'modules', 'file', 'files', 'path', 'paths', 'line', 'lines', 'class',
+    'method', 'methods', 'param', 'params', 'argument', 'arguments',
+}
+
 
 def build_csr_read_enhancement(
     snapshot: SnapshotDict,
@@ -236,15 +244,25 @@ def build_query_variants(
     related_terms = cast(dict[str, list[str]], project_vocabulary.get('relatedTerms', {}))
     expanded_terms = list(base_terms)
 
-    for term in list(base_terms)[:12]:
-        for related in related_terms.get(term.lower(), [])[:3]:
-            if related not in expanded_terms:
-                expanded_terms.append(related)
+    allow_related_expansion = len(base_terms) <= 2
+    if allow_related_expansion:
+        for term in list(base_terms)[:12]:
+            additions = 0
+            for related in related_terms.get(term.lower(), [])[:6]:
+                normalized = related.strip().lower()
+                if not normalized or normalized in expanded_terms:
+                    continue
+                if not should_keep_related_expansion(term, normalized):
+                    continue
+                expanded_terms.append(normalized)
+                additions += 1
+                if additions >= 2:
+                    break
 
     variants = []
     if query:
         variants.append(query)
-    if blueprint_query:
+    if blueprint_query and (not query or len(base_terms) <= 2):
         variants.append(' '.join([blueprint_query, *expanded_terms[:10]]).strip())
     route_terms = [term for term in route.get('routeTerms', []) if term]
     expanded_lower = {term.lower() for term in expanded_terms}
@@ -468,6 +486,43 @@ def normalize_text(text: str) -> str:
 
 def normalize_path(path: str) -> str:
     return path.replace('\\', '/').strip()
+
+
+def build_term_variants(token: str) -> set[str]:
+    normalized = (token or '').strip().lower()
+    if not normalized:
+        return set()
+
+    variants = {normalized}
+    if len(normalized) >= 4:
+        if normalized.endswith('ies'):
+            variants.add(normalized[:-3] + 'y')
+        if normalized.endswith('es'):
+            variants.add(normalized[:-2])
+        if normalized.endswith('s'):
+            variants.add(normalized[:-1])
+        else:
+            variants.add(normalized + 's')
+    return {item for item in variants if item}
+
+
+def should_keep_related_expansion(base_term: str, related_term: str) -> bool:
+    base = (base_term or '').strip().lower()
+    related = (related_term or '').strip().lower()
+    if not base or not related or related == base:
+        return False
+    if len(related) < 3 or related in NOISY_QUERY_EXPANSION_TERMS:
+        return False
+
+    base_variants = build_term_variants(base)
+    related_variants = build_term_variants(related)
+    if base_variants & related_variants:
+        return True
+
+    if len(base) >= 4 and (base in related or related in base):
+        return True
+
+    return False
 
 
 def is_probably_test_path(path: str) -> bool:

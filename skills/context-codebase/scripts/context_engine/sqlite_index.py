@@ -4,6 +4,7 @@ SQLite index - high-speed KV query storage
 """
 from __future__ import annotations
 import json
+import re
 import sqlite3
 from pathlib import Path
 from typing import Optional
@@ -74,33 +75,37 @@ class SQLiteIndex:
         conn.close()
 
     def search(self, query: str, limit: int = 10) -> list[dict]:
-        """Search chunks using FTS5 MATCH with BM25 ranking"""
+        """Search chunks using FTS5 MATCH with strict and relaxed expressions."""
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
-        # Normalize query for FTS5 (escape quotes, split words)
-        sanitized_words = [word.replace('"', '').strip() for word in query.split() if word.strip()]
-        safe_query = " ".join([f'"{word}"' for word in sanitized_words if word])
-        if not safe_query:
-            fallback = query.replace('"', '').strip()
-            if not fallback:
-                conn.close()
-                return []
-            safe_query = f'"{fallback}"'
+        expressions = self._build_match_expressions(query)
+        if not expressions:
+            conn.close()
+            return []
 
-        try:
-            cursor.execute("""
-                SELECT * FROM chunks
-                WHERE chunks MATCH ?
-                ORDER BY rank
-                LIMIT ?
-            """, (safe_query, limit))
-            
-            results = []
+        results: list[dict] = []
+        seen_ids: set[str] = set()
+        for expression in expressions:
+            try:
+                cursor.execute("""
+                    SELECT *, bm25(chunks) AS score
+                    FROM chunks
+                    WHERE chunks MATCH ?
+                    ORDER BY score ASC
+                    LIMIT ?
+                """, (expression, limit))
+            except sqlite3.OperationalError:
+                continue
+
             for row in cursor.fetchall():
+                chunk_id = row["id"]
+                if not chunk_id or chunk_id in seen_ids:
+                    continue
+                seen_ids.add(chunk_id)
                 results.append({
-                    "id": row["id"],
+                    "id": chunk_id,
                     "path": row["path"],
                     "startLine": row["start_line"],
                     "endLine": row["end_line"],
@@ -110,12 +115,59 @@ class SQLiteIndex:
                     "signals": json.loads(row["signals"]) if row["signals"] else [],
                     "preview": row["preview"]
                 })
-        except sqlite3.OperationalError:
-            # Fallback if query syntax is invalid
-            results = []
+                if len(results) >= limit:
+                    break
+            if len(results) >= limit:
+                break
 
         conn.close()
         return results
+
+    def _build_match_expressions(self, query: str) -> list[str]:
+        terms = self._tokenize_query(query)
+        if not terms:
+            return []
+
+        quoted_terms = [f'"{term}"' for term in terms[:8]]
+        prefix_terms = [self._prefix_query_term(term) for term in terms[:8]]
+        expressions = [
+            " ".join(quoted_terms),  # strict AND-like match
+            " AND ".join(prefix_terms),  # prefix AND for plural/camel variants
+            " OR ".join(prefix_terms),  # relaxed OR fallback
+        ]
+
+        deduped: list[str] = []
+        seen = set()
+        for expression in expressions:
+            normalized = expression.strip()
+            if not normalized or normalized in seen:
+                continue
+            seen.add(normalized)
+            deduped.append(normalized)
+        return deduped
+
+    def _tokenize_query(self, query: str) -> list[str]:
+        if not query:
+            return []
+
+        normalized = query.replace('"', ' ').strip().lower()
+        if not normalized:
+            return []
+        tokens = re.findall(r'[A-Za-z0-9_]+|[\u4e00-\u9fff]+', normalized)
+
+        deduped: list[str] = []
+        seen = set()
+        for token in tokens:
+            if len(token) < 2 or token in seen:
+                continue
+            seen.add(token)
+            deduped.append(token)
+        return deduped
+
+    def _prefix_query_term(self, term: str) -> str:
+        if re.fullmatch(r'[A-Za-z0-9_]+', term) and len(term) >= 3:
+            return f'{term}*'
+        return f'"{term}"'
 
     def get_by_path(self, path: str) -> list[dict]:
         """Get all chunks for a specific path"""

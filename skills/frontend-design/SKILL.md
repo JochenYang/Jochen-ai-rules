@@ -5,9 +5,9 @@ description: Implement distinctive, production-grade frontend UI code with stron
 
 # Frontend Design
 
-Build distinctive, production-grade frontend interfaces with clear visual direction,
-strong motion, real local assets, and conversion-aware content. Prefer
-implementation over abstract strategy, but keep the final output cohesive,
+Build distinctive, production-grade frontend interfaces with clear visual
+direction, strong motion, real local assets, and conversion-aware content.
+Prefer implementation over abstract strategy, but keep the result cohesive,
 performant, and ready to ship.
 
 ## Boundary With Other Skills
@@ -22,72 +22,101 @@ performant, and ready to ship.
 
 ## When NOT to Use
 
-- Pure backend or API development → use `developer`
-- Database design or schema work → use `database-engineer`
-- Product planning or requirements analysis → use `product-manager` or `requirements-interview`
-- Architecture design or system planning → use `dev-planner`
-- Security auditing or vulnerability review → use `quality-assurance`
+- Pure backend or API development -> use `developer`
+- Database design or schema work -> use `database-engineer`
+- Product planning or requirements analysis -> use `product-manager` or
+  `requirements-interview`
+- Architecture design or system planning -> use `dev-planner`
+- Security auditing or vulnerability review -> use `quality-assurance`
 
 ## When To Use
 
 Use this skill when the user asks to:
 
-- build a landing page, marketing site, dashboard, product page, or interactive
-  app shell
+- build a landing page, marketing site, dashboard, product page, or
+  interactive app shell
 - create polished React, Vue, HTML, CSS, or Tailwind frontend code
 - add motion systems, scroll storytelling, or premium interaction details
 - generate local image, video, or audio assets for the interface
 - write conversion-aware UI copy, headings, and CTAs
+- upgrade an existing frontend that looks generic, unfinished, or visually weak
 - build visually distinctive frontend work that should not feel generic
 
-## Working Style
+## Working Model
 
 Before coding, align on:
 
 - **Purpose**: what the interface does and who it serves
-- **Tone**: the specific visual direction to commit to
+- **Tone**: the visual direction to commit to
 - **Constraints**: framework, design system, performance, accessibility
 - **Differentiation**: the one memorable visual or interaction idea
 
-Commit to a clear aesthetic direction before writing code. Bold maximalism and
-refined minimalism both work when execution is intentional.
-
-Before building, also write three anchors:
+Before building, write three anchors:
 
 - **Visual thesis**: one sentence describing mood, material, and energy
 - **Content plan**: hero, support, detail, final CTA
-- **Interaction thesis**: two or three motion ideas that change the feel of the
-  page
+- **Interaction thesis**: two or three motion ideas that change the feel of
+  the page
 
 Each section should have one job, one dominant visual idea, and one primary
 takeaway or action.
 
-## Clarification First
+### Design Controls
 
-If the user's request does not clearly specify a direction, do not guess the
+Use these three internal dials to keep output intentional instead of generic:
+
+- **DESIGN_VARIANCE**: layout boldness and asymmetry
+  - `1-3`: restrained, symmetrical, predictable
+  - `4-7`: offset, structured, moderately experimental
+  - `8-10`: aggressive asymmetry, broken grids, strong spatial contrast
+- **MOTION_INTENSITY**: how animated the interface feels
+  - `1-3`: hover, focus, and pressed states only
+  - `4-7`: entrance reveals, stagger, restrained choreography
+  - `8-10`: scroll-linked sequencing, magnetic motion, cinematic behavior
+- **VISUAL_DENSITY**: how much content fits in the viewport
+  - `1-3`: airy, premium, gallery-like
+  - `4-7`: balanced daily-use product UI
+  - `8-10`: dense dashboards, telemetry, operational surfaces
+
+Default baseline:
+
+- `DESIGN_VARIANCE = 6`
+- `MOTION_INTENSITY = 4`
+- `VISUAL_DENSITY = 4`
+
+Always adapt the dials to the user request, existing product language, and
+screen type.
+
+## Direction And Anchoring
+
+If the user request does not clearly specify a direction, do not guess the
 style too early.
 
-- Use `AskUserQuestion` when the user has not made the visual direction,
-  reference style, or interaction ambition clear enough to build confidently.
-  If the host runtime exposes the tool as `askuserquestion`, treat it as the
-  same tool.
-- Prefer one focused question at a time. Ask about the biggest design unknown
-  first instead of dumping a long questionnaire.
-- Prefer multiple-choice framing when possible so the user can answer quickly.
-- Fall back to a short conversational question only if `AskUserQuestion` is not
-  available.
+- If missing information would materially change the implementation, you MUST
+  ask exactly one focused clarification question before proceeding.
+- Treat these as clarification triggers: missing reference anchor, unclear
+  interface type, unclear motion intensity, unclear device priority, or unknown
+  requirement to preserve an existing brand or design system.
+- Use `AskUserQuestion` when the visual direction, reference style, or
+  interaction ambition is still unclear. If the host runtime exposes the tool
+  as `askuserquestion`, treat it as the same tool. If no such tool is
+  available, ask the same question in plain text.
+- Prefer one focused question at a time.
+- Prefer multiple-choice framing when possible.
 - Skip clarification only when the repo already has a strong established design
-  system or the user explicitly says to choose the direction for them.
+  system, the user explicitly says to choose the direction, or the missing
+  detail would not meaningfully change the implementation.
+- If you choose not to ask, state the assumption you made before implementing.
 
 When clarifying visual direction, prioritize this order:
 
-1. **Reference anchor** — a brand/product/style from `design-md/` or another
+1. **Reference anchor** - a brand or product from `design-md/` or another
    explicit reference
-2. **Mood and tone** — calm, bold, premium, playful, technical, editorial, etc.
-3. **Interface type** — landing page, dashboard, docs site, app shell, promo
+2. **Mood and tone** - calm, bold, premium, playful, technical, editorial
+3. **Interface type** - landing page, dashboard, docs site, app shell, promo
    page
-4. **Constraints** — light/dark preference, motion intensity, accessibility,
-   performance, device priority
+4. **Constraints** - light or dark preference, motion intensity,
+   accessibility, device priority
 
 Recommended question patterns:
 
@@ -96,7 +125,7 @@ Recommended question patterns:
 - "Do you want this to feel more editorial, product-polished, experimental, or
   operational?"
 - "Should motion stay subtle, medium, or high-impact?"
-- "Is there an existing brand/design system I must preserve?"
+- "Is there an existing brand or design system I must preserve?"
 
 ## Core Principles
 
@@ -117,86 +146,70 @@ Recommended question patterns:
 1. Identify page type, audience, and technical constraints.
 2. Confirm framework and styling stack from the repo before importing
    dependencies.
-3. If the requested solution or style is ambiguous, use `AskUserQuestion`
-   before designing. Do not invent a direction just to get moving.
-4. **Style anchoring**:
-   - if the user specifies a brand/style (e.g., "Airbnb feel", "Claude
-     aesthetic", "Linear-style"), immediately load
-     `design-md/<brand>/DESIGN.md` and treat it as the authoritative spec
-   - if the user does not specify one, use `AskUserQuestion` to gather a
-     reference anchor or mood, then map the answer to the closest relevant
-     `design-md/` folder when possible
-   - if no `design-md/` reference fits, summarize the confirmed style in a
-     short visual thesis before implementation
-5. When you offer options, keep them opinionated and concrete. Recommend 2-3
-   directions max, and tie each option to a known brand, mood, or interaction
-   model.
+3. If any key design input is ambiguous enough to change implementation
+   meaningfully, ask exactly one focused clarification question before
+   designing. Do not invent a direction just to get moving.
+4. If the user specifies a brand or style, immediately load
+   `design-md/<brand>/DESIGN.md` and treat it as authoritative.
+5. If the user does not specify a brand or style, gather a reference anchor or
+   mood, then map it to the closest `design-md/` folder when possible.
+6. If no `design-md/` reference fits, summarize the confirmed style as a short
+   visual thesis before implementation.
+7. When offering options, recommend 2-3 concrete directions max.
 
 ### 2. Plan Layout, Motion, And Assets Together
 
 1. Break the UI into sections and reusable components.
 2. Decide which sections need motion, which need static polish, and which need
    supporting media.
-3. Prefer the smallest set of tools that can deliver the intended effect.
+3. Set the three design controls before implementation.
+4. Prefer the smallest set of tools that can deliver the intended effect.
 
-### 3. Verify Dependencies
+### 3. Verify Dependencies And Runtime Constraints
 
-- Check `package.json` before using a library.
+- Check `package.json` before using any new library.
 - Do not mix Tailwind v3 and v4 syntax.
-- For React or Next.js, isolate interactive behavior into client boundaries when
-  needed.
+- For React or Next.js, isolate interactive behavior into client boundaries
+  when needed.
+- In RSC environments, keep global state and animation-heavy code inside client
+  components only.
+- Prefer `@phosphor-icons/react` or `@radix-ui/react-icons` when the project
+  already supports them. Otherwise preserve the existing icon system.
 
-### 4. Generate Local Assets When Needed
+### 4. Route To References
 
-Only generate media when it directly supports the frontend outcome.
+Do not load every reference file by default. Read only what the task needs.
 
-Rules:
-
-- Never ship placeholder image or video URLs.
-- Show prompts to the user before generation when prompts materially affect the
-  result.
-- Save assets locally in the target project.
-- Prefer web-ready formats and compress before delivery.
-
-### 5. Write Real Copy
-
-- Do not use lorem ipsum or filler text.
-- Write copy that matches the product, audience, and tone.
-- Use AIDA, PAS, or FAB when helpful.
-
-### 6. Implement The UI
-
-- Build responsive, accessible, production-ready code.
-- Integrate local assets, real copy, and intentional motion.
-- Favor polish in spacing, states, and interaction details.
-
-### 7. Run Quality Gates
-
-- Run the checks in `Quality Gates` before delivery.
-
-## Reference Routing
-
-Do not load every reference file by default. Read only the files that match the
-current task.
-
-- **Layout, hero composition, visual hierarchy, or section rhythm**: read
+- **Layout, hero composition, section rhythm, or visual hierarchy**: read
   `references/composition-playbook.md`
-- **Motion, scroll choreography, reveals, or animation sequencing**: read
+- **Motion, reveal choreography, stagger, or animation sequencing**: read
   `references/motion-recipes.md`
+- **Existing page or app redesign work**: read `references/redesign-audit.md`
 - **Image, video, audio, or voice generation**: read
-  `references/asset-prompt-guide.md` first, then the relevant minimax reference
-  for the asset type you are generating
-- **Tooling trouble, asset script failures, or local environment issues**: read
+  `references/asset-prompt-guide.md` first, then the relevant minimax guide
+- **Tooling trouble or local environment issues**: read
   `references/troubleshooting.md` and `references/env-setup.md`
 
 Asset-specific routing:
 
-- images → `references/minimax-image-guide.md`
-- video → `references/minimax-video-guide.md`
-- TTS / spoken voice → `references/minimax-tts-guide.md` and
+- images -> `references/minimax-image-guide.md`
+- video -> `references/minimax-video-guide.md`
+- TTS / spoken voice -> `references/minimax-tts-guide.md` and
   `references/minimax-voice-catalog.md`
-- music → `references/minimax-music-guide.md`
-- CLI flags or invocation details → `references/minimax-cli-reference.md`
+- music -> `references/minimax-music-guide.md`
+- CLI flags or invocation details -> `references/minimax-cli-reference.md`
+
+### 5. Implement The UI
+
+- Build responsive, accessible, production-ready code.
+- Integrate local assets, real copy, and intentional motion.
+- Favor polish in spacing, hierarchy, states, and interaction details.
+- When redesigning an existing surface, upgrade in place instead of rewriting
+  from scratch unless the user explicitly asks for a rebuild.
+
+### 6. Run Quality Gates
+
+- Run the checks in `Quality Gates` before delivery.
 
 ## Design Rules
 
@@ -207,17 +220,25 @@ Asset-specific routing:
   product already uses them.
 - Match font personality to the product tone instead of reaching for the same
   pairings every time.
+- For dashboards and operational surfaces, avoid serif typography unless the
+  established product language already uses it.
+- For dense data views, use monospace or tabular numerals for numbers.
 
 ### Color And Surfaces
 
 - Commit to one coherent palette and use CSS variables for consistency.
+- Prefer one accent color by default.
 - Avoid predictable purple-on-white gradients and washed-out startup palettes.
+- Avoid pure `#000000`; use tinted dark neutrals or off-black instead.
 - Build atmosphere with layered backgrounds, textures, gradients, borders, or
   shadow systems that fit the concept.
+- Tint shadows to the surrounding palette when possible instead of relying on
+  generic black shadow presets.
 
 ### Layout
 
 - Prefer asymmetry, modular rhythm, or intentional negative space.
+- If `DESIGN_VARIANCE > 4`, avoid centered hero compositions by default.
 - Avoid interchangeable centered-hero plus three-card-grid layouts unless the
   surrounding product already uses that pattern.
 - Use grid, overlap, stacking, or sectional contrast to create hierarchy.
@@ -226,6 +247,9 @@ Asset-specific routing:
   columns, dividers, lists, and media blocks before reaching for card grids.
 - Let each section carry one dominant idea instead of stacking many small UI
   devices into the same region.
+- Use `min-h-[100dvh]` instead of `h-screen` for full-height hero sections.
+- On mobile, high-variance layouts must collapse aggressively to a single
+  column with no horizontal scroll.
 
 ### Landing Page Composition
 
@@ -236,7 +260,7 @@ Asset-specific routing:
 - Avoid hero cards, stat strips, logo clouds, and floating dashboard props by
   default.
 - Keep the hero text column narrow enough to scan quickly and place it on a
-  calm area of the visual.
+  calm tonal area of the visual.
 - If a sticky header consumes viewport height, budget for it in the hero.
 
 ### App And Dashboard Restraint
@@ -246,6 +270,8 @@ Asset-specific routing:
   clear accent for action or state.
 - Prefer utility copy over marketing copy for dashboards, admin tools, and
   operational surfaces.
+- If `VISUAL_DENSITY > 7`, prefer dividers, spacing, and alignment over
+  generic cards.
 - Avoid dashboard-card mosaics unless the card itself is the interaction model.
 
 ### Imagery And Copy
@@ -255,14 +281,18 @@ Asset-specific routing:
 - Ensure imagery has a stable tonal area for text and tap targets.
 - Keep headlines concise, let them carry the meaning, and trim repetition
   aggressively.
-- For product surfaces, prioritize orientation, status, and action over mood or
-  campaign language.
+- Do not use lorem ipsum, placeholder brands, generic people names, or empty
+  hype language.
+- Avoid emojis in UI copy, alt text, and interface chrome unless the existing
+  product deliberately uses them.
 
 ### Components
 
 - Customize shadcn-style primitives or base components so they belong to the
   chosen direction.
 - Add meaningful loading, empty, error, hover, focus, and pressed states.
+- Prefer visible labels above inputs for forms.
+- Aim for minimum `44px` touch targets on interactive controls.
 - Do not stop at the happy path.
 
 ## Motion Rules
@@ -277,12 +307,20 @@ Asset-specific routing:
 
 ### Guardrails
 
-- Do not mix GSAP and Framer Motion in the same component.
-- Animate GPU-friendly properties such as `transform`, `opacity`, `filter`, and
-  carefully chosen `clip-path`.
+- Do not mix GSAP and Framer Motion in the same component tree.
+- Animate GPU-friendly properties such as `transform`, `opacity`, `filter`,
+  and carefully chosen `clip-path`.
 - Respect `prefers-reduced-motion`.
-- Lazy-load heavy libraries and isolate perpetual motion in small leaf
-  components.
+- Never drive magnetic hover or continuous micro-motion with React `useState`;
+  use motion values or library-native animation state instead.
+- Keep perpetual or CPU-heavy animation in small leaf components.
+- For `staggerChildren`, keep the parent motion wrapper and animated children
+  in the same client component tree.
+- Use `IntersectionObserver`, `whileInView`, or scroll libraries instead of raw
+  `window.addEventListener("scroll")` for reveal logic.
+- Apply noise or grain overlays only to fixed, pointer-events-none layers, not
+  scrolling containers.
+- Clean up timers, scroll triggers, and effects in `useEffect`.
 - Disable expensive parallax or 3D effects on coarse pointers or weak devices.
 - For visually led work, ship two or three intentional motions: one entrance
   sequence, one scroll-linked or depth effect, and one hover or reveal that
@@ -290,7 +328,7 @@ Asset-specific routing:
 - Remove motion that is ornamental only; motion should improve hierarchy,
   atmosphere, or affordance in a quick recording.
 
-For motion work, follow `Reference Routing` before reading support files.
+For motion work, follow `Route To References` before reading support files.
 
 ## Asset Generation
 
@@ -313,27 +351,7 @@ Asset workflow:
 5. Prefer WebP for images, compressed MP4 for video, and normalized audio when
    possible.
 
-For asset work, follow `Reference Routing` before reading support files.
-
-## Escalation Rules
-
-Pause and ask the owner before:
-
-- changing established brand or design-system direction in a major way
-- introducing asset generation or motion choices that materially increase delivery risk
-- shipping frontend work without responsive and accessibility validation
-
-## Final Output Contract (MANDATORY)
-
-Every use of this skill should end with:
-
-1. `Skill Fit` - why implementation-first frontend design is the right path
-2. `Primary Deliverable` - page, component set, or asset-backed frontend output
-3. `Execution Evidence` - files changed, preview/build steps, and validation completed
-4. `Design System Alignment` - when using `design-md/`, confirm which Do's/Don'ts
-   were followed and any intentional deviations
-5. `Risks / Open Questions` - responsiveness, performance, or polish concerns
-6. `Next Action` - the next implementation or review step
+For asset work, follow `Route To References` before reading support files.
 
 ## Copywriting
 
@@ -359,6 +377,25 @@ When the request includes generative or art-led presentation:
 Keep artistic exploration in service of the frontend outcome unless the user
 explicitly asks for standalone visual art.
 
+## Output Integrity
+
+- Do not ship placeholder comments such as `TODO`, `...`, "rest of code", or
+  "same pattern".
+- Do not replace required implementation with a skeleton plus explanation.
+- If the task requires a full file or full component set, deliver the whole
+  thing.
+- When output size becomes a limit, stop at a clean breakpoint and make the
+  continuation explicit instead of compressing the rest into summaries.
+
+## Escalation Rules
+
+Pause and ask the owner before:
+
+- changing an established brand or design-system direction in a major way
+- introducing asset generation or motion choices that materially increase
+  delivery risk
+- shipping frontend work without responsive and accessibility validation
+
 ## Quality Gates
 
 Before delivering:
@@ -373,78 +410,46 @@ Before delivering:
 - the first screen has one unmistakable visual anchor
 - the brand or product is unmistakable in the first screen
 - each section has one job and cards are used only when they earn their place
+- no obvious placeholder comments, fake filler, or unfinished implementation
+  remain
+
+## Final Output Contract (MANDATORY)
+
+Every use of this skill should end with:
+
+1. `Skill Fit` - why implementation-first frontend design is the right path
+2. `Primary Deliverable` - page, component set, or asset-backed frontend output
+3. `Execution Evidence` - files changed, preview or build steps, and validation
+   completed
+4. `Design System Alignment` - when using `design-md/`, confirm which Do's and
+   Don'ts were followed and any intentional deviations
+5. `Risks / Open Questions` - responsiveness, performance, or polish concerns
+6. `Next Action` - the next implementation or review step
 
 ## Design System Reference Library
 
-When the user specifies a target style, or selects one after clarification
-(e.g., "Airbnb aesthetic", "Claude's design language", "Figma-like
-interface"), use the `design-md/` folder as an authoritative reference.
-
-### Format: Stitch DESIGN.md
+When the user specifies a target style, or selects one after clarification,
+use the `design-md/` folder as an authoritative reference.
 
 Each design system follows a 9-section structure:
-1. **Visual Theme & Atmosphere** — mood, material, energy
-2. **Color Palette & Roles** — hex values with semantic names
-3. **Typography Rules** — font families, sizes, weights, line-heights
-4. **Component Stylings** — buttons, cards, inputs with exact specs
-5. **Layout Principles** — spacing scale, grid, container
-6. **Depth & Elevation** — shadow system with values
-7. **Do's and Don'ts** — explicit design constraints
-8. **Responsive Behavior** — breakpoints and collapsing strategy
-9. **Agent Prompt Guide** — copy-paste component prompts
 
-### Available Design Systems (58 total)
+1. **Visual Theme & Atmosphere** - mood, material, energy
+2. **Color Palette & Roles** - hex values with semantic names
+3. **Typography Rules** - font families, sizes, weights, line-heights
+4. **Component Stylings** - buttons, cards, inputs with exact specs
+5. **Layout Principles** - spacing scale, grid, container
+6. **Depth & Elevation** - shadow system with values
+7. **Do's and Don'ts** - explicit design constraints
+8. **Responsive Behavior** - breakpoints and collapsing strategy
+9. **Agent Prompt Guide** - reusable component prompts
 
-| Category | Examples |
-|----------|----------|
-| AI/ML | claude, cohere, elevenlabs, minimax, replicate, together.ai |
-| Developer Tools | cursor, expo, framer, linear.app, lovable, raycast, vercel |
-| Design/Productivity | figma, miro, notion, sanity |
-| Fintech | coinbase, kraken, revolut, stripe |
-| Enterprise | airbnb, airtable, apple, intercom, superhuman |
-| Automotive | bmw, ferrari, lamborghini |
-| Infrastructure | clickhouse, hashicorp, ibm, mongodb, supabase |
+When the user does not specify a brand or style:
 
-### Style Anchoring Workflow
-
-When user specifies a brand/style, or chooses one after clarification:
-
-1. **Locate** — find the matching folder in `design-md/<brand>/`
-2. **Read** — load `DESIGN.md` for specifications
-3. **Translate** — convert specs into component-level implementation
-4. **Verify** — check Do's/Don'ts against implementation
-
-When the user does not specify a brand/style:
-
-1. **Ask** — use `AskUserQuestion` to narrow the direction before coding
-2. **Recommend** — suggest 2-3 relevant anchors from `design-md/` based on page
-   type and product tone
-3. **Map** — once the user chooses, load that folder's `DESIGN.md`
-4. **Only then implement** — do not freehand the aesthetic while key design
-   choices are still unresolved
-
-Example:
-```
-User: "做成 Linear app 那种风格"
-→ Read design-md/linear.app/DESIGN.md
-→ Apply: Near Black #heimdallr, Linear Sans font, 5px radius, thin borders
-→ Ship with precise specs, not vague "clean/minimal"
-```
-
-Example when style is unclear:
-```
-User: "帮我设计一个产品页"
-→ AskUserQuestion: "你更想靠近哪种方向：Linear 式冷静产品感、Stripe 式品牌叙事感，还是 Notion 式编辑感？"
-→ User selects one
-→ Read the matching `design-md/<brand>/DESIGN.md`
-→ Implement against that anchor instead of guessing
-```
-
-### Why Use Design MD Over Free-form?
-
-- **Component-level precision**: padding, radius, shadow values are exact
-- **Do's/Don'ts prevent drift**: explicit constraints keep implementation on-brand
-- **Agent Prompt Guide**: pre-built prompts for common components
+1. Ask for a direction before coding.
+2. Recommend 2-3 relevant anchors from `design-md/` based on page type and
+   product tone.
+3. Load the chosen `DESIGN.md`.
+4. Implement against that anchor instead of freehanding the aesthetic.
 
 ## References
 
@@ -452,6 +457,7 @@ Read only as needed:
 
 - `references/composition-playbook.md`
 - `references/motion-recipes.md`
+- `references/redesign-audit.md`
 - `references/troubleshooting.md`
 - `references/asset-prompt-guide.md`
 - `references/minimax-cli-reference.md`
