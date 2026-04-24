@@ -1,3 +1,89 @@
+---
+version: alpha
+name: Linear
+description: Dark-mode-native product interface with precision typography, sparse chroma, and highly controlled luminous contrast.
+colors:
+  primary: "#08090A"
+  secondary: "#0F1011"
+  tertiary: "#5E6AD2"
+  neutral: "#F7F8F8"
+  text-secondary: "#D0D6E0"
+  text-tertiary: "#8A8F98"
+  border: "#23252A"
+  border-strong: "#34343A"
+  success: "#27A644"
+typography:
+  display-xl:
+    fontFamily: Inter Variable
+    fontSize: 72px
+    fontWeight: 510
+    lineHeight: 1
+    letterSpacing: -1.584px
+    fontFeature: "\"cv01\", \"ss03\""
+  display:
+    fontFamily: Inter Variable
+    fontSize: 48px
+    fontWeight: 510
+    lineHeight: 1
+    letterSpacing: -1.056px
+    fontFeature: "\"cv01\", \"ss03\""
+  body:
+    fontFamily: Inter Variable
+    fontSize: 16px
+    fontWeight: 400
+    lineHeight: 1.5
+  body-medium:
+    fontFamily: Inter Variable
+    fontSize: 16px
+    fontWeight: 510
+    lineHeight: 1.5
+  label:
+    fontFamily: Inter Variable
+    fontSize: 12px
+    fontWeight: 510
+    lineHeight: 1.4
+  mono:
+    fontFamily: Berkeley Mono
+    fontSize: 14px
+    fontWeight: 400
+    lineHeight: 1.5
+rounded:
+  sm: 6px
+  md: 8px
+  lg: 12px
+  panel: 22px
+  full: 9999px
+spacing:
+  xs: 4px
+  sm: 8px
+  md: 16px
+  lg: 24px
+  xl: 32px
+components:
+  button-primary:
+    backgroundColor: "{colors.tertiary}"
+    textColor: "{colors.neutral}"
+    typography: "{typography.label}"
+    rounded: "{rounded.sm}"
+    padding: 8px 16px
+  button-ghost:
+    backgroundColor: "{colors.secondary}"
+    textColor: "{colors.text-secondary}"
+    typography: "{typography.label}"
+    rounded: "{rounded.sm}"
+    padding: 8px 16px
+  card-default:
+    backgroundColor: "{colors.secondary}"
+    textColor: "{colors.neutral}"
+    rounded: "{rounded.md}"
+    padding: 24px
+  input-default:
+    backgroundColor: "{colors.secondary}"
+    textColor: "{colors.text-secondary}"
+    rounded: "{rounded.sm}"
+    padding: 12px 14px
+---
+
 # Design System Inspiration of Linear
 
 ## 1. Visual Theme & Atmosphere

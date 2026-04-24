@@ -1,3 +1,90 @@
+---
+version: alpha
+name: Claude
+description: Warm editorial product system with parchment surfaces, serif-led hierarchy, and terracotta interaction accents.
+colors:
+  primary: "#141413"
+  secondary: "#5E5D59"
+  tertiary: "#C96442"
+  neutral: "#F5F4ED"
+  surface: "#FAF9F5"
+  text-primary: "#141413"
+  text-secondary: "#5E5D59"
+  text-tertiary: "#87867F"
+  border: "#F0EEE6"
+  border-strong: "#E8E6DC"
+  dark-surface: "#30302E"
+  focus: "#3898EC"
+typography:
+  display:
+    fontFamily: Anthropic Serif
+    fontSize: 64px
+    fontWeight: 500
+    lineHeight: 1.1
+  section-heading:
+    fontFamily: Anthropic Serif
+    fontSize: 52px
+    fontWeight: 500
+    lineHeight: 1.2
+  body:
+    fontFamily: Anthropic Sans
+    fontSize: 16px
+    fontWeight: 400
+    lineHeight: 1.6
+  body-large:
+    fontFamily: Anthropic Sans
+    fontSize: 20px
+    fontWeight: 400
+    lineHeight: 1.6
+  label:
+    fontFamily: Anthropic Sans
+    fontSize: 12px
+    fontWeight: 500
+    lineHeight: 1.4
+    letterSpacing: 0.12px
+  mono:
+    fontFamily: Anthropic Mono
+    fontSize: 15px
+    fontWeight: 400
+    lineHeight: 1.6
+    letterSpacing: -0.32px
+rounded:
+  sm: 8px
+  md: 12px
+  lg: 16px
+  xl: 32px
+  full: 9999px
+spacing:
+  xs: 4px
+  sm: 8px
+  md: 16px
+  lg: 24px
+  xl: 32px
+components:
+  button-primary:
+    backgroundColor: "{colors.tertiary}"
+    textColor: "{colors.surface}"
+    typography: "{typography.label}"
+    rounded: "{rounded.md}"
+    padding: 10px 16px
+  button-secondary:
+    backgroundColor: "{colors.border-strong}"
+    textColor: "{colors.text-primary}"
+    typography: "{typography.label}"
+    rounded: "{rounded.md}"
+    padding: 8px 16px
+  card-default:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.text-primary}"
+    rounded: "{rounded.lg}"
+    padding: 24px
+  input-default:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.text-primary}"
+    rounded: "{rounded.md}"
+    padding: 12px
+---
+
 # Design System Inspiration of Claude (Anthropic)
 
 ## 1. Visual Theme & Atmosphere
