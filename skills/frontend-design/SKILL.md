@@ -95,6 +95,13 @@ Clarification triggers:
 Use `AskUserQuestion` if available. If not, ask the same question in plain
 text. Prefer multiple-choice framing. Ask one thing at a time.
 
+When no brand or style is specified, proactively recommend 2-3 anchors from
+`design-md/` based on page type and product tone. Example question patterns:
+
+- "Which direction should we anchor to: a specific brand in `design-md/`, a
+  URL reference, or a mood description?"
+- "Is there an existing brand or design system I must preserve?"
+
 Skip clarification only when:
 
 - the repo already has a strong design system
@@ -110,11 +117,13 @@ If you proceed without asking, state the assumption first.
 1. Identify page type, audience, and technical constraints.
 2. Confirm framework and styling stack before importing dependencies.
 3. If direction is ambiguous enough to change the build, ask one question.
-4. If the user names a brand or style, load `design-md/<brand>/DESIGN.md`.
-5. If no brand is named, map the confirmed mood or product type to the closest
-   `design-md/` anchor when possible.
+4. If the user names a brand or style, immediately load
+   `design-md/<brand>/DESIGN.md` and treat it as authoritative.
+5. If no brand is named, recommend 2-3 anchors from `design-md/` based on page
+   type and product tone, then load the chosen anchor.
 6. If no anchor fits, summarize the intended style as a visual thesis before
    building.
+7. When offering options, recommend 2-3 concrete directions max.
 
 ### 2. Plan
 
@@ -161,6 +170,21 @@ Each `DESIGN.md` may contain two layers:
 
 1. YAML front matter for machine-readable tokens
 2. Markdown body for rationale and application guidance
+
+Each `DESIGN.md` typically covers these areas:
+
+1. Visual Theme and Atmosphere
+2. Color Palette and Roles (hex values with semantic names)
+3. Typography Rules (families, sizes, weights, line-heights)
+4. Component Stylings (buttons, cards, inputs with exact specs)
+5. Layout Principles (spacing scale, grid, container)
+6. Depth and Elevation (shadow system)
+7. Do's and Don'ts (explicit design constraints)
+8. Responsive Behavior (breakpoints and collapsing)
+9. Agent Prompt Guide (reusable component prompts)
+
+Extract and apply all relevant sections systematically, not just color and
+typography.
 
 When YAML exists:
 
