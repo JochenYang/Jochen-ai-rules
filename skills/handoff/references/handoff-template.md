@@ -17,6 +17,14 @@ and biased toward immediate resumability.
 - Working tree:
 - Relevant commit or checkpoint:
 
+## Changed Files
+- Evidence source: `git` / `session-derived`
+- `<path>` (`modified` / `added` / `deleted` / `renamed` / `untracked`)
+  - Line ranges:
+  - Summary:
+  - Snippets:
+    - `<diff or content excerpt>`
+
 ## Current Status
 - Completed:
 - In progress:
@@ -69,6 +77,16 @@ and biased toward immediate resumability.
 
 - Prefer bullets over long prose.
 - Name exact file paths.
+- When inside a git repository, populate `Changed Files` from
+  `scripts/git_changes.py` instead of hand-writing it from memory.
+- If `scripts/git_changes.py` reports `git-unavailable`, a clean tree, or misses
+  important changes that happened earlier in the current session, populate the
+  section from session evidence instead and label it `session-derived`.
+- If the working tree is clean, explicitly say so in `Changed Files`.
+- If changes exist, include line ranges and at least one snippet per changed
+  file when the script provides them.
+- For session-derived fallback, include confidence per file and mark line ranges
+  as approximate when they are not directly verified from git.
 - Preserve failed attempts when they prevent repeated mistakes.
 - Mark unknowns clearly instead of smoothing them over.
 - Keep “Next Action” singular and concrete.
@@ -79,6 +97,7 @@ A handoff is acceptable only if:
 
 - the next session can tell what to do first
 - verification status is explicit
+- changed files and line ranges are explicit whenever working tree is not clean
 - key files are named
 - blockers are not hidden
 - assumptions are separated from facts
@@ -89,6 +108,7 @@ A handoff is acceptable only if:
 |----------------------------|----------|------------------------------------------|
 | Task                       | Yes      | What is the objective and current phase? |
 | Repository State           | Yes      | Where to resume, current branch/commit   |
+| Changed Files              | Yes      | What changed in this session, where, how |
 | Current Status             | Yes      | Completed vs in-progress vs not started  |
 | Key Files                  | Yes      | Which files matter and why               |
 | Decisions Already Made     | Yes      | Avoid re-litigating settled questions    |
@@ -106,6 +126,12 @@ current phase percentage when known.
 
 **Repository State** - Include branch AND working tree status. If there are
 unstaged changes that matter, mention them.
+
+**Changed Files** - Prefer the deterministic output from `scripts/git_changes.py`.
+If git evidence is unavailable or insufficient for this session, fall back to
+session-derived evidence and mark confidence explicitly. List each changed file
+with status, line ranges, and short snippets or content excerpts so the next
+session can see what materially changed without reconstructing context first.
 
 **Current Status** - Use three buckets: Completed, In progress, Not started.
 Be honest about "not started" items.

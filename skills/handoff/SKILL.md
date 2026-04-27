@@ -49,6 +49,11 @@ The script is the source of truth for:
 - which file `read` should load by default
 - whether the provided project root accidentally points at the installed skill
   directory instead of the active repository
+- `scripts/git_changes.py` is the source of truth for changed files, line
+  ranges, and diff/content snippets that should appear in the handoff body
+- `scripts/session_changes.py` is the fallback formatter when git evidence is
+  unavailable, clean, or does not cover important changes already completed in
+  the current session
 
 If the script result conflicts with intuition, trust the script.
 
@@ -130,15 +135,29 @@ Execution steps:
    or by absolute script path.
 2. Example:
    `cd <installed-handoff-skill-dir> && python scripts/handoff.py write [topic-or-existing-file] --project-root <active-repo-root>`
-3. Use the returned JSON `path` as the only valid handoff target.
-4. Inspect the current goal, active branch, working tree state, files touched,
+3. Run the installed change-summary script before writing the handoff body:
+   `cd <installed-handoff-skill-dir> && python scripts/git_changes.py --project-root <active-repo-root>`
+4. Use the returned JSON `path` from `scripts/handoff.py` as the only valid
+   handoff target.
+5. If `scripts/git_changes.py` returns `evidence_source=git` with meaningful
+   file changes, use its returned JSON `markdown` to populate the
+   `Changed Files` section.
+6. If `scripts/git_changes.py` reports `git-unavailable`, a clean tree, or
+   misses important changes that already happened in this session, build a
+   session file manifest from the current conversation and run:
+   `cd <installed-handoff-skill-dir> && python scripts/session_changes.py`
+   Pass JSON on stdin with `files[].path`, `status`, `summary`, optional
+   `line_ranges`, optional `snippets`, and `confidence`.
+7. In session-derived mode, clearly mark confidence and do not claim exact line
+   ranges unless they were directly verified.
+8. Inspect the current goal, active branch, working tree state, files touched,
    commands run, test status, and remaining work.
-5. Separate facts from assumptions. If something was not verified, say so.
-6. Write a concise, structured handoff into the resolved file using
+9. Separate facts from assumptions. If something was not verified, say so.
+10. Write a concise, structured handoff into the resolved file using
    `references/handoff-template.md`.
-7. Record exact file paths, decisions, blockers, risks, failed commands,
+11. Record exact file paths, decisions, blockers, risks, failed commands,
    partial work, and the next recommended action.
-8. Tell the user exactly which handoff file was written and should be read
+12. Tell the user exactly which handoff file was written and should be read
    after reset.
 
 Mandatory rules:
@@ -147,6 +166,15 @@ Mandatory rules:
 - Write what the next session needs to continue work immediately.
 - Trust the resolver script for file targeting instead of inferring paths.
 - Include branch and working tree state.
+- Include a `Changed Files` section with per-file status, line ranges, and
+  snippets whenever `scripts/git_changes.py` reports changes.
+- If `scripts/git_changes.py` reports a clean tree or unavailable git, switch
+  to session-derived evidence whenever the current session still touched files
+  that matter for resume.
+- If neither git evidence nor session-derived evidence exists, say that
+  explicitly instead of omitting the section.
+- Mark session-derived file entries with confidence and approximate ranges when
+  precision is not directly verified.
 - Include verification status: passed, failed, or not run.
 - Include a short “resume order” so the next session knows where to start.
 
@@ -156,6 +184,7 @@ Do not:
 - hide uncertainty behind confident prose
 - say tests passed if they were not rerun
 - omit blockers, broken attempts, or risky assumptions
+- present session-derived file edits as exact git-verified diff evidence
 - write a handoff that lacks a concrete next action
 
 ### Session End Checklist (MANDATORY)
@@ -163,6 +192,10 @@ Do not:
 Before finalizing the handoff, confirm:
 
 - [ ] **Environment clean**: No uncommitted changes that break the build
+- [ ] **Changed files captured**: File paths, line ranges, and snippets are in
+      the handoff when changes exist
+- [ ] **Fallback used when needed**: If git was unavailable or clean, the
+      handoff still records session-derived touched files when relevant
 - [ ] **Tests run**: At least basic sanity tests executed, results recorded
 - [ ] **Errors documented**: Any known failures or TODOs are in the handoff
 - [ ] **Next action clear**: The next session knows exactly what to do first
@@ -314,6 +347,8 @@ The essential sections are:
 - task and objective
 - current status
 - branch and working tree state
+- changed files with line ranges and snippets from `scripts/git_changes.py`
+- session-derived change evidence when git is unavailable, clean, or incomplete
 - key files and why they matter
 - decisions already made
 - verification summary
@@ -340,6 +375,8 @@ Short version:
 Read only as needed:
 
 - `scripts/handoff.py`
+- `scripts/git_changes.py`
+- `scripts/session_changes.py`
 - `references/handoff-template.md`
 - `references/handoff-vs-compact.md`
 
@@ -363,6 +400,7 @@ Every use of this skill should end with:
 
 1. `Skill Fit` - why a handoff artifact is needed now
 2. `Primary Deliverable` - handoff path and captured status summary
-3. `Execution Evidence` - resolver result, files written, and state included
+3. `Execution Evidence` - resolver result, changed-files summary, session
+   evidence fallback when used, files written, and state included
 4. `Risks / Open Questions` - missing evidence, pending checks, or resume hazards
 5. `Next Action` - the exact resume instruction or next operator step

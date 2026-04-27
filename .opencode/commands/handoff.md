@@ -40,6 +40,9 @@ When writing:
 - produce a structured execution artifact, not a chat recap
 - include goal, status, key files, verification, risks, blockers, and one next
   action
+- include a `Changed Files` section populated from `skills/handoff/scripts/git_changes.py` when git evidence exists
+- if git is unavailable, clean, or does not cover important session work, fall back to `skills/handoff/scripts/session_changes.py`
+- include per-file line ranges and short snippets when available, and mark session-derived entries with confidence
 - preserve facts vs assumptions clearly
 
 When reading:
