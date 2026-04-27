@@ -204,6 +204,11 @@ On Windows or any environment where non-ASCII query text may become mojibake:
 - Then `--query-stdin`
 - Avoid raw `--query` for non-ASCII input when the shell is unreliable
 
+CLI output contract:
+
+- stdout is reserved for UTF-8 JSON payloads
+- warnings and errors must go to stderr
+
 ## Manual Script Usage
 
 Replace `{skill_dir}` with the actual installed skill path. In this repository,

@@ -6,6 +6,8 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stderr, redirect_stdout
+from io import StringIO
 from pathlib import Path
 
 
@@ -525,6 +527,67 @@ class CSRIntegrationTests(unittest.TestCase):
 
             self.assertEqual(refreshed['freshness']['reason'], 'source fingerprint unchanged')
             self.assertEqual(refreshed['freshness']['hashedCandidateFiles'], 0)
+
+    def test_write_snapshot_keeps_stdout_clean_when_sqlite_index_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            base = Path(tmp_dir)
+            output_path = base / 'repo' / 'progress' / 'context-codebase.json'
+            snapshot = {'hello': 'world'}
+            chunks = [
+                {
+                    'id': 'chunk-1',
+                    'path': 'src/main.py',
+                    'startLine': 1,
+                    'endLine': 1,
+                    'kind': 'section',
+                    'language': 'Python',
+                    'signals': [],
+                    'preview': 'print("ok")',
+                }
+            ]
+
+            original_sqlite_index = generate.SQLiteIndex
+
+            class FailingSQLiteIndex:
+                def __init__(self, *_args, **_kwargs):
+                    raise RuntimeError('sqlite init failed')
+
+            stdout_buffer = StringIO()
+            stderr_buffer = StringIO()
+            try:
+                generate.SQLiteIndex = FailingSQLiteIndex
+                with redirect_stdout(stdout_buffer), redirect_stderr(stderr_buffer):
+                    generate.write_snapshot(output_path, snapshot, chunks=chunks)
+            finally:
+                generate.SQLiteIndex = original_sqlite_index
+
+            self.assertEqual(stdout_buffer.getvalue(), '')
+            self.assertIn('WARNING: SQLiteIndex failed', stderr_buffer.getvalue())
+            self.assertEqual(
+                json.loads(output_path.read_text(encoding='utf-8')),
+                snapshot,
+            )
+
+    def test_read_text_file_preserves_gb18030_content(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            base = Path(tmp_dir)
+            path = base / 'gb18030-demo.py'
+            expected = '# 注释\ndef hello():\n    return "中文内容"\n'
+            path.write_bytes(expected.encode('gb18030'))
+
+            actual = generate.read_text_file(path)
+
+            self.assertEqual(actual, expected)
+
+    def test_query_stdin_reads_utf8_input(self) -> None:
+        original_stdin = sys.stdin
+        try:
+            sys.stdin = StringIO('中文 快照 编码\n')
+            query = generate.read_query_input(use_stdin=True)
+        finally:
+            sys.stdin = original_stdin
+
+        self.assertEqual(query, '中文 快照 编码')
 
 
 if __name__ == '__main__':

@@ -137,6 +137,8 @@ class JavaScriptAnalyzer:
                 ],
                 input=content,
                 text=True,
+                encoding='utf-8',
+                errors='strict',
                 capture_output=True,
                 check=False,
             )

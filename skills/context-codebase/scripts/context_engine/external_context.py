@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import locale
 import subprocess
+
+from .encoding_utils import decode_text_bytes
 
 
 def collect_external_context(project_path: str, file_records: list[dict]) -> dict:
@@ -97,27 +98,5 @@ def run_git_command(project_path: str, args: list[str]) -> str:
 
 
 def decode_subprocess_output(payload: bytes | bytearray | memoryview | str | None) -> str:
-    if payload is None:
-        return ''
-    if isinstance(payload, str):
-        return payload
-    raw_payload = bytes(payload)
-
-    encodings = []
-    preferred = locale.getpreferredencoding(False)
-    if preferred:
-        encodings.append(preferred)
-    encodings.extend(['utf-8', 'gb18030'])
-
-    seen = set()
-    for encoding in encodings:
-        normalized = encoding.lower()
-        if normalized in seen:
-            continue
-        seen.add(normalized)
-        try:
-            return raw_payload.decode(encoding)
-        except UnicodeDecodeError:
-            continue
-
-    return raw_payload.decode('utf-8', errors='replace')
+    text, _encoding = decode_text_bytes(payload, fallback_errors='replace')
+    return text or ''

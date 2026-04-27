@@ -1,5 +1,5 @@
-import pytest
 import sys
+import unittest
 from pathlib import Path
 
 # 设置正确的导入路径
@@ -9,7 +9,7 @@ if str(SCRIPT_DIR) not in sys.path:
 
 from context_engine.semantic_chunker import SemanticChunker
 
-class TestSemanticChunker:
+class TestSemanticChunker(unittest.TestCase):
     def test_chunk_small_file_unchanged(self):
         """小于60行的文件应保持原样"""
         content = """def foo():
@@ -17,12 +17,12 @@ class TestSemanticChunker:
 
 def bar():
     return 24
-"""
+        """
         chunker = SemanticChunker()
         chunks = chunker.chunk_file(content, "test.py", "python")
 
-        assert len(chunks) == 1
-        assert chunks[0]["kind"] == "section"
+        self.assertEqual(len(chunks), 1)
+        self.assertEqual(chunks[0]["kind"], "section")
 
     def test_chunk_function_boundary(self):
         """基于函数边界分块"""
@@ -107,13 +107,13 @@ def process_request(request_data):
         chunks = chunker.chunk_file(content, "test.py", "python")
 
         # 应该分成三个 chunk
-        assert len(chunks) == 3
-        assert chunks[0]["kind"] == "function"
-        assert chunks[0]["name"] == "authenticate"
-        assert chunks[1]["kind"] == "function"
-        assert chunks[1]["name"] == "validate_token"
-        assert chunks[2]["kind"] == "function"
-        assert chunks[2]["name"] == "process_request"
+        self.assertEqual(len(chunks), 3)
+        self.assertEqual(chunks[0]["kind"], "function")
+        self.assertEqual(chunks[0]["name"], "authenticate")
+        self.assertEqual(chunks[1]["kind"], "function")
+        self.assertEqual(chunks[1]["name"], "validate_token")
+        self.assertEqual(chunks[2]["kind"], "function")
+        self.assertEqual(chunks[2]["name"], "process_request")
 
     def test_extract_signals(self):
         """提取语义信号"""
@@ -124,10 +124,10 @@ def process_request(request_data):
         chunker = SemanticChunker()
         chunks = chunker.chunk_file(content, "test.py", "python")
 
-        assert len(chunks) == 1
+        self.assertEqual(len(chunks), 1)
         signals = chunks[0]["signals"]
-        assert "payment" in signals
-        assert "stripe" in signals
+        self.assertIn("payment", signals)
+        self.assertIn("stripe", signals)
 
     def test_class_chunking(self):
         """类级别的智能分块"""
@@ -204,6 +204,10 @@ class PaymentService:
         chunks = chunker.chunk_file(content, "test.py", "python")
 
         # 整个类应作为一个 chunk
-        assert len(chunks) == 1
-        assert chunks[0]["kind"] == "class"
-        assert chunks[0]["name"] == "PaymentService"
+        self.assertEqual(len(chunks), 1)
+        self.assertEqual(chunks[0]["kind"], "class")
+        self.assertEqual(chunks[0]["name"], "PaymentService")
+
+
+if __name__ == "__main__":
+    unittest.main()

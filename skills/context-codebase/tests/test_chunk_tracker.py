@@ -1,5 +1,5 @@
-import pytest
 import sys
+import unittest
 from pathlib import Path
 
 # 设置正确的导入路径
@@ -9,7 +9,7 @@ if str(SCRIPT_DIR) not in sys.path:
 
 from context_engine.chunk_tracker import ChunkTracker, ChunkState, ChangeSet
 
-class TestChunkTracker:
+class TestChunkTracker(unittest.TestCase):
     def test_track_generates_stable_ids(self):
         """相同 chunk 应生成相同的 ID"""
         tracker = ChunkTracker()
@@ -21,9 +21,9 @@ class TestChunkTracker:
 
         states = tracker.track(chunks)
 
-        assert "test.py:1-10" in states
-        assert "test.py:12-20" in states
-        assert states["test.py:1-10"].version == 1
+        self.assertIn("test.py:1-10", states)
+        self.assertIn("test.py:12-20", states)
+        self.assertEqual(states["test.py:1-10"].version, 1)
 
     def test_detect_modified_chunk(self):
         """能检测到 chunk 的修改"""
@@ -41,8 +41,8 @@ class TestChunkTracker:
 
         diff = tracker.diff(old_states, new_states)
 
-        assert len(diff.modified) == 1
-        assert diff.modified[0]["id"] == "test.py:1-10"
+        self.assertEqual(len(diff.modified), 1)
+        self.assertEqual(diff.modified[0]["id"], "test.py:1-10")
 
     def test_detect_added_chunk(self):
         """能检测到新增的 chunk"""
@@ -61,8 +61,8 @@ class TestChunkTracker:
 
         diff = tracker.diff(old_states, new_states)
 
-        assert len(diff.added) == 1
-        assert diff.added[0]["id"] == "test.py:12-20"
+        self.assertEqual(len(diff.added), 1)
+        self.assertEqual(diff.added[0]["id"], "test.py:12-20")
 
     def test_detect_deleted_chunk(self):
         """能检测到删除的 chunk"""
@@ -81,8 +81,8 @@ class TestChunkTracker:
 
         diff = tracker.diff(old_states, new_states)
 
-        assert len(diff.deleted) == 1
-        assert "test.py:12-20" in diff.deleted
+        self.assertEqual(len(diff.deleted), 1)
+        self.assertIn("test.py:12-20", diff.deleted)
 
     def test_unchanged_chunk_version_increment(self):
         """未变更的 chunk 版本不变"""
@@ -95,7 +95,10 @@ class TestChunkTracker:
 
         v2 = tracker.track(chunks)
 
-        assert v1["test.py:1-10"].content_hash == v2["test.py:1-10"].content_hash
+        self.assertEqual(
+            v1["test.py:1-10"].content_hash,
+            v2["test.py:1-10"].content_hash,
+        )
 
     def test_merge_states_increments_version(self):
         """合并状态时版本号递增"""
@@ -113,4 +116,8 @@ class TestChunkTracker:
 
         merged = tracker.merge_states(old_states, new_states)
 
-        assert merged["test.py:1-10"].version == 2
+        self.assertEqual(merged["test.py:1-10"].version, 2)
+
+
+if __name__ == "__main__":
+    unittest.main()

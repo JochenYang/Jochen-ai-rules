@@ -21,6 +21,7 @@ if str(SCRIPT_DIR) not in sys.path:
 
 from context_engine.analyzers import AnalyzerRegistry
 from context_engine.csr import build_csr_read_enhancement
+from context_engine.encoding_utils import decode_text_bytes, read_text_file_with_fallback
 from context_engine.external_context import collect_external_context
 from context_engine.graph import build_code_graph
 from context_engine.retrieval import build_retrieval_artifacts, retrieve_chunks
@@ -413,15 +414,8 @@ def read_text_file(path: Path) -> str | None:
     if path.stat().st_size > MAX_TEXT_FILE_BYTES:
         return None
 
-    try:
-        return path.read_text(encoding='utf-8')
-    except UnicodeDecodeError:
-        try:
-            return path.read_text(encoding='utf-8', errors='ignore')
-        except Exception:
-            return None
-    except Exception:
-        return None
+    text, _encoding = read_text_file_with_fallback(path, max_bytes=MAX_TEXT_FILE_BYTES)
+    return text
 
 
 def compute_file_content_hash(path_obj: Path) -> str:
@@ -658,13 +652,22 @@ def run_git_command(project_path: str, args: list[str]) -> str | None:
             ['git', *args],
             cwd=project_path,
             capture_output=True,
-            text=True,
-            check=True,
+            text=False,
+            check=False,
         )
     except Exception:
         return None
 
-    return completed.stdout.strip() or None
+    if getattr(completed, 'returncode', 1) != 0:
+        return None
+
+    stdout, _encoding = decode_text_bytes(
+        getattr(completed, 'stdout', b''),
+        fallback_errors='replace',
+    )
+    if not stdout:
+        return None
+    return stdout.strip() or None
 
 
 def collect_git_context(project_path: str) -> dict[str, str | None]:
@@ -713,10 +716,22 @@ def collect_file_records(files: list[str], project_path: str) -> tuple[list[dict
         path_obj = Path(file_path)
         rel_path = normalize_rel_path(os.path.relpath(file_path, base))
         language = detect_language(rel_path)
-        content = read_text_file(path_obj)
+        content, detected_encoding = read_text_file_with_fallback(
+            path_obj,
+            max_bytes=MAX_TEXT_FILE_BYTES,
+        ) if path_obj.suffix.lower() in TEXT_EXTENSIONS else (None, None)
         line_count = len(content.splitlines()) if content is not None else 0
         total_lines += line_count
         analysis = ANALYZER_REGISTRY.analyze_file(content, rel_path, project_path)
+        analysis_warnings = list(analysis.warnings)
+        if (
+            path_obj.suffix.lower() in TEXT_EXTENSIONS
+            and path_obj.stat().st_size <= MAX_TEXT_FILE_BYTES
+            and content is None
+        ):
+            analysis_warnings.append(
+                'text decode failed; supported fallbacks: utf-8, utf-8-sig, locale preferred encoding, gb18030'
+            )
 
         records.append({
             'path': rel_path,
@@ -725,6 +740,7 @@ def collect_file_records(files: list[str], project_path: str) -> tuple[list[dict
             'lineCount': line_count,
             'sizeBytes': path_obj.stat().st_size,
             'content': content,
+            'detectedEncoding': detected_encoding,
             'imports': analysis.imports,
             'exports': analysis.exports,
             'apiRoutes': analysis.api_routes,
@@ -733,7 +749,7 @@ def collect_file_records(files: list[str], project_path: str) -> tuple[list[dict
             'frameworkHints': analysis.framework_hints,
             'analysisEngine': analysis.engine,
             'analysisConfidence': analysis.confidence,
-            'analysisWarnings': analysis.warnings,
+            'analysisWarnings': analysis_warnings,
         })
 
     return records, total_lines
@@ -1509,8 +1525,11 @@ def write_snapshot(output_file: Path, snapshot: dict, chunks: list[dict] | None 
                 sqlite_index.delete_stale(valid_ids)
 
             sqlite_index.close()
-        except Exception:
-            print(f'WARNING: SQLiteIndex failed, snapshot written without index update')
+        except Exception as exc:
+            print(
+                f'WARNING: SQLiteIndex failed, snapshot written without index update: {exc}',
+                file=sys.stderr,
+            )
 
 
 def summarize_modules_from_records(file_records: list[dict]) -> dict[str, str]:
@@ -4124,6 +4143,11 @@ def read_query_input(
         return query_path.read_text(encoding='utf-8-sig').strip() or None
 
     if use_stdin:
+        stdin_buffer = getattr(sys.stdin, 'buffer', None)
+        if stdin_buffer is not None:
+            payload = stdin_buffer.read()
+            text, _encoding = decode_text_bytes(payload)
+            return text.strip() or None if text else None
         return sys.stdin.read().strip() or None
 
     return inline_query
@@ -4189,6 +4213,20 @@ def main():
     except FileNotFoundError as error:
         print(f"Error: {error}", file=sys.stderr)
         sys.exit(1)
+
+    if (
+        query
+        and '--query' in cli_args
+        and not escaped_query
+        and not query_file
+        and not query_stdin
+        and any(ord(ch) > 127 for ch in query)
+        and os.name == 'nt'
+    ):
+        print(
+            'Warning: non-ASCII query detected on raw --query; prefer --query-file, --query-escaped, or --query-stdin on Windows.',
+            file=sys.stderr,
+        )
 
     if report_mode:
         base = Path(project_path)

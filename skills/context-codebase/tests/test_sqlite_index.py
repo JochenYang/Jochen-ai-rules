@@ -1,8 +1,8 @@
 # context-codebase/tests/test_sqlite_index.py
-import pytest
 import sys
 import tempfile
 import os
+import unittest
 from pathlib import Path
 
 # 设置正确的导入路径
@@ -13,14 +13,14 @@ if str(SCRIPT_DIR) not in sys.path:
 from context_engine.sqlite_index import SQLiteIndex
 
 
-class TestSQLiteIndex:
-    def setup_method(self):
+class TestSQLiteIndex(unittest.TestCase):
+    def setUp(self):
         """每个测试前创建临时数据库"""
         self.temp_dir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.temp_dir, "test.db")
         self.index = SQLiteIndex(self.db_path)
 
-    def teardown_method(self):
+    def tearDown(self):
         """清理临时文件"""
         import shutil
         shutil.rmtree(self.temp_dir, ignore_errors=True)
@@ -44,8 +44,8 @@ class TestSQLiteIndex:
         self.index.upsert_chunks(chunks)
         results = self.index.search("auth")
 
-        assert len(results) == 1
-        assert results[0]["id"] == "test.py:1-10"
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["id"], "test.py:1-10")
 
     def test_get_by_path(self):
         """按路径获取 chunks"""
@@ -77,7 +77,7 @@ class TestSQLiteIndex:
         self.index.upsert_chunks(chunks)
         results = self.index.get_by_path("test.py")
 
-        assert len(results) == 2
+        self.assertEqual(len(results), 2)
 
     def test_delete_stale(self):
         """删除废弃 chunks"""
@@ -101,14 +101,14 @@ class TestSQLiteIndex:
 
         # 验证还在
         results = self.index.search("foo")
-        assert len(results) == 1
+        self.assertEqual(len(results), 1)
 
         # 删除不存在的
         self.index.delete_stale({"nonexistent"})
 
         # 无交集时应清理为0（避免陈旧数据残留）
         results = self.index.search("foo")
-        assert len(results) == 0
+        self.assertEqual(len(results), 0)
 
     def test_replace_existing(self):
         """替换已存在的 chunk"""
@@ -132,8 +132,8 @@ class TestSQLiteIndex:
         self.index.upsert_chunks([chunk])
 
         results = self.index.search("updated")
-        assert len(results) == 1
-        assert results[0]["signals"] == ["updated"]
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["signals"], ["updated"])
 
     def test_search_handles_quoted_query(self):
         """查询里包含引号时也能正常检索"""
@@ -151,8 +151,8 @@ class TestSQLiteIndex:
         self.index.upsert_chunks([chunk])
 
         results = self.index.search('"message" route')
-        assert len(results) == 1
-        assert results[0]["id"] == "src/router.py:1-10"
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["id"], "src/router.py:1-10")
 
     def test_get_by_path_handles_wrapped_quotes(self):
         """路径参数带包裹引号时仍可命中"""
@@ -170,8 +170,8 @@ class TestSQLiteIndex:
         self.index.upsert_chunks([chunk])
 
         results = self.index.get_by_path('"src/app.py"')
-        assert len(results) == 1
-        assert results[0]["path"] == "src/app.py"
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["path"], "src/app.py")
 
     def test_get_by_path_is_exact_match(self):
         """路径查询应是精确匹配，避免误命中相似路径"""
@@ -202,5 +202,9 @@ class TestSQLiteIndex:
         self.index.upsert_chunks(chunks)
 
         results = self.index.get_by_path("src/app.py")
-        assert len(results) == 1
-        assert results[0]["path"] == "src/app.py"
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["path"], "src/app.py")
+
+
+if __name__ == "__main__":
+    unittest.main()
