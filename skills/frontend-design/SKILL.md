@@ -30,9 +30,13 @@ motion.
 - Do not ship generic AI aesthetics.
 - Do not guess critical design direction when it would materially change the
   implementation.
+- Do not design from scratch when local code, screenshots, or a design system
+  already exist and can be mined first.
 - Do not use placeholder copy, placeholder media URLs, or half-finished code.
 - Do not break an existing design system unless the user explicitly asks.
 - Do not add heavy motion or media without clear payoff.
+- If a required asset is missing, prefer an explicit local placeholder or
+  simple custom illustration over irrelevant stock UI or fake product chrome.
 
 ## Execution Model
 
@@ -91,6 +95,7 @@ Clarification triggers:
 - unclear motion intensity
 - unclear device priority
 - unclear requirement to preserve an existing brand or design system
+- no usable design context for a net-new design task
 
 Use `AskUserQuestion` if available. If not, ask the same question in plain
 text. Prefer multiple-choice framing. Ask one thing at a time.
@@ -101,6 +106,8 @@ When no brand or style is specified, proactively recommend 2-3 anchors from
 - "Which direction should we anchor to: a specific brand in `design-md/`, a
   URL reference, or a mood description?"
 - "Is there an existing brand or design system I must preserve?"
+- "What is the best starting context: existing repo UI, screenshots, a design
+  system, or should I choose an anchor and proceed?"
 
 Skip clarification only when:
 
@@ -117,13 +124,15 @@ If you proceed without asking, state the assumption first.
 1. Identify page type, audience, and technical constraints.
 2. Confirm framework and styling stack before importing dependencies.
 3. If direction is ambiguous enough to change the build, ask one question.
-4. If the user names a brand or style, immediately load
+4. Inspect the most relevant existing UI context first: local components,
+   screenshots, route shells, design-system docs, or brand references.
+5. If the user names a brand or style, immediately load
    `design-md/<brand>/DESIGN.md` and treat it as authoritative.
-5. If no brand is named, recommend 2-3 anchors from `design-md/` based on page
+6. If no brand is named, recommend 2-3 anchors from `design-md/` based on page
    type and product tone, then load the chosen anchor.
-6. If no anchor fits, summarize the intended style as a visual thesis before
+7. If no anchor fits, summarize the intended style as a visual thesis before
    building.
-7. When offering options, recommend 2-3 concrete directions max.
+8. When offering options, recommend 2-3 concrete directions max.
 
 ### 2. Plan
 
@@ -132,6 +141,8 @@ If you proceed without asking, state the assumption first.
    supporting media.
 3. Set the three design controls.
 4. Prefer the smallest toolset that can still deliver the effect.
+5. Decide whether the task is best handled as direct implementation, a focused
+   design study, or a clickable prototype.
 
 ### 3. Read References
 
@@ -143,9 +154,20 @@ Load only what the task needs:
   `references/motion-recipes.md`
 - redesigning an existing page or app -> `references/redesign-audit.md`
 - media generation -> `references/asset-prompt-guide.md` first, then the
-  relevant minimax guide
+  currently supported toolchain docs; prefer installed workflows such as
+  `mmx-cli` over legacy local scripts
 - tooling trouble -> `references/troubleshooting.md`,
   `references/env-setup.md`
+
+### 3.5. Acquire Context Before Freehanding
+
+- Prefer code and design context over screenshots alone when both exist.
+- When editing an existing product, inspect the visual vocabulary before making
+  changes: hierarchy, spacing, color roles, radius, borders, shadows, motion,
+  copy tone, and density.
+- When the repo lacks enough context, explicitly anchor to one of:
+  `design-md/`, a provided reference, or a written visual thesis.
+- Treat full freehand invention as the last resort, not the default.
 
 ### 4. Build
 
@@ -153,6 +175,8 @@ Load only what the task needs:
 - integrate real copy, local assets, and intentional motion
 - preserve the existing system when working inside a product
 - redesign in place unless the user explicitly asks for a rebuild
+- when the task is exploratory, keep variants easy to compare inside the same
+  implementation path unless separation is clearly cleaner
 - check `package.json` before introducing any new dependency
 - do not mix Tailwind v3 and v4 syntax
 - keep interactive or animation-heavy behavior inside the correct client
@@ -202,6 +226,30 @@ When the user does not specify a brand or style:
 3. load the chosen `DESIGN.md`
 4. extract the core token set if YAML exists
 5. build against that anchor instead of freehanding the aesthetic
+
+## Exploration Modes And Variations
+
+Choose the working mode by the actual problem:
+
+- purely visual direction work -> produce tightly scoped visual comparisons
+  rather than a bloated full app shell
+- interaction, flow, or concept exploration -> prefer a realistic clickable
+  prototype or end-to-end implemented slice
+- direct product implementation -> ship the chosen direction cleanly instead of
+  over-optimizing for breadth
+
+When the user wants options:
+
+- vary 2-4 meaningful dimensions max: layout, typography, color treatment,
+  motion language, or interaction model
+- start with one direction that stays close to the existing product language,
+  then expand into bolder alternatives
+- make variants comparable; avoid creating unrelated designs with no shared
+  evaluation frame
+- if a single code path can support comparison cleanly, prefer toggles, props,
+  or structured variants over fragmented duplicate files
+- if a design needs multiple files, name them clearly and preserve the prior
+  revision when making a major directional change
 
 ## Design Rules
 
@@ -260,6 +308,8 @@ When the user does not specify a brand or style:
 - Prefer real-looking, in-situ imagery over fake dashboards or abstract filler.
 - Avoid emojis in UI copy, alt text, and interface chrome unless already part
   of the product language.
+- If real assets are unavailable, use deliberate placeholders that make the
+  intended structure obvious instead of low-credibility filler.
 
 ### Components
 
@@ -296,12 +346,14 @@ When the user does not specify a brand or style:
 
 Only generate media when it directly improves the frontend outcome.
 
-Available scripts:
+Preferred execution path:
 
-- `scripts/minimax_image.py`
-- `scripts/minimax_video.py`
-- `scripts/minimax_tts.py`
-- `scripts/minimax_music.py`
+- use the currently installed, workspace-approved media generation toolchain
+  first; `mmx-cli` is the preferred MiniMax path when available
+- treat local `scripts/minimax_*.py` as legacy compatibility helpers, not the
+  default workflow
+- if the repo explicitly depends on legacy scripts, validate them before
+  relying on them in delivery work
 
 Asset rules:
 
@@ -311,6 +363,8 @@ Asset rules:
   relevant
 - show prompts to the user before generation when the visual direction is
   sensitive
+- keep commands reproducible and non-interactive when running generation in an
+  agent workflow
 
 ## Output Integrity
 
@@ -320,6 +374,20 @@ Asset rules:
   thing.
 - If output must pause, stop at a clean breakpoint instead of compressing the
   rest into summaries.
+
+## Prototype And Artifact Rules
+
+Apply these when the deliverable is an HTML prototype, design study, or
+standalone frontend artifact:
+
+- choose a descriptive filename that reflects the screen or concept
+- avoid giant monolithic files; split large artifacts into smaller components
+  or support files when the structure starts hiding intent
+- for major revisions, preserve the old version or make the variant boundary
+  explicit so comparison is easy
+- avoid fake title screens unless the user explicitly wants a presentation-like
+  artifact
+- keep the design centered on the interface itself, not decorative framing
 
 ## Escalation Rules
 
@@ -345,6 +413,8 @@ Before delivery, verify:
 - each section has one job
 - cards are used only when they earn their place
 - no obvious filler, unfinished implementation, or generic slop remains
+- when the UI is runnable, preview the implemented result rather than trusting
+  static code inspection alone
 
 ## Final Output Contract
 
@@ -367,10 +437,4 @@ Read only as needed:
 - `references/redesign-audit.md`
 - `references/troubleshooting.md`
 - `references/asset-prompt-guide.md`
-- `references/minimax-cli-reference.md`
-- `references/minimax-image-guide.md`
-- `references/minimax-video-guide.md`
-- `references/minimax-tts-guide.md`
-- `references/minimax-music-guide.md`
-- `references/minimax-voice-catalog.md`
 - `references/env-setup.md`
