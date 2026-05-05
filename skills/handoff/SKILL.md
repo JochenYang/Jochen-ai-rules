@@ -31,7 +31,7 @@ Path resolution rule:
 Preferred command:
 
 ```bash
-cd <installed-handoff-skill-dir> && python scripts/handoff.py <write|read> [target] --project-root <active-repo-root>
+cd <installed-handoff-skill-dir> && python scripts/handoff.py <write|read> <topic-or-existing-file> --project-root <active-repo-root>
 ```
 
 Fallback when `python` is unavailable:
@@ -134,7 +134,7 @@ Execution steps:
 1. Run the installed resolver script first, from the installed skill directory
    or by absolute script path.
 2. Example:
-   `cd <installed-handoff-skill-dir> && python scripts/handoff.py write [topic-or-existing-file] --project-root <active-repo-root>`
+   `cd <installed-handoff-skill-dir> && python scripts/handoff.py write <topic-or-existing-file> --project-root <active-repo-root>`
 3. Run the installed change-summary script before writing the handoff body:
    `cd <installed-handoff-skill-dir> && python scripts/git_changes.py --project-root <active-repo-root>`
 4. Use the returned JSON `path` from `scripts/handoff.py` as the only valid
@@ -165,9 +165,12 @@ Mandatory rules:
 - Prefer explicit state over conversational recap.
 - Write what the next session needs to continue work immediately.
 - Trust the resolver script for file targeting instead of inferring paths.
+- Always provide a topic slug for write mode. The resolver script will return a
+  `"topic_required"` error if the topic is missing.
 - Include branch and working tree state.
-- Include a `Changed Files` section with per-file status, line ranges, and
-  snippets whenever `scripts/git_changes.py` reports changes.
+- The `Changed Files` section MUST be populated from `scripts/git_changes.py`
+  output (or `scripts/session_changes.py` when git evidence is insufficient).
+  Never write file change entries from memory.
 - If `scripts/git_changes.py` reports a clean tree or unavailable git, switch
   to session-derived evidence whenever the current session still touched files
   that matter for resume.
@@ -194,6 +197,8 @@ Before finalizing the handoff, confirm:
 - [ ] **Environment clean**: No uncommitted changes that break the build
 - [ ] **Changed files captured**: File paths, line ranges, and snippets are in
       the handoff when changes exist
+- [ ] **Committed files captured**: If commits were made during this session,
+      they appear in the Changed Files section with status committed-today
 - [ ] **Fallback used when needed**: If git was unavailable or clean, the
       handoff still records session-derived touched files when relevant
 - [ ] **Tests run**: At least basic sanity tests executed, results recorded

@@ -138,6 +138,23 @@ class HandoffPathResolutionTests(unittest.TestCase):
             self.assertEqual(payload["path"], str(newer.resolve()))
 
 
+    def test_write_without_topic_returns_error(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            project = Path(temp_dir) / "health-tracker"
+            (project / "repo" / "progress").mkdir(parents=True)
+
+            code, payload = run_handoff(
+                "write",
+                "--project-root",
+                str(project),
+            )
+
+            self.assertNotEqual(code, 0)
+            self.assertEqual(payload["error"], "topic_required")
+            self.assertIn("mode", payload)
+            self.assertEqual(payload["mode"], "write")
+
+
 class HandoffChangeSummaryTests(unittest.TestCase):
     def test_change_report_includes_modified_file_ranges_and_content_snippets(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -219,9 +236,50 @@ class HandoffChangeSummaryTests(unittest.TestCase):
             code, payload = run_change_report(repo)
 
             self.assertEqual(code, 0)
-            self.assertFalse(payload["has_changes"])
-            self.assertEqual(payload["files"], [])
-            self.assertIn("No working tree changes detected.", payload["markdown"])
+            # With committed-today detection, the init commit (made just now)
+            # is within the 24-hour window and appears as a committed-today file.
+            # Working tree is clean, so the only files are committed-today.
+            self.assertTrue(payload["has_changes"])
+            files = {item["path"]: item for item in payload["files"]}
+            self.assertIn("README.md", files)
+            self.assertEqual(files["README.md"]["status"], "committed-today")
+
+    def test_change_report_includes_committed_today_files(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo = Path(temp_dir) / "repo"
+            repo.mkdir()
+
+            git(repo, "init")
+            git(repo, "config", "user.name", "Test User")
+            git(repo, "config", "user.email", "test@example.com")
+
+            # Initial commit
+            initial_file = repo / "README.md"
+            initial_file.write_text("# Project\n", encoding="utf-8")
+            git(repo, "add", ".")
+            git(repo, "commit", "-m", "initial commit")
+
+            # Second commit (both commits are within 24 hours of test runtime)
+            committed_file = repo / "src" / "utils.py"
+            committed_file.parent.mkdir(parents=True)
+            committed_file.write_text(
+                "def helper():\n    return True\n", encoding="utf-8"
+            )
+            git(repo, "add", ".")
+            git(repo, "commit", "-m", "add utils module")
+
+            # Working tree is clean — all changes are committed
+            code, payload = run_change_report(repo)
+
+            self.assertEqual(code, 0)
+            self.assertTrue(payload["has_changes"])
+            files = {item["path"]: item for item in payload["files"]}
+
+            # The newly added file should appear as committed-today
+            self.assertIn("src/utils.py", files)
+            self.assertEqual(files["src/utils.py"]["status"], "committed-today")
+            self.assertIn("committed-today", payload["markdown"])
+            self.assertIn("src/utils.py", payload["markdown"])
 
     def test_change_report_handles_non_ascii_content(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:

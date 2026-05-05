@@ -129,6 +129,20 @@ def emit(payload: dict, status: int = 0) -> int:
 
 
 def handle_write(project_root: Path, target: str | None) -> int:
+    if not target:
+        return emit(
+            {
+                "mode": "write",
+                "error": "topic_required",
+                **build_resolution_payload(project_root),
+                "message": (
+                    "A topic slug is required for write mode."
+                    " Example: python scripts/handoff.py write auth-refactor --project-root ."
+                ),
+            },
+            status=1,
+        )
+
     existing = resolve_existing_file(project_root, target)
     if existing is not None:
         return emit(

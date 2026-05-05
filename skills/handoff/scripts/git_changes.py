@@ -65,6 +65,55 @@ def has_head(git_root: Path) -> bool:
     return result.returncode == 0
 
 
+def get_today_commits(git_root: Path) -> list[str]:
+    """Return commit hashes from the last 24 hours, oldest first."""
+    result = run_git(
+        git_root, "log", "--since=24 hours ago", "--reverse", "--format=%H"
+    )
+    if result.returncode != 0:
+        return []
+    return [line for line in result.stdout.strip().splitlines() if line]
+
+
+def get_committed_today_diff(git_root: Path) -> str:
+    """Return unified diff covering all commits from the last 24 hours.
+
+    Uses the parent of the earliest today-commit as the diff base.  When that
+    commit is a root commit (no parent), creates an empty-tree object locally
+    and diffs against it so the first commit's content is included.
+    """
+    commits = get_today_commits(git_root)
+    if not commits:
+        return ""
+
+    first = commits[0]
+    parent_result = run_git(git_root, "rev-parse", "--verify", first + "^")
+    if parent_result.returncode != 0:
+        # Root commit: no parent exists.  Create an empty tree object so the
+        # diff picks up all files that were introduced in the root commit.
+        et = subprocess.run(
+            ["git", "hash-object", "-t", "tree", "--stdin"],
+            cwd=git_root,
+            input="",
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+        )
+        if et.returncode != 0 or not et.stdout.strip():
+            return ""
+        parent = et.stdout.strip()
+    else:
+        parent = parent_result.stdout.strip()
+
+    # Use <base> HEAD (space, not ..) so tree objects can serve as the base.
+    result = run_git(
+        git_root, "diff", "--unified=0", "--no-color", parent, "HEAD", "--"
+    )
+    return result.stdout
+
+
 def get_status_map(git_root: Path) -> dict[str, dict[str, str]]:
     result = run_git(git_root, "status", "--porcelain=v1", "--untracked-files=all")
     status_map: dict[str, dict[str, str]] = {}
@@ -341,7 +390,31 @@ def main() -> int:
         )
 
     status_map = get_status_map(git_root)
-    files = merge_changes(git_root, parse_patch(get_diff_text(git_root), status_map), status_map)
+
+    # Working-tree changes (staged, unstaged, untracked)
+    working_files = merge_changes(
+        git_root,
+        parse_patch(get_diff_text(git_root), status_map),
+        status_map,
+    )
+
+    # Committed-today changes (commits from the last 24 hours)
+    committed_diff = get_committed_today_diff(git_root)
+    committed_files: list[dict] = []
+    if committed_diff.strip():
+        committed_parsed = parse_patch(committed_diff, {})
+        for item in committed_parsed:
+            item["status"] = "committed-today"
+        committed_files = committed_parsed
+
+    # Merge: working-tree entries take precedence over committed-today entries
+    merged: dict[str, dict] = {}
+    for item in committed_files:
+        merged[item["path"]] = item
+    for item in working_files:
+        merged[item["path"]] = item
+
+    files = [merged[key] for key in sorted(merged)]
 
     return emit(
         {
