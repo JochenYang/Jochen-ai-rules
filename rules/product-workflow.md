@@ -1,6 +1,10 @@
 ﻿---
 name: product-workflow
 description: Mandatory product delivery workflow.
+scope: delivery
+applies_to: [dev-planner, story-generator, ui-sketcher, code-implementer, commands/plan.md, commands/commit.md, commands/branch.md]
+priority: critical
+always_active: true
 ---
 
 # Product Development Workflow
@@ -13,31 +17,31 @@ Build a real, shippable, maintainable product. Avoid demo-only delivery.
 
 ## 5-Stage Flow
 
-1. Discovery
+### 1. Discovery
 
 - Clarify real need and success criteria.
 - Split Must-have vs Nice-to-have.
 - If scope is too large, propose MVP cut.
 
-2. Planning
+### 2. Planning
 
 - Provide implementation approach and complexity level.
 - List key dependencies and external decisions.
 - Define milestones and acceptance criteria.
 
-3. Building
+### 3. Building
 
 - Deliver iteratively with visible checkpoints.
 - Explain key tradeoffs in plain language.
 - Stop at decision points for confirmation.
 
-4. Polish
+### 4. Polish
 
 - Close edge cases and error handling.
 - Verify performance and multi-device compatibility.
 - Improve usability and interaction consistency.
 
-### Design Requirements (Applied in Polish Stage)
+#### Design Requirements
 
 - Keep interface simple, readable, and consistent.
 - Reuse existing theme tokens and component library first.
@@ -50,7 +54,7 @@ Build a real, shippable, maintainable product. Avoid demo-only delivery.
 - Consistent elevation and shadow depth.
 - Clear visual hierarchy for primary vs secondary actions.
 
-### Accessibility Requirements (WCAG 2.1 AA)
+#### Accessibility Requirements (WCAG 2.1 AA)
 
 - Contrast >= 4.5:1 for normal text.
 - Contrast >= 3:1 for large text.
@@ -58,13 +62,13 @@ Build a real, shippable, maintainable product. Avoid demo-only delivery.
 - Visible focus states.
 - Semantic HTML structure.
 
-### Responsive Requirements
+#### Responsive Requirements
 
 - Build mobile-first.
 - Scale spacing and layout progressively for larger screens.
 - Keep interaction targets accessible on touch devices.
 
-5. Handoff
+### 5. Handoff
 
 - Provide runbook, usage notes, and maintenance guidance.
 - Suggest next iteration candidates.
@@ -91,13 +95,13 @@ Build a real, shippable, maintainable product. Avoid demo-only delivery.
 
 ## Git & Commit Conventions
 
-#### Commit Message Format
+### Commit Message Format
 
 `<type>(<scope>): <subject>`
 
 Types: `feat`, `fix`, `refactor`, `docs`, `style`, `test`, `chore`, `perf`, `ci`, `build`, `revert`
 
-#### Commit Message Rules
+### Commit Message Rules
 
 - English only
 - Imperative mood (`add`, `fix`, `update`)
@@ -106,21 +110,21 @@ Types: `feat`, `fix`, `refactor`, `docs`, `style`, `test`, `chore`, `perf`, `ci`
 - No trailing period
 - No AI signature or `Co-Authored-By: Claude`
 
-#### Commit Workflow (Mandatory)
+### Commit Workflow (Mandatory)
 
 1. Do not auto-commit after code changes.
 2. Show proposed commit message first.
 3. Commit only after owner confirmation.
 4. Allow owner to edit or skip commit.
 
-#### Pre-Commit Checklist
+### Pre-Commit Checklist
 
 - [ ] No secret leakage
 - [ ] Tests pass
 - [ ] Lint/format pass
 - [ ] Scope is focused
 
-#### Branch Naming
+### Branch Naming
 
 - `feat/<feature-name>`
 - `fix/<issue-name>`
@@ -128,14 +132,14 @@ Types: `feat`, `fix`, `refactor`, `docs`, `style`, `test`, `chore`, `perf`, `ci`
 - `docs/<scope>`
 - `chore/<scope>`
 
-#### Pull Request Rules
+### Pull Request Rules
 
 - Keep PRs small and focused
 - Include tests for behavior changes
 - Update docs for externally visible changes
 - Link related issue/task when available
 
-#### Git Proposal Output Contract
+### Git Proposal Output Contract
 
 When proposing Git actions, always provide:
 

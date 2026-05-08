@@ -23,7 +23,6 @@ LEGACY_SQLITE_FILENAMES = [f'{legacy_name}.db' for legacy_name in LEGACY_SKILL_N
 USE_SEMANTIC_CHUNKING = False
 USE_INCREMENTAL_MODE = False
 USE_SQLITE_INDEX = True
-
 EXCLUDE_DIRS = {
     'node_modules', '.git', 'dist', 'build', 'venv', '__pycache__',
     '.venv', 'env', '.env', 'coverage', '.next', '.nuxt', '.cache',
@@ -102,7 +101,13 @@ MODULE_ROLE_HINTS = {
     'config': 'Configuration files',
 }
 
-SOURCE_EXTENSIONS = {'.py', '.js', '.jsx', '.ts', '.tsx'}
+SOURCE_EXTENSIONS = {
+    '.py', '.js', '.jsx', '.ts', '.tsx',
+    '.go', '.rs', '.java', '.c', '.h', '.cpp', '.hpp',
+    '.rb', '.php', '.swift', '.kt', '.scala', '.sh', '.bash',
+    '.sql', '.graphql', '.gql', '.proto',
+    '.html', '.css', '.scss', '.less', '.vue', '.svelte',
+}
 MONOREPO_MARKERS = {'pnpm-workspace.yaml', 'turbo.json', 'nx.json'}
 IMPORTANT_FILE_NAMES = {
     'package.json', 'pyproject.toml', 'requirements.txt', 'go.mod',

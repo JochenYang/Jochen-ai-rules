@@ -3,7 +3,7 @@ name: code-reviewer
 description: Review specialist for correctness, security, performance, and maintainability. Inspects code changes and prioritizes risks with actionable repair guidance. Outputs machine-readable review reports.
 color: blue
 model: inherit
-tools: ["Read", "Bash", "Grep", "Glob"]
+tools: ["Read", "Grep", "Glob"]
 ---
 
 # Expert Code Reviewer

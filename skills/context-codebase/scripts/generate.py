@@ -12,6 +12,7 @@ import subprocess
 import sys
 import codecs
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -28,6 +29,9 @@ from context_engine.retrieval import build_retrieval_artifacts, retrieve_chunks
 from context_engine.semantic_chunker import SemanticChunker
 from context_engine.chunk_tracker import ChunkTracker
 from context_engine.sqlite_index import SQLiteIndex
+
+from context_engine.fuzzy_search import FuzzySymbolSearcher
+from context_engine.git_index import collect_git_stats, enrich_chunks_with_git
 
 try:
     import tomllib
@@ -53,11 +57,6 @@ SQLITE_FILENAME = f'{SKILL_NAME}.db'
 LEGACY_SNAPSHOT_FILENAMES = [f'{legacy_name}.json' for legacy_name in LEGACY_SKILL_NAMES]
 LEGACY_INDEX_STATE_FILENAMES = [f'{legacy_name}.index.json' for legacy_name in LEGACY_SKILL_NAMES]
 LEGACY_SQLITE_FILENAMES = [f'{legacy_name}.db' for legacy_name in LEGACY_SKILL_NAMES]
-
-# Feature flags for advanced chunking modes
-USE_SEMANTIC_CHUNKING = False
-USE_INCREMENTAL_MODE = False
-USE_SQLITE_INDEX = True
 
 EXCLUDE_DIRS = {
     'node_modules', '.git', 'dist', 'build', 'venv', '__pycache__',
@@ -707,38 +706,36 @@ def extract_exports(content: str, language: str | None) -> list[str]:
     return sorted(set(name for name in exports if not name.startswith('_')))[:8]
 
 
-def collect_file_records(files: list[str], project_path: str) -> tuple[list[dict], int]:
-    base = Path(project_path)
-    records = []
-    total_lines = 0
-
-    for file_path in files:
+def _process_single_file(file_path: str, base: Path) -> tuple[dict | None, int]:
+    """Process a single file record (used for parallel execution)."""
+    try:
         path_obj = Path(file_path)
         rel_path = normalize_rel_path(os.path.relpath(file_path, base))
         language = detect_language(rel_path)
+        file_stat = path_obj.stat()
+        file_size = file_stat.st_size
         content, detected_encoding = read_text_file_with_fallback(
             path_obj,
             max_bytes=MAX_TEXT_FILE_BYTES,
         ) if path_obj.suffix.lower() in TEXT_EXTENSIONS else (None, None)
         line_count = len(content.splitlines()) if content is not None else 0
-        total_lines += line_count
-        analysis = ANALYZER_REGISTRY.analyze_file(content, rel_path, project_path)
+        analysis = ANALYZER_REGISTRY.analyze_file(content, rel_path, str(base))
         analysis_warnings = list(analysis.warnings)
         if (
             path_obj.suffix.lower() in TEXT_EXTENSIONS
-            and path_obj.stat().st_size <= MAX_TEXT_FILE_BYTES
+            and file_size <= MAX_TEXT_FILE_BYTES
             and content is None
         ):
             analysis_warnings.append(
                 'text decode failed; supported fallbacks: utf-8, utf-8-sig, locale preferred encoding, gb18030'
             )
 
-        records.append({
+        record = {
             'path': rel_path,
             'fileName': path_obj.name,
             'language': language,
             'lineCount': line_count,
-            'sizeBytes': path_obj.stat().st_size,
+            'sizeBytes': file_size,
             'content': content,
             'detectedEncoding': detected_encoding,
             'imports': analysis.imports,
@@ -750,7 +747,28 @@ def collect_file_records(files: list[str], project_path: str) -> tuple[list[dict
             'analysisEngine': analysis.engine,
             'analysisConfidence': analysis.confidence,
             'analysisWarnings': analysis_warnings,
-        })
+        }
+        return (record, line_count)
+    except Exception:
+        return (None, 0)
+
+
+def collect_file_records(files: list[str], project_path: str) -> tuple[list[dict], int]:
+    base = Path(project_path)
+    records = []
+    total_lines = 0
+
+    # Threading: file I/O and analysis are I/O-bound, parallelize for speed
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        results = list(executor.map(
+            lambda fp: _process_single_file(fp, base),
+            files,
+        ))
+
+    for record, line_count in results:
+        if record is not None:
+            records.append(record)
+            total_lines += line_count
 
     return records, total_lines
 
@@ -1504,6 +1522,7 @@ def write_snapshot(output_file: Path, snapshot: dict, chunks: list[dict] | None 
 
             sqlite_chunks = chunks if chunks is not None else snapshot.get('chunks', [])
             if sqlite_chunks:
+                print(f'  writing {len(sqlite_chunks):,} chunks to FTS5 index...', file=sys.stderr)
                 # Normalize chunk format for SQLiteIndex
                 normalized_chunks = []
                 for chunk in sqlite_chunks:
@@ -1521,6 +1540,7 @@ def write_snapshot(output_file: Path, snapshot: dict, chunks: list[dict] | None 
                 sqlite_index.upsert_chunks(normalized_chunks)
 
                 # Delete stale chunks (not in current snapshot)
+                print(f'  cleaning stale chunks...', file=sys.stderr)
                 valid_ids = {chunk['id'] for chunk in sqlite_chunks if chunk.get('id')}
                 sqlite_index.delete_stale(valid_ids)
 
@@ -3784,6 +3804,7 @@ def generate_snapshot(project_path: str, force: bool = False) -> dict:
         and existing_snapshot.get('version') == SNAPSHOT_VERSION
         and existing_snapshot.get('sourceFingerprint') == source_fingerprint
     ):
+        cached_chunks = (existing_index_state or {}).get('chunks', [])
         freshness = existing_snapshot.setdefault('freshness', {})
         freshness['stale'] = False
         freshness['reason'] = 'source fingerprint unchanged'
@@ -3793,130 +3814,155 @@ def generate_snapshot(project_path: str, force: bool = False) -> dict:
             index_state_file,
             existing_index_state,
             current_signatures,
-            (existing_index_state or {}).get('chunks', []),
+            cached_chunks,
             reusing_snapshot=True,
         )
         existing_snapshot['chunkCatalog'] = build_chunk_catalog(
-            (existing_index_state or {}).get('chunks', []),
+            cached_chunks,
             existing_snapshot.get('importantFiles', []),
         )
-        write_snapshot(output_file, existing_snapshot)
+        write_snapshot(output_file, existing_snapshot, chunks=cached_chunks)
         return existing_snapshot
 
     file_records, total_lines = collect_file_records(files, project_path)
-    # Detect framework
-    frameworks = detect_framework(files, project_path)
 
-    for record in file_records:
-        for framework_hint in record.get('frameworkHints', []):
-            if framework_hint not in frameworks:
-                frameworks.append(framework_hint)
+    # Threading: submit git stats early (I/O-bound subprocess calls), overlap with CPU work
+    _git_stats_executor = ThreadPoolExecutor(max_workers=2)
+    try:
+        _git_future = _git_stats_executor.submit(
+            collect_git_stats, project_path, [r['path'] for r in file_records]
+        )
 
-    # Find entry points
-    entry_points = find_entry_points(files, project_path)
-    dependencies = extract_dependencies(project_path)
-    workspace = detect_workspace(file_records, project_path, dependencies)
-    important_files = build_important_files(file_records, entry_points, workspace)
-    modules = summarize_modules_from_records(file_records)
-    analysis = build_analysis_metadata(file_records)
-    chunks = build_chunks(file_records)
-    chunk_catalog = build_chunk_catalog(chunks, important_files)
-    index_metadata = build_index_metadata(
-        base,
-        index_state_file,
-        existing_index_state,
-        current_signatures,
-        chunks,
-        reusing_snapshot=False,
-    )
+        # Detect framework
+        frameworks = detect_framework(files, project_path)
 
-    # Expand framework hints from dependency manifests
-    for manifest_path, manifest_dependencies in dependencies.items():
-        if manifest_path.endswith(('requirements.txt', 'pyproject.toml')):
-            python_frameworks = {
-                'fastapi': 'FastAPI',
-                'flask': 'Flask',
-                'django': 'Django',
-                'pydantic': 'Pydantic',
-                'sqlalchemy': 'SQLAlchemy',
-            }
-            for dependency_name, framework_name in python_frameworks.items():
-                if dependency_name in manifest_dependencies and framework_name not in frameworks:
-                    frameworks.append(framework_name)
-    frameworks = sorted(set(frameworks))
-    summary = build_summary(
-        project_path,
-        files,
-        frameworks,
-        entry_points,
-        total_lines,
-        file_records,
-        important_files,
-    )
-    context_hints = build_context_hints(summary, workspace, important_files, modules)
+        for record in file_records:
+            for framework_hint in record.get('frameworkHints', []):
+                if framework_hint not in frameworks:
+                    frameworks.append(framework_hint)
 
-    # Extract API routes, data models, functions
-    api_routes = []
-    data_models = []
-    key_functions = []
+        # Find entry points
+        entry_points = find_entry_points(files, project_path)
+        dependencies = extract_dependencies(project_path)
+        workspace = detect_workspace(file_records, project_path, dependencies)
+        important_files = build_important_files(file_records, entry_points, workspace)
+        modules = summarize_modules_from_records(file_records)
+        analysis = build_analysis_metadata(file_records)
+        chunks = build_chunks(file_records)
 
-    for record in file_records:
-        for route in record['apiRoutes']:
-            api_routes.append({
-                'method': route['method'],
-                'path': route['path'],
-                'handler': record['path'],
-                'line': route.get('line'),
-                'source': record.get('analysisEngine'),
-                'confidence': record.get('analysisConfidence'),
-            })
+        chunk_catalog = build_chunk_catalog(chunks, important_files)
+        index_metadata = build_index_metadata(
+            base,
+            index_state_file,
+            existing_index_state,
+            current_signatures,
+            chunks,
+            reusing_snapshot=False,
+        )
 
-        for model in record['dataModels']:
-            data_models.append({
-                'name': model['name'],
-                'type': model['type'],
-                'file': record['path'],
-                'line': model.get('line'),
-                'source': record.get('analysisEngine'),
-                'confidence': record.get('analysisConfidence'),
-            })
+        # Expand framework hints from dependency manifests
+        for manifest_path, manifest_dependencies in dependencies.items():
+            if manifest_path.endswith(('requirements.txt', 'pyproject.toml')):
+                python_frameworks = {
+                    'fastapi': 'FastAPI',
+                    'flask': 'Flask',
+                    'django': 'Django',
+                    'pydantic': 'Pydantic',
+                    'sqlalchemy': 'SQLAlchemy',
+                }
+                for dependency_name, framework_name in python_frameworks.items():
+                    if dependency_name in manifest_dependencies and framework_name not in frameworks:
+                        frameworks.append(framework_name)
+        frameworks = sorted(set(frameworks))
+        summary = build_summary(
+            project_path,
+            files,
+            frameworks,
+            entry_points,
+            total_lines,
+            file_records,
+            important_files,
+        )
+        context_hints = build_context_hints(summary, workspace, important_files, modules)
 
-        for func in record['keyFunctions']:
-            key_functions.append(func)
+        # Extract API routes, data models, functions
+        api_routes = []
+        data_models = []
+        key_functions = []
 
-    # Deduplicate
-    seen_routes = set()
-    unique_routes = []
-    for r in api_routes:
-        key = f"{r['method']}:{r['path']}:{r['handler']}"
-        if key not in seen_routes:
-            seen_routes.add(key)
-            unique_routes.append(r)
+        for record in file_records:
+            for route in record['apiRoutes']:
+                api_routes.append({
+                    'method': route['method'],
+                    'path': route['path'],
+                    'handler': record['path'],
+                    'line': route.get('line'),
+                    'source': record.get('analysisEngine'),
+                    'confidence': record.get('analysisConfidence'),
+                })
 
-    seen_models = set()
-    unique_models = []
-    for m in data_models:
-        key = f"{m['name']}:{m['type']}:{m['file']}"
-        if key not in seen_models:
-            seen_models.add(key)
-            unique_models.append(m)
+            for model in record['dataModels']:
+                data_models.append({
+                    'name': model['name'],
+                    'type': model['type'],
+                    'file': record['path'],
+                    'line': model.get('line'),
+                    'source': record.get('analysisEngine'),
+                    'confidence': record.get('analysisConfidence'),
+                })
 
-    seen_functions = set()
-    unique_functions = []
-    for func in key_functions:
-        key = f"{func['file']}:{func['name']}:{func['line']}"
-        if key not in seen_functions:
-            seen_functions.add(key)
-            unique_functions.append(func)
+            for func in record['keyFunctions']:
+                key_functions.append(func)
 
-    # Limit key functions after ranking important areas first
-    key_functions = sorted(unique_functions, key=lambda item: rank_key_function(item, entry_points))[:80]
+        # Deduplicate
+        seen_routes = set()
+        unique_routes = []
+        for r in api_routes:
+            key = f"{r['method']}:{r['path']}:{r['handler']}"
+            if key not in seen_routes:
+                seen_routes.add(key)
+                unique_routes.append(r)
 
-    # Infer architecture
-    architecture = infer_architecture(files, project_path)
-    graph = build_code_graph(file_records, unique_routes, unique_models, key_functions, workspace, Path(project_path))
-    external_context = collect_external_context(project_path, file_records)
+        seen_models = set()
+        unique_models = []
+        for m in data_models:
+            key = f"{m['name']}:{m['type']}:{m['file']}"
+            if key not in seen_models:
+                seen_models.add(key)
+                unique_models.append(m)
+
+        seen_functions = set()
+        unique_functions = []
+        for func in key_functions:
+            key = f"{func['file']}:{func['name']}:{func['line']}"
+            if key not in seen_functions:
+                seen_functions.add(key)
+                unique_functions.append(func)
+
+        # Limit key functions after ranking important areas first
+        key_functions = sorted(unique_functions, key=lambda item: rank_key_function(item, entry_points))[:80]
+
+        # Infer architecture
+        architecture = infer_architecture(files, project_path)
+        graph = build_code_graph(file_records, unique_routes, unique_models, key_functions, workspace, Path(project_path))
+        external_context = collect_external_context(project_path, file_records)
+
+        # Collect git stats (submitted early, wait for result now)
+        git_stats = {}
+        try:
+            git_stats = _git_future.result()
+            if git_stats:
+                chunks = enrich_chunks_with_git(chunks, git_stats)
+        except Exception:
+            pass
+    finally:
+        _git_stats_executor.shutdown(wait=False)
+
     retrieval, context_packs = build_retrieval_artifacts(chunks, important_files, graph, external_context)
+
+    # Build fuzzy symbol index
+    fuzzy_searcher = FuzzySymbolSearcher()
+    fuzzy_searcher.build_index(chunks)
 
     # Build snapshot
     snapshot = {
@@ -3949,14 +3995,23 @@ def generate_snapshot(project_path: str, force: bool = False) -> dict:
         'apiRoutes': sorted(unique_routes, key=lambda item: (item['handler'], item['path'], item['method'])),
         'dataModels': sorted(unique_models, key=lambda item: (item['file'], item['type'], item['name'])),
         'keyFunctions': key_functions,
-        'architecture': architecture
+        'architecture': architecture,
+        'gitStats': git_stats,
+        'symbolIndex': fuzzy_searcher.to_dict(),
     }
 
     # Save to file
     write_snapshot(output_file, snapshot, chunks=chunks)
-    save_index_state(index_state_file, current_signatures, chunks, file_records, source_fingerprint)
+    try:
+        save_index_state(index_state_file, current_signatures, chunks, file_records, source_fingerprint)
+    except Exception:
+        print(f'Warning: index state save failed (snapshot is still valid)', file=sys.stderr)
 
-    print(f"Snapshot saved to: {output_file}", file=sys.stderr)
+    print(
+        f"Snapshot saved to: {output_file}\n"
+        f"  {total_lines:,} lines, {len(file_records):,} files, {len(chunks):,} chunks",
+        file=sys.stderr,
+    )
     return snapshot
 
 

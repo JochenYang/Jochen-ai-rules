@@ -12,6 +12,7 @@ Artifacts:
 
 - Snapshot: `{project}/repo/progress/context-codebase.json`
 - Index state: `{project}/repo/progress/context-codebase.index.json`
+- SQLite FTS5 index: `{project}/repo/progress/context-codebase.db`
 
 ## When To Use
 
@@ -21,6 +22,8 @@ Use this skill when you need to:
 - refresh a reusable project snapshot
 - retrieve focused files and snippets for a concrete question
 - prepare a deep technical walkthrough from a cached project context
+- fuzzy-search symbols by name (IDE-like Ctrl+P / Go to Symbol)
+- identify change hotspots and blame history via Git integration
 
 ## Modes
 
@@ -171,6 +174,28 @@ Important clarifications:
 - `git.status=dirty` means the worktree has uncommitted changes; it does not
   automatically prove that the snapshot fingerprint changed
 
+## Retrieval Model
+
+The retrieval pipeline uses FTS5 BM25 keyword search combined with graph-aware expansion and importance boosting:
+
+- **BM25 keyword** (FTS5 SQLite) — lexical precision for exact matches
+- **Graph expansion** (dependency graph neighbors) — structural context around high-scoring chunks
+- **Important-file boosting** — prioritizes key configuration and entry-point files
+- **Recent-change boosting** — boosts recently modified files for bugfix/code-review tasks
+- **Fuzzy symbol search** (FuzzySymbolSearcher) — IDE-style camelCase/snake_case fuzzy matching
+
+### Chunking
+
+- **Regex chunker** — line-based chunking (60-line windows with anchor-point overlap), works for all languages.
+
+### Symbol Search
+
+- **FuzzySymbolSearcher** — IDE-like Ctrl+P symbol lookup with camelCase and snake_case aware fuzzy matching. Filters by file path patterns.
+
+### Git Integration
+
+- **GitEnrichment** (`git_index.py`) — annotates chunks with change frequency, hotspot score, churn metric, recent authors, and blame data. Results feed into `recent-change-boost` and `importance-boost` retrieval strategies.
+
 ## Retrieval Workflow
 
 For `read`:
@@ -194,7 +219,7 @@ For focused questions, prefer `--task` with a UTF-8 safe query channel.
 
 **⚠️ Cross-Lingual Search Limitation:**
 - If your internal reasoning or the user's prompt is in a non-English language (e.g., Chinese) but the codebase uses English identifiers, you **MUST append English keyword translations** to your query string.
-- *Why?* The backend uses literal FTS5 BM25 token matching, which will yield 0 hits if lexical characters do not overlap.
+- *Why?* BM25 uses literal FTS5 token matching, which yields 0 hits if lexical characters do not overlap.
 - *Example:* Instead of `--query "记忆模块"`, use `--query "记忆模块 memory module"`.
 
 On Windows or any environment where non-ASCII query text may become mojibake:

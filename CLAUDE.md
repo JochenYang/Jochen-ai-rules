@@ -18,25 +18,53 @@ The project is organized into several core components:
 
 ## Key Commands
 
-- `/branch` - Git worktree management
-- `/commit` - Create well-formatted commits
-- `/plan` - Implementation planning
-- `/tdd` - Test-driven development workflow
-- `/code-review` - Quality review
-- `/build-fix` - Fix build errors
+- `/plan` - Approval-gated implementation planning
+- `/orchestrate` - Sequential multi-agent workflow with repair loops
+- `/tdd` - Test-driven development workflow (RED-GREEN-REFACTOR-VERIFY)
+- `/review` - Code review via `code-reviewer` agent (returns `Recommendation: SHIP|NEEDS WORK|BLOCKED`)
+- `/commit` - Create conventional commit messages with confirmation gate
+- `/branch` - Git worktree branch management
+- `/build-fix` - Fix build/compile errors
 - `/refactor-clean` - Clean up dead code
-- `/orchestrate` - Orchestrate multi-agent workflows
 
 ## Key Skills
 
-- **developer** - Full-stack development
-- **ui-ux-pro-max** - UI/UX design intelligence
+Engineering core (most-used):
+
+- **developer** - Full-stack development workflows
+- **tdd-workflow** - RED-GREEN-REFACTOR cycle enforcement
+- **quality-assurance** - Code review, testing, security audit standards
+- **handoff** - Manual session handoff for long-running work
+- **context-codebase** - Project context engine for repo orientation
+- **reflect** - Session reflection and lesson extraction
+
+Specialist domains:
+
+- **api-designer** - REST/GraphQL/gRPC design
+- **database-engineer** - Schema design, query optimization, migrations
+- **performance-optimizer** - Bottleneck identification across full stack
+- **devops-engineer** - CI/CD, containers, Kubernetes, monitoring
+- **vercel-deploy** - Next.js deployment, env vars, edge functions
 - **mcp-builder** - MCP server development
-- **threejs-builder** - Three.js web apps
-- **quality-assurance** - Code review and testing
-- **reflect** - Session reflection and learning
-- **claude-audit** - Audit .claude/ files
-- **skills-audit** - Audit skills collection
+
+Product & design:
+
+- **product-manager** - PRD, user stories, roadmap
+- **requirements-interview** - Structured requirement Q&A
+- **frontend-design** - Production-grade frontend with motion + assets
+- **ui-ux-pro-max** - 50+ design styles, 21 color systems
+- **artifacts-builder** - Interactive React/HTML artifacts
+- **threejs-builder** - 3D web content
+- **phaser-build** - 2D HTML5 games
+
+Meta & maintenance:
+
+- **agent-teams** - Parallel multi-agent collaboration
+- **claude-audit** - Audit `.claude/` files for redundancy
+- **skills-audit** - Inventory and review skill collection
+
+> Total: 8 commands · 11 agents · 22 skills. Counts auto-synced via
+> `scripts/sync-doc-counts.js`; do not edit manually after running the sync.
 
 ## Development Notes
 

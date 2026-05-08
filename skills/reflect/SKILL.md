@@ -92,12 +92,32 @@ Pause and ask the owner before:
 - concluding that a repeated issue is systemic without enough evidence
 - writing retrospective notes to shared artifacts that could affect future workflows
 
+## Lessons Log Integration (MANDATORY)
+
+Every reflection session that produces at least one durable lesson MUST append
+an entry to `repo/progress/lessons.md`. Rules:
+
+1. Append at the **top** of the `## Entries` section (newest first); never
+   overwrite or delete prior entries.
+2. Use the template defined in `repo/progress/lessons.md` verbatim.
+3. One concrete lesson per entry; if reflection surfaces N lessons, append N
+   entries.
+4. Before appending, scan recent entries to avoid duplicates. If the lesson is
+   a refinement of an older one, mark the older as `Superseded by <date-title>`
+   and add the new entry pointing back.
+5. After appending, summarise the new entries in the chat output under
+   `Primary Deliverable` and link to the file path.
+6. If the session produced no durable lesson (pure execution, no surprises),
+   say so explicitly and skip the file write.
+
 ## Final Output Contract (MANDATORY)
 
 Every use of this skill should end with:
 
 1. `Skill Fit` - why reflection is useful for this session or sprint
-2. `Primary Deliverable` - lesson summary, patterns, and recommendations
+2. `Primary Deliverable` - lesson summary, patterns, recommendations, and the
+   list of `repo/progress/lessons.md` entries appended (or an explicit
+   "no entry appended" note with reason)
 3. `Execution Evidence` - tasks reviewed, failures observed, and signals considered
 4. `Risks / Open Questions` - uncertain conclusions or missing evidence
 5. `Next Action` - the best improvement to adopt in the next cycle

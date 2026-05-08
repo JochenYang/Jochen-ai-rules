@@ -9,6 +9,12 @@ Sequential multi-agent workflow engine for complex engineering tasks. This
 command coordinates specialized **Agents** (loaded from `.claude/agents/`) with
 explicit approval gates, structured handoffs, and mandatory review loops.
 
+> **Source of truth.** Agent responsibilities, base workflow chains, repair
+> ownership rules, and trigger hints are defined in `rules/agents.md`. This
+> command only adds **execution semantics** on top: approval gates, specialist
+> re-check loops, repair iteration caps, and machine-readable handoff payloads.
+> Any chain edit must update both files in lock-step.
+
 ## Usage
 
 `/orchestrate [workflow-type] [task-description]`
@@ -30,17 +36,17 @@ parallel team, multiple simultaneous agents, or `agent-teams`.
 
 ## Workflow Catalog
 
-| Workflow | Primary Chain | Approval Gate | Default Repair Owner | Required Re-Checks |
-| --- | --- | --- | --- | --- |
-| `feature` | `dev-planner -> code-implementer -> code-reviewer` `↺ repair loop if needed` | After `dev-planner` | `code-implementer` | `code-reviewer` |
-| `feature-tdd` | `dev-planner -> tdd-guide -> code-reviewer` `↺ repair loop if needed` | After `dev-planner` | `tdd-guide` | `code-reviewer` |
-| `bugfix` | `bug-analyzer -> tdd-guide -> code-reviewer` `↺ repair loop if needed` | None unless analysis changes scope | `tdd-guide` | `code-reviewer` |
-| `refactor` | `dev-planner -> code-implementer -> code-reviewer` `↺ repair loop if needed` | After `dev-planner` | `code-implementer` | `code-reviewer` |
-| `ui-design` | `story-generator -> ui-sketcher -> dev-planner -> code-implementer -> code-reviewer` `↺ repair loop if needed` | After `dev-planner` | `code-implementer` | `code-reviewer` |
-| `secure-feature` | `dev-planner -> code-implementer -> security-reviewer -> code-reviewer` `↺ specialist + review loop if needed` | After `dev-planner` | `code-implementer` | `security-reviewer -> code-reviewer` |
-| `db-feature` | `dev-planner -> database-migration -> code-implementer -> code-reviewer` `↺ specialist + review loop if needed` | After `dev-planner` | `database-migration` for schema/data issues, otherwise `code-implementer` | `database-migration` when schema/data changed, then `code-reviewer` |
+| Workflow            | Primary Chain                                                                                                       | Approval Gate                                     | Default Repair Owner                                                         | Required Re-Checks                                                           |
+|---------------------|---------------------------------------------------------------------------------------------------------------------|---------------------------------------------------|------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| `feature`           | `dev-planner -> code-implementer -> code-reviewer` `↺ repair loop if needed`                                        | After `dev-planner`                               | `code-implementer`                                                           | `code-reviewer`                                                              |
+| `feature-tdd`       | `dev-planner -> tdd-guide -> code-reviewer` `↺ repair loop if needed`                                               | After `dev-planner`                               | `tdd-guide`                                                                  | `code-reviewer`                                                              |
+| `bugfix`            | `bug-analyzer -> tdd-guide -> code-reviewer` `↺ repair loop if needed`                                              | None unless analysis changes scope                | `tdd-guide`                                                                  | `code-reviewer`                                                              |
+| `refactor`          | `dev-planner -> code-implementer -> code-reviewer` `↺ repair loop if needed`                                        | After `dev-planner`                               | `code-implementer`                                                           | `code-reviewer`                                                              |
+| `ui-design`         | `story-generator -> ui-sketcher -> dev-planner -> code-implementer -> code-reviewer` `↺ repair loop if needed`      | After `dev-planner`                               | `code-implementer`                                                           | `code-reviewer`                                                              |
+| `secure-feature`    | `dev-planner -> code-implementer -> security-reviewer -> code-reviewer` `↺ specialist + review loop if needed`      | After `dev-planner`                               | `code-implementer`                                                           | `security-reviewer -> code-reviewer`                                         |
+| `db-feature`        | `dev-planner -> database-migration -> code-implementer -> code-reviewer` `↺ specialist + review loop if needed`     | After `dev-planner`                               | `database-migration` for schema/data issues, otherwise `code-implementer`    | `database-migration` when schema/data changed, then `code-reviewer`          |
 | `performance-audit` | `bug-analyzer -> performance-optimizer -> code-implementer -> code-reviewer` `↺ specialist + review loop if needed` | None unless optimization scope changes materially | `performance-optimizer` for measurement issues, otherwise `code-implementer` | `performance-optimizer` when metrics/profiling changed, then `code-reviewer` |
-| `deploy` | `dev-planner -> devops-engineer -> code-reviewer` `↺ specialist + review loop if needed` | After `dev-planner` | `devops-engineer` | `devops-engineer` when infra/pipeline changed, then `code-reviewer` |
+| `deploy`            | `dev-planner -> devops-engineer -> code-reviewer` `↺ specialist + review loop if needed`                            | After `dev-planner`                               | `devops-engineer`                                                            | `devops-engineer` when infra/pipeline changed, then `code-reviewer`          |
 
 ### When to Use Specialist Workflows
 
@@ -272,9 +278,9 @@ Review Iterations: [N]
 
 ## Review History
 | Iteration | Recommendation | Issues Found | Issues Fixed |
-| --- | --- | --- | --- |
-| 1 | NEEDS WORK | 3 major | - |
-| 2 | SHIP | 0 | 3 |
+|-----------|----------------|--------------|--------------|
+| 1         | NEEDS WORK     | 3 major      | -            |
+| 2         | SHIP           | 0            | 3            |
 
 ## Recommendation
 [SHIP / NEEDS WORK / BLOCKED]

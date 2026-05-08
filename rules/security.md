@@ -1,6 +1,11 @@
 ﻿---
 name: security
 description: Mandatory security baseline for all code changes.
+scope: security
+applies_to: ["*"]
+priority: critical
+always_active: true
+related_workflows: [secure-feature]
 ---
 
 # Security Guidelines

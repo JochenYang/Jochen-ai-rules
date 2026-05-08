@@ -3,7 +3,7 @@ name: security-reviewer
 description: Security audit specialist for auth, secrets, permissions, and data exposure risks. Reviews implementations against OWASP-style concerns and remediation paths. Outputs security findings and required re-check guidance.
 color: pink
 model: inherit
-tools: ["Read", "Bash", "Grep", "Glob"]
+tools: ["Read", "Grep", "Glob"]
 ---
 
 # Security Reviewer

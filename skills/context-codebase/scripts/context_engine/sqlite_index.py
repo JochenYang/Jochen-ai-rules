@@ -43,33 +43,48 @@ class SQLiteIndex:
         conn.close()
 
     def upsert_chunks(self, chunks: list[dict]) -> None:
-        """Batch insert or update chunks, clearing old ones first"""
+        """Batch insert chunks — drop and recreate FTS5 table for speed."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
-        for chunk in chunks:
-            chunk_id = chunk["id"]
-            signals_json = json.dumps(chunk.get("signals", []))
-            
-            # FTS5 doesn't support UPSERT or INSERT OR REPLACE simply based on an unindexed column constraints
-            # We must delete existing matching id first manually
-            cursor.execute("DELETE FROM chunks WHERE id = ?", (chunk_id,))
-            
-            cursor.execute("""
-                INSERT INTO chunks
-                (id, path, start_line, end_line, kind, name, language, signals, preview)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                chunk_id,
-                chunk["path"],
+        # Drop and recreate is much faster than per-row DELETE+INSERT on FTS5
+        cursor.execute("DROP TABLE IF EXISTS chunks")
+        cursor.execute("""
+            CREATE VIRTUAL TABLE chunks USING fts5(
+                id UNINDEXED,
+                path,
+                start_line UNINDEXED,
+                end_line UNINDEXED,
+                kind,
+                name,
+                language,
+                signals,
+                preview,
+                content_hash UNINDEXED,
+                tokenize="unicode61"
+            )
+        """)
+
+        rows = [
+            (
+                chunk.get("id", ""),
+                chunk.get("path", ""),
                 chunk.get("startLine"),
                 chunk.get("endLine"),
-                chunk.get("kind"),
-                chunk.get("name"),
-                chunk.get("language"),
-                signals_json,
-                chunk.get("preview", "")[:200]
-            ))
+                chunk.get("kind", ""),
+                chunk.get("name", ""),
+                chunk.get("language", ""),
+                json.dumps(chunk.get("signals", [])),
+                chunk.get("preview", "")[:200],
+                chunk.get("content_hash", ""),
+            )
+            for chunk in chunks
+        ]
+        cursor.executemany("""
+            INSERT INTO chunks
+            (id, path, start_line, end_line, kind, name, language, signals, preview, content_hash)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, rows)
 
         conn.commit()
         conn.close()

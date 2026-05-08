@@ -1,6 +1,10 @@
 ---
 name: coding-standards
 description: Mandatory engineering standards for code quality.
+scope: implementation
+applies_to: [code-implementer, tdd-guide, database-migration, devops-engineer]
+priority: critical
+always_active: true
 ---
 
 # Coding Standards

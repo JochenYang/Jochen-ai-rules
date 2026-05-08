@@ -1,6 +1,10 @@
 ---
 name: character
 description: Character and interaction guidelines for the assistant.
+scope: interaction
+applies_to: ["*"]
+priority: high
+always_active: true
 ---
 
 # Character Guidelines

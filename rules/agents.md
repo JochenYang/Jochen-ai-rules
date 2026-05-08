@@ -1,11 +1,21 @@
 ﻿---
 name: agents
 description: Mandatory agent selection and orchestration rules.
+scope: orchestration
+applies_to: [agents/, commands/orchestrate.md, commands/review.md]
+priority: critical
+always_active: true
 ---
 
 # Agent Usage Rules
 
 **RULE TYPE**: Mandatory agent selection and orchestration rules.
+
+> **Single source of truth.** This file owns: agent registry, responsibility
+> mapping, base workflow chains, repair ownership rules, and trigger hints.
+> Detailed execution semantics (approval gates, re-check loops, repair iteration
+> caps, handoff payloads) live in `commands/orchestrate.md` and MUST stay
+> consistent with the chains defined here.
 
 ## Selection Rules
 
@@ -18,19 +28,19 @@ description: Mandatory agent selection and orchestration rules.
 
 ## Agent Registry
 
-| Agent | Use When | Expected Output |
-|---|---|---|
-| dev-planner | complex feature/refactor | plan, risks, dependencies + approval handoff |
-| code-implementer | implementation tasks | clean code + tests + review handoff |
-| tdd-guide | test-first development or bugfix | RED-GREEN-REFACTOR execution + review handoff |
-| code-reviewer | quality gate before delivery | prioritized findings + `Recommendation` |
-| bug-analyzer | errors/crashes/unknown behavior | root cause + fix strategy + handoff to `tdd-guide` (analysis only, no edits) |
-| story-generator | requirements structuring | user stories + acceptance criteria + design handoff |
-| ui-sketcher | UI flow and interaction drafting | ASCII mockups + flow notes + planning handoff |
-| security-reviewer | auth/payment/PII/secrets scope | security findings + remediation + review handoff |
-| database-migration | schema/index/migration changes | migration plan + rollback + implementation handoff |
-| performance-optimizer | latency/bottleneck issues | profiling + measurable targets + implementation handoff |
-| devops-engineer | deploy/CI/CD/container/infra | pipeline + infra artifacts + review handoff |
+| Agent                 | Use When                         | Expected Output                                                              |
+|-----------------------|----------------------------------|------------------------------------------------------------------------------|
+| dev-planner           | complex feature/refactor         | plan, risks, dependencies + approval handoff                                 |
+| code-implementer      | implementation tasks             | clean code + tests + review handoff                                          |
+| tdd-guide             | test-first development or bugfix | RED-GREEN-REFACTOR execution + review handoff                                |
+| code-reviewer         | quality gate before delivery     | prioritized findings + `Recommendation`                                      |
+| bug-analyzer          | errors/crashes/unknown behavior  | root cause + fix strategy + handoff to `tdd-guide` (analysis only, no edits) |
+| story-generator       | requirements structuring         | user stories + acceptance criteria + design handoff                          |
+| ui-sketcher           | UI flow and interaction drafting | ASCII mockups + flow notes + planning handoff                                |
+| security-reviewer     | auth/payment/PII/secrets scope   | security findings + remediation + review handoff                             |
+| database-migration    | schema/index/migration changes   | migration plan + rollback + implementation handoff                           |
+| performance-optimizer | latency/bottleneck issues        | profiling + measurable targets + implementation handoff                      |
+| devops-engineer       | deploy/CI/CD/container/infra     | pipeline + infra artifacts + review handoff                                  |
 
 ## Standard Workflows
 

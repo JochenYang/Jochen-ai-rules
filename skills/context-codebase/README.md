@@ -1,309 +1,134 @@
 # context-codebase
 
 <p align="center">
-  <strong>Language</strong><br/>
+  <strong>Fast · Zero-dependency · Skill-native</strong><br/>
+  <sub>Project context engine for repo orientation and code retrieval</sub><br/><br/>
   <a href="./README.md">English</a> ·
-  <a href="./README_zh.md">简体中文</a>
+  <a href="./README_zh.md">简体中文</a><br/>
 </p>
 
-`context-codebase` is a project context engine for fast repository orientation,
-cached handoff, and task-focused code retrieval.
+---
 
-It generates reusable artifacts under `repo/progress/` so a new model, a new
-IDE session, or another tool can understand a codebase quickly without
-rescanning the whole repository every time.
+`context-codebase` is a project context engine that generates reusable snapshots
+for fast repository understanding and task-focused code retrieval. Works as a
+skill in any AI coding agent — no model downloads, no vector computation, no
+external dependencies beyond Python stdlib + SQLite.
 
-## What It Solves
+```text
+Scan → Regex Chunk → FTS5 BM25 → Rank → Git Stats → Fuzzy Search → Snapshot
+```
 
-Most repo summary tools stop at file trees, language counts, or symbol lists.
-That is usually not enough for practical model handoff.
+**Output**: `context-codebase.json` · `context-codebase.index.json` · `context-codebase.db`
 
-`context-codebase` is built to answer the questions that matter during a real
-session:
-
-- What kind of project is this?
-- Which files should be read first?
-- Which areas define the architecture?
-- Can the current snapshot be reused safely?
-- For a focused question, which files and anchors should be read next?
-
-## Artifacts
-
-The skill writes reusable outputs to:
-
-- `repo/progress/context-codebase.json`
-- `repo/progress/context-codebase.index.json`
-
-These artifacts are designed for model consumption first, not just human
-inspection.
+---
 
 ## Quick Start
 
-Use the mode that matches the question you need answered:
+| Command | Purpose |
+|---------|---------|
+| `/context-codebase` | Generate or reuse snapshot → high-level repo overview |
+| `/context-codebase read` | Consume snapshot → focused file & snippet retrieval |
+| `/context-codebase refresh` | Incremental update after repo changes |
+| `/context-codebase report` | Deep technical walkthrough (delegates to sub-agent) |
 
-- `/context-codebase`: build or reuse a snapshot for high-level orientation
-- `/context-codebase refresh`: force a fresh scan after meaningful repo changes
-- `/context-codebase read`: answer a focused implementation question quickly
-- `/context-codebase report`: prepare a deeper host-side technical walkthrough
+---
 
-## Modes
+## Core Capabilities
 
-### `/context-codebase`
+| Layer | What It Provides |
+|-------|-----------------|
+| **Retrieval** | FTS5 BM25 keyword search (SQLite) — millisecond-level exact matching |
+| **Chunking** | Regex-based 60-line windows with anchor-point overlap, works for all languages |
+| **Navigation** | Dependency graph · importance ranking · hotspot detection · entry-point hints |
+| **Symbol Search** | FuzzySymbolSearcher — IDE-style camelCase/snake_case fuzzy matching |
+| **Git Integration** | Change frequency · hotspots · churn · author tracking |
+| **Cache** | Source-fingerprint reuse — unchanged repos skip regeneration |
 
-Default mode.
+## Snapshot Layers
 
-Behavior:
+```
+summary → workspace → analysis → contextHints → importantFiles
+chunkCatalog → graph → retrieval → contextPacks → externalContext
+apiRoutes → dataModels → keyFunctions → freshness → gitStats → symbolIndex
+```
 
-- generates a snapshot when none exists
-- reuses the cached snapshot when the source fingerprint is unchanged
-- returns a repo overview optimized for fast understanding
-
-Use it when:
-
-- entering a project for the first time
-- switching models or IDEs
-- rebuilding a high-level mental map of the repo
-
-### `/context-codebase refresh`
-
-Force-refresh mode.
-
-Behavior:
-
-- ignores cache reuse
-- rescans the repository
-- overwrites the existing snapshot
-
-Use it when:
-
-- the codebase changed significantly
-- the current snapshot is stale
-- you explicitly want a fresh scan
-
-### `/context-codebase read`
-
-Focused retrieval mode.
-
-Behavior:
-
-- consumes the existing snapshot and index
-- skips forced regeneration
-- returns a lightweight retrieval payload with:
-  - `files`
-  - `snippets`
-  - `flowAnchors`
-  - `nextHops`
-  - `searchScope`
-  - `hotspots`
-  - `externalContext`
-
-Use it when:
-
-- the snapshot already exists
-- you need a quick answer for a specific implementation question
-- you want to preserve tokens and avoid a full rescan
-
-`read` is optimized for quick implementation summaries:
-
-- lead with the core conclusion
-- show the call entry when available
-- surface 3-4 core files
-- surface 3-5 anchors worth reading next
-- stop before it turns into a long technical report
-
-### `/context-codebase report`
-
-Deep-analysis mode.
-
-Behavior:
-
-- consumes the existing snapshot and index when available
-- generates the snapshot first only if it is missing
-- returns a `deep-pack` for host-side deep report generation
-
-Use it when:
-
-- you want a full technical walkthrough
-- you need a broader call chain or architecture trace
-- you want to keep the parent thread lightweight and delegate the deeper work
-
-## Why It Is More Useful Than A File Tree
-
-A file tree tells you where files exist.
-
-A context engine should also tell you:
-
-- where a model should start
-- which files are worth the tokens
-- which modules carry the strongest architectural signal
-- whether the saved context is still valid
-- how to approach a concrete task without opening the whole repository
-
-That is the main difference this skill is designed around.
-
-## Snapshot Contents
-
-The snapshot and index expose several layers of context:
-
-- `summary`: project identity, tech stack, entry points, dominant languages
-- `workspace`: monorepo and package layout hints
-- `analysis`: analyzer engines, warnings, and fallback details
-- `contextHints`: recommended start file, read order, high-signal areas
-- `importantFiles`: ranked files worth reading first
-- `chunkCatalog`: reusable anchors for retrieval
-- `graph`: dependency edges, module relationships, hotspots
-- `retrieval`: task list, retrieval metadata, project vocabulary
-- `contextPacks`: prebuilt task-oriented reading packs
-- `externalContext`: recent changes, docs, conventions
-- `apiRoutes`, `dataModels`, `keyFunctions`: extracted code structure
-- `freshness` and `sourceFingerprint`: cache safety and reuse checks
+---
 
 ## Retrieval Model
 
-`context-codebase` uses a hybrid retrieval flow instead of plain grep or a pure
-embedding-backed semantic search stack:
+Keyword-driven, no semantic embedding:
 
-- snapshot and index reuse
-- chunk-based keyword retrieval
-- graph-aware expansion
-- important-file boosting
-- task-oriented read packs
-- multilingual query expansion
-- project-vocabulary-driven term expansion
+- **BM25** — FTS5 full-text search for lexical precision
+- **Graph expansion** — dependency neighbors around high-scoring chunks
+- **Importance boost** — key configs and entry-point files ranked higher
+- **Recent-change boost** — recently modified files prioritized for bugfix/review tasks
+- **Task packs** — pre-built reading plans per task type
 
-This makes `read` fast enough for handoff workflows while still being useful
-for focused implementation questions.
+Large projects (~1M LOC) target sub-7-minute snapshot generation.
 
-## Installation
+> **Note**: First-time snapshot generation on large projects may take several
+> minutes due to full-source scanning and FTS5 indexing. Progress is printed to
+> stderr. Subsequent runs reuse cached artifacts and complete in seconds.
 
-This repository keeps the distributable skill under `./context-codebase/`.
-
-Repository layout in this repo:
-
-```text
-.
-├─ README.md
-├─ README_zh.md
-└─ context-codebase/
-   ├─ SKILL.md
-   ├─ scripts/
-   ├─ tests/
-   └─ references/
-```
-
-Packaged or installed skill layout:
-
-```text
-context-codebase/
-  SKILL.md
-  scripts/
-    generate.py
-```
-
-Recommended development layout:
-
-```text
-context-codebase/
-  SKILL.md
-  scripts/
-    generate.py
-    context_engine/
-  tests/
-    test_generate.py
-  references/
-  README.md
-  README_zh.md
-```
-
-Keep generated outputs out of versioned source where possible:
-
-- `repo/progress/`
-- `node_modules/`
-- `dist/`
-- `build/`
-- `__pycache__/`
-- `*.pyc`
-
-## Manual Script Usage
-
-From this repository root, use:
-
-```bash
-python context-codebase/scripts/generate.py <project_path>
-python context-codebase/scripts/generate.py <project_path> --force
-python context-codebase/scripts/generate.py <project_path> --read
-python context-codebase/scripts/generate.py <project_path> --read --task feature-delivery --query "skill download flow"
-python context-codebase/scripts/generate.py <project_path> --report --task bugfix-investigation --query "message routing"
-```
-
-If the skill is installed elsewhere, replace `context-codebase/` with the
-actual skill directory.
+---
 
 ## Accuracy Boundary
 
-This tool is optimized for practical context transfer.
+| :white_check_mark: Strong at | :x: Not designed for |
+|------------------------------|----------------------|
+| Fast repo orientation | Compiler-grade cross-language indexing |
+| Cached model handoff | Exact search in every edge case |
+| High-signal reading order | Semantic/embedding search |
+| Focused code retrieval | Real-time file monitoring |
+| Large-repo navigation layer | IDE symbol resolution |
 
-It is strong at:
+---
 
-- fast repository orientation
-- cached model handoff
-- high-signal reading order
-- focused code retrieval
-- large-repo navigation
-
-It is not designed to be:
-
-- a compiler-grade cross-language indexer
-- a replacement for exact repo search in every case
-- an embedding-backed semantic search engine
-
-Some extraction still depends on heuristics or regex fallback, especially when
-JS/TS AST analysis is unavailable in the analyzed project.
-
-In other words, this tool is designed to get a model oriented fast and point it
-at the right code, not to replace exact search in every edge case.
-
-## Development And Validation
-
-Run tests with:
+## CLI Usage
 
 ```bash
-python -m unittest context-codebase.tests.test_generate
+# Generate snapshot
+python context-codebase/scripts/generate.py <project_path>
+
+# Refresh index
+python context-codebase/scripts/generate.py <project_path> refresh
+
+# Task-focused retrieval
+python context-codebase/scripts/generate.py <project_path> --read --task bugfix-investigation --query "auth middleware"
+
+# Deep report
+python context-codebase/scripts/generate.py <project_path> --report --task feature-delivery --query "payment flow"
 ```
 
-Current validation covers:
+CLI contract: `stdout` = JSON payload, `stderr` = warnings and progress.
 
-- self-reference exclusion
-- route false-positive prevention
-- Python AST extraction
-- JS/TS fallback reporting
-- snapshot reuse and invalidation
-- chunk and index generation
-- task-oriented retrieval
-- read/report payload structure
-- multilingual query expansion
+---
 
-## Current Status
+## Installation
 
-The current implementation is suitable for active context-engine use in real
-projects:
+```
+context-codebase/
+├── SKILL.md              ← skill entry point
+├── scripts/
+│   ├── generate.py        ← main pipeline
+│   └── context_engine/    ← analyzers, retrieval, FTS5, git, fuzzy search
+├── tests/
+│   └── test_enhanced.py
+└── references/
+```
 
-- reusable snapshot and index generation
-- graph-aware retrieval and task packs
-- `read` for lightweight implementation lookup
-- `report` for deep-pack generation
-- regression coverage for core behaviors
+Generated artifacts live under `{project}/repo/progress/` — keep them out of version control.
 
-## Limitations
+---
 
-- some route, model, and function extraction is still heuristic
-- `read` is a skill mode, not a full replacement for exact code search
-- retrieval quality is high for common flows, but long-tail domain language can
-  still benefit from direct repo search
-- the design target is practical, reusable understanding rather than absolute
-  precision
+## Development
+
+```bash
+python -m unittest context-codebase.tests.test_enhanced -v
+```
+
+---
 
 ## License
 
-Use this skill according to the host repository's license and internal
-distribution rules.
+Follow the host repository's license and internal distribution rules.
