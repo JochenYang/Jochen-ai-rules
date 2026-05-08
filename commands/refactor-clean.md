@@ -1,5 +1,6 @@
 ---
 description: Remove dead code and improve code organization with a scoped cleanup pass. Can invoke the review flow when changes need additional quality verification.
+argument-hint: [scope]
 ---
 
 # Refactor Clean Command

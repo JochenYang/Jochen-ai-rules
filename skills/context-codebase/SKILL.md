@@ -25,6 +25,17 @@ Use this skill when you need to:
 - fuzzy-search symbols by name (IDE-like Ctrl+P / Go to Symbol)
 - identify change hotspots and blame history via Git integration
 
+## When NOT to Use
+
+Skip this skill when:
+
+- the task is a small bugfix or single-file change that does not require repo-wide orientation
+- you already have full context from a recently loaded handoff or snapshot
+- the question is purely conceptual (language syntax, algorithm design) with no codebase dependency
+- the repository is tiny (< 10 source files) and manual file reading is faster
+- you need live runtime behavior (API calls, DB queries, server state) rather than static code analysis
+- the snapshot is known to be significantly stale and a full regeneration would be expensive relative to the benefit
+
 ## Modes
 
 ### `/context-codebase`

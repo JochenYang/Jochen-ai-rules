@@ -391,6 +391,16 @@ Read only as needed:
 - Prefer explicit status capture over speculative future planning.
 - Do not replace a normal compact or active implementation flow unless handoff is actually needed.
 
+## When NOT to Use
+
+Skip handoff when:
+
+- the task is short and can be completed in the current session without a context reset
+- compact (automatic context compression) is sufficient to keep the thread usable
+- there is no meaningful implementation state to preserve (e.g., purely conversational Q&A)
+- the working tree is clean and no decisions, partial work, or blockers need to be recorded
+- the next session operator is the same person continuing immediately with full recall
+
 ## Escalation Rules
 
 Pause and ask the owner before:

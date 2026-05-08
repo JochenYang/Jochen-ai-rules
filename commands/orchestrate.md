@@ -92,6 +92,33 @@ For each agent in the chain:
 6. For `bugfix`, do not treat root-cause analysis as completion. The workflow is
    incomplete until `tdd-guide` and `code-reviewer` have both run.
 
+### Phase 1b: Task Loop (when dev-planner hands off a Task List)
+
+When the dev-planner's `HANDOFF` block contains a `### Task List` table (see
+`agents/dev-planner.md`), the orchestrator drives the implementation agent
+**one task at a time** instead of pushing the entire plan in a single
+invocation.
+
+1. Parse the `### Task List` Markdown table from the plan handoff.
+2. Sort tasks by dependency order: process tasks whose `Depends On` column is
+   `-` or already-completed first.
+3. For each `pending` task in order:
+   a. Invoke the implementation agent (e.g. `code-implementer` or `tdd-guide`)
+      with the single task description plus full plan context.
+   b. Collect the agent's primary artifact and `HANDOFF`.
+   c. Mark that task's `Status` as `done` in the tracking copy.
+   d. If the handoff reports a blocker or failure, pause the loop and escalate.
+4. After all tasks are `done`, proceed to Phase 2 (Review Gate) as normal.
+
+**Commit policy:** Do NOT commit after individual tasks. All tasks remain
+uncommitted until `code-reviewer` returns `SHIP`, at which point the full
+changeset is committed as a single unit. Task tracking is for progress
+visibility and interruption recovery only, not for granular commits.
+
+**Interruption recovery:** If the session is interrupted mid-loop, restart by
+reading the last handoff's Task List status column — completed tasks are
+`done`, the first `pending` task is the resume point.
+
 ### Phase 2: Review Gate
 
 The final quality gate always ends at `code-reviewer`, even when specialist

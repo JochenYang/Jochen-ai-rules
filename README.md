@@ -30,7 +30,7 @@ Jochen AI Rules is a comprehensive Claude Code plugin that provides:
 
 | Category       | Count |
 |----------------|-------|
-| Commands       | 9     |
+| Commands       | 8     |
 | Agents         | 11    |
 | Skills         | 22    |
 | Design Styles  | 50+   |
@@ -232,7 +232,6 @@ git push origin v1.3.1
 - **Requirements Interview**: Structured requirements gathering through guided interviews
 - **TDD Workflow**: Test-driven development with RED-GREEN-REFACTOR cycle enforcement
 - **Vercel Deploy**: Next.js deployment, environment variables, edge functions
-- **Jochen Skill Creator**: Template and standards for creating new skills
 
 ### UI/UX Design Capabilities
 

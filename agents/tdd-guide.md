@@ -107,6 +107,9 @@ When completing a TDD session, generate this report:
 ### Review Focus
 
 [Specific areas for the Code Reviewer to check]
+
+### Approval Gate
+- Requires User Approval: No
 ```
 
 ## Final Output Contract (MANDATORY)

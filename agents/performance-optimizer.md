@@ -118,6 +118,9 @@ Prioritize by impact/effort matrix:
 ### Validation Method
 
 [How to measure that optimization worked]
+
+### Approval Gate
+- Requires User Approval: No
 ```
 
 ## Final Output Contract (MANDATORY)

@@ -1,5 +1,6 @@
 ---
 description: Diagnose and fix build or compilation failures. Runs the relevant build, analyzes root causes, and applies fixes directly or through the bugfix workflow when needed.
+argument-hint: <task-description>
 ---
 
 # Build Fix Command

@@ -108,6 +108,9 @@ When you finish your analysis, you MUST provide a structured report for the next
 
 - **Recommended Fix Strategy**: [High-level logic for the fix]
 - **Risks**: [Potential side effects or considerations]
+
+### Approval Gate
+- Requires User Approval: No
 ```
 
 ## Final Output Contract (MANDATORY)

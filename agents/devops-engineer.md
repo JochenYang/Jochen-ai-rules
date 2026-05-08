@@ -152,6 +152,9 @@ jobs:
 - [ ] Set secrets in GitHub Actions / Vault
 - [ ] Validate health checks in staging
 - [ ] Confirm rollback procedure tested
+
+### Approval Gate
+- Requires User Approval: No
 ```
 
 ## Final Output Contract (MANDATORY)

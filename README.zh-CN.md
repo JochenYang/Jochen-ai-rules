@@ -30,7 +30,7 @@ Jochen AI Rules 是一个全面的 Claude Code 插件，提供：
 
 | 类别     | 数量 |
 |----------|------|
-| Commands | 9    |
+| Commands | 8    |
 | Agents   | 11   |
 | Skills   | 22   |
 | 设计风格 | 50+  |
@@ -227,8 +227,6 @@ git push origin v1.3.1
 - **Requirements Interview**: 通过结构化引导式问答收集需求
 - **TDD Workflow**: 测试驱动开发，强制执行 RED-GREEN-REFACTOR 循环
 - **Vercel Deploy**: Next.js 部署、环境变量管理、边缘函数
-- **Jochen Skill Creator**: 新技能创建的模板与标准规范
-
 ### UI/UX 设计能力
 
 - **50+ 设计风格**: 玻璃拟态、黏土拟态、极简主义，粗野主义、新拟态、Bento 栅格、暗色模式、拟物化、扁平化等

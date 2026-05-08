@@ -127,6 +127,21 @@ append this block:
 ### Decisions
 - [Key design decision]
 
+### Task List
+
+| # | Task | Depends On | Status |
+|---|------|------------|--------|
+| 1 | [First implementation task] | - | pending |
+| 2 | [Second task, e.g. API endpoint] | 1 | pending |
+| 3 | [Third task, e.g. middleware] | 2 | pending |
+
+**Task list rules:**
+- One row per independently completable unit of work.
+- `#` column: sequential task number for ordering.
+- `Depends On`: `-` if no dependency, or a task number that must be completed first.
+- `Status`: always `pending` on handoff; the orchestrator updates it.
+- `code-implementer` does one task per invocation — the orchestrator loops.
+
 ### Files Changed
 - None yet
 
