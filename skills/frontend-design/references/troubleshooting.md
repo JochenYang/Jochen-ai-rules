@@ -74,7 +74,7 @@ Wrong: `speech_01`, `speech_2.6`, `speech-01`
 
 Re-generate with higher settings:
 ```bash
-python scripts/minimax_tts.py "text" -o out.mp3 --sample-rate 32000 --model speech-2.8-hd
+mmx speech synthesize --text "text" --out out.mp3 --non-interactive --quiet
 ```
 
 ### Invalid emotion

@@ -1,9 +1,6 @@
 # Environment Setup
 
-Use the currently installed media-generation toolchain first. In the current
-workflow, `mmx-cli` is the preferred MiniMax path. The local
-`scripts/minimax_*.py` helpers are legacy and should only be used when
-explicitly maintaining an older script-based flow.
+Use the currently installed media-generation toolchain first. In the current workflow, `mmx-cli` is the preferred MiniMax path.
 
 ## 1. Confirm tool availability
 

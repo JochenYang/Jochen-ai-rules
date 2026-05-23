@@ -154,8 +154,7 @@ Load only what the task needs:
   `references/motion-recipes.md`
 - redesigning an existing page or app -> `references/redesign-audit.md`
 - media generation -> `references/asset-prompt-guide.md` first, then the
-  currently supported toolchain docs; prefer installed workflows such as
-  `mmx-cli` over legacy local scripts
+  currently supported toolchain docs; prefer the installed toolchain (e.g. `mmx-cli`)
 - tooling trouble -> `references/troubleshooting.md`,
   `references/env-setup.md`
 
@@ -350,10 +349,8 @@ Preferred execution path:
 
 - use the currently installed, workspace-approved media generation toolchain
   first; `mmx-cli` is the preferred MiniMax path when available
-- treat local `scripts/minimax_*.py` as legacy compatibility helpers, not the
-  default workflow
-- if the repo explicitly depends on legacy scripts, validate them before
-  relying on them in delivery work
+- use the installed toolchain (e.g. `mmx-cli`); avoid script-based
+  workflows that require separate environment setup
 
 Asset rules:
 
@@ -416,6 +413,22 @@ Before delivery, verify:
 - when the UI is runnable, preview the implemented result rather than trusting
   static code inspection alone
 
+### Anti-AI-Slop Checks
+
+These rules prevent the most common AI-design tells. Reference
+`craft/anti-ai-slop.md` for the full checklist:
+
+- no default indigo accent (`#6366f1`, `#4f46e5`, etc.) — use the chosen
+  design system's accent color
+- no two-stop "trust" gradients (purple→blue, blue→cyan) on hero sections
+- no emoji as feature icons (`✨`, `🚀`, `🎯`, `⚡`, `🔥`, `💡`) — use
+  monoline SVG with `currentColor`
+- no sans-serif on display text when the design system specifies a serif
+- no rounded cards with colored left-border accent ("AI dashboard tile")
+- no invented metrics ("10× faster", "99.9% uptime") without a real source
+- no filler copy — lorem ipsum, "feature one / two / three", placeholder text
+- no external placeholder image CDNs (unsplash.com, placehold.co, etc.)
+
 ## Final Output Contract
 
 Every use of this skill should end with:
@@ -438,3 +451,15 @@ Read only as needed:
 - `references/troubleshooting.md`
 - `references/asset-prompt-guide.md`
 - `references/env-setup.md`
+
+### Craft Rules
+
+Brand-agnostic design craftsmanship. Read as needed during review:
+
+- `craft/anti-ai-slop.md` — anti-AI-tell rules and quality gates
+- `craft/color.md` — accent discipline, contrast, dark-theme rules
+- `craft/typography-hierarchy.md` — hierarchy vectors, rhythm, controlled
+  violations
+- `craft/state-coverage.md` — loading, empty, error, edge, and form states
+- `craft/accessibility-baseline.md` — WCAG 2.2 AA, ARIA, focus, labels
+- `craft/laws-of-ux.md` — cognitive heuristics, decision-making, memory laws
