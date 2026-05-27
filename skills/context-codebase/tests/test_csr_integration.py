@@ -464,14 +464,16 @@ class CSRIntegrationTests(unittest.TestCase):
             self.assertEqual(refreshed['summary'], initial_summary)
             self.assertEqual(refreshed['modules'], initial_modules)
 
-            index_state = generate.load_existing_index_state(base / 'repo' / 'progress' / 'context-codebase.index.json')
-            self.assertIsNotNone(index_state)
-            previews = [
+            # Chunks are in the snapshot chunkCatalog (index_state omits chunks when SQLite is active)
+            catalog_previews = [
                 chunk['preview']
-                for chunk in index_state['chunks']
+                for chunk in refreshed['chunkCatalog']
                 if chunk['path'] == 'src/main.py'
             ]
-            self.assertTrue(any('return 2' in preview for preview in previews))
+            self.assertTrue(
+                any('return 2' in preview for preview in catalog_previews),
+                msg='refreshed chunk content should appear in snapshot chunkCatalog',
+            )
 
     def test_refresh_detects_same_size_same_mtime_content_change_via_hash_audit(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
@@ -494,14 +496,16 @@ class CSRIntegrationTests(unittest.TestCase):
 
             self.assertEqual(refreshed['freshness']['reason'], 'incremental index refreshed')
             self.assertGreaterEqual(refreshed['freshness']['hashedCandidateFiles'], 1)
-            index_state = generate.load_existing_index_state(base / 'repo' / 'progress' / 'context-codebase.index.json')
-            self.assertIsNotNone(index_state)
-            previews = [
+            # Chunks are in the snapshot chunkCatalog (index_state omits chunks when SQLite is active)
+            catalog_previews = [
                 chunk['preview']
-                for chunk in index_state['chunks']
+                for chunk in refreshed['chunkCatalog']
                 if chunk['path'] == 'src/main.py'
             ]
-            self.assertTrue(any('return 2' in preview for preview in previews))
+            self.assertTrue(
+                any('return 2' in preview for preview in catalog_previews),
+                msg='hash audit should detect and index content change',
+            )
 
     def test_refresh_reuses_cached_hashes_when_sources_unchanged(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:

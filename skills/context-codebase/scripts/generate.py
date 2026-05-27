@@ -197,6 +197,20 @@ def is_excluded_path(rel_path: str) -> bool:
     )
 
 
+def validate_path_within_root(root: Path, file_path: str) -> str | None:
+    """Ensure a resolved file path is within the project root (path traversal protection).
+    Returns the original file_path on success, not the resolved form, to avoid
+    breaking relative path computation when the OS uses different path representations
+    (e.g., Windows short vs long filename)."""
+    try:
+        resolved = Path(file_path).resolve()
+        root_resolved = root.resolve()
+        resolved.relative_to(root_resolved)
+        return file_path
+    except (ValueError, OSError):
+        return None
+
+
 def clean_content_for_parsing(content: str, ext: str) -> str:
     """Remove common comments to reduce regex false positives."""
     if ext == '.py':
@@ -653,6 +667,7 @@ def run_git_command(project_path: str, args: list[str]) -> str | None:
             capture_output=True,
             text=False,
             check=False,
+            timeout=30,
         )
     except Exception:
         return None
@@ -709,8 +724,13 @@ def extract_exports(content: str, language: str | None) -> list[str]:
 def _process_single_file(file_path: str, base: Path) -> tuple[dict | None, int]:
     """Process a single file record (used for parallel execution)."""
     try:
-        path_obj = Path(file_path)
-        rel_path = normalize_rel_path(os.path.relpath(file_path, base))
+        # Path traversal protection
+        safe_path = validate_path_within_root(base, file_path)
+        if safe_path is None:
+            return (None, 0)
+
+        path_obj = Path(safe_path)
+        rel_path = normalize_rel_path(os.path.relpath(path_obj, base))
         language = detect_language(rel_path)
         file_stat = path_obj.stat()
         file_size = file_stat.st_size
@@ -1032,6 +1052,11 @@ def clip_chunk_preview(lines: list[str], start_line: int, end_line: int) -> str:
     return '\n'.join(lines[start_line - 1:preview_end]).strip()
 
 
+def _get_chunk_content(lines: list[str], start_line: int, end_line: int) -> str:
+    """Extract the full raw content for a chunk spanning start_line..end_line (1-indexed)."""
+    return '\n'.join(lines[start_line - 1:end_line])
+
+
 def build_chunks(file_records: list[dict]) -> list[dict]:
     # Use semantic chunking when enabled
     if USE_SEMANTIC_CHUNKING:
@@ -1091,6 +1116,7 @@ def build_chunks(file_records: list[dict]) -> list[dict]:
                     'endLine': end_line,
                     'signals': [signal for signal in signals if signal],
                     'preview': clip_chunk_preview(lines, start_line, end_line),
+                    'content': _get_chunk_content(lines, start_line, end_line),
                     'analysisEngine': record.get('analysisEngine'),
                     'analysisConfidence': record.get('analysisConfidence'),
                 })
@@ -1109,6 +1135,7 @@ def build_chunks(file_records: list[dict]) -> list[dict]:
                 'endLine': window_end,
                 'signals': [],
                 'preview': clip_chunk_preview(lines, window_start, window_end),
+                'content': _get_chunk_content(lines, window_start, window_end),
                 'analysisEngine': record.get('analysisEngine'),
                 'analysisConfidence': record.get('analysisConfidence'),
             })
@@ -1270,6 +1297,7 @@ def build_markdown_chunks(record: dict, lines: list[str]) -> list[dict]:
             'endLine': min(len(lines), MAX_CHUNK_LINES),
             'signals': ['documentation'],
             'preview': clip_chunk_preview(lines, 1, min(len(lines), MAX_CHUNK_LINES)),
+            'content': _get_chunk_content(lines, 1, min(len(lines), MAX_CHUNK_LINES)),
             'analysisEngine': record.get('analysisEngine'),
             'analysisConfidence': record.get('analysisConfidence'),
         }]
@@ -1287,6 +1315,7 @@ def build_markdown_chunks(record: dict, lines: list[str]) -> list[dict]:
             'endLine': end_line,
             'signals': [heading] if heading else ['documentation'],
             'preview': clip_chunk_preview(lines, start_line, end_line),
+            'content': _get_chunk_content(lines, start_line, end_line),
             'analysisEngine': record.get('analysisEngine'),
             'analysisConfidence': record.get('analysisConfidence'),
         })
@@ -1420,9 +1449,17 @@ def build_index_files_payload(
     return files_payload
 
 
+def atomic_write_json(path: Path, payload: dict) -> None:
+    """Write JSON atomically: write to .tmp then replace target, preventing partial writes on crash."""
+    import os
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = path.with_suffix(path.suffix + '.tmp')
+    tmp_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding='utf-8')
+    os.replace(str(tmp_path), str(path))
+
+
 def save_index_state_payload(index_state_file: Path, payload: dict) -> None:
-    index_state_file.parent.mkdir(parents=True, exist_ok=True)
-    index_state_file.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding='utf-8')
+    atomic_write_json(index_state_file, payload)
 
 
 def save_index_state(
@@ -1438,8 +1475,12 @@ def save_index_state(
         'generatedAt': utc_now_iso(),
         'sourceFingerprint': source_fingerprint,
         'files': build_index_files_payload(current_signatures, chunks, file_records),
-        'chunks': chunks,
     }
+    # Only store chunks in JSON when FTS5/SQLite is unavailable.
+    # When SQLite is active, the FTS5 index serves as the primary query backend,
+    # and the JSON fallback is redundant for large payloads (saves 10-30s on serialization).
+    if not USE_SQLITE_INDEX:
+        payload['chunks'] = chunks
 
     # Add incremental tracking when enabled
     if USE_INCREMENTAL_MODE:
@@ -1510,9 +1551,13 @@ def load_existing_snapshot(output_file: Path) -> dict | None:
         return None
 
 
-def write_snapshot(output_file: Path, snapshot: dict, chunks: list[dict] | None = None) -> None:
-    output_file.parent.mkdir(parents=True, exist_ok=True)
-    output_file.write_text(json.dumps(snapshot, indent=2, ensure_ascii=False), encoding='utf-8')
+def write_snapshot(
+    output_file: Path,
+    snapshot: dict,
+    chunks: list[dict] | None = None,
+    changed_paths: set[str] | None = None,
+) -> None:
+    atomic_write_json(output_file, snapshot)
 
     # Write to SQLite index when enabled
     if USE_SQLITE_INDEX:
@@ -1536,8 +1581,15 @@ def write_snapshot(output_file: Path, snapshot: dict, chunks: list[dict] | None 
                         'language': chunk.get('language', ''),
                         'signals': chunk.get('signals', []),
                         'preview': chunk.get('preview', ''),
+                        'content': chunk.get('content', ''),
                     })
-                sqlite_index.upsert_chunks(normalized_chunks)
+
+                # Use incremental update when changed_paths is provided, else full rebuild
+                if changed_paths:
+                    print(f'  incremental update for {len(changed_paths):,} changed paths...', file=sys.stderr)
+                    sqlite_index.upsert_chunks_incremental(normalized_chunks, changed_paths)
+                else:
+                    sqlite_index.upsert_chunks(normalized_chunks)
 
                 # Delete stale chunks (not in current snapshot)
                 print(f'  cleaning stale chunks...', file=sys.stderr)
@@ -3790,14 +3842,32 @@ def generate_snapshot(project_path: str, force: bool = False) -> dict:
     output_file = output_dir / SNAPSHOT_FILENAME
     index_state_file = output_dir / INDEX_STATE_FILENAME
 
-    # Scan files
-    files = scan_files(project_path)
-    current_signatures = build_file_signatures(files, project_path)
-    source_fingerprint = build_source_fingerprint(current_signatures)
-    newest_source_mtime = get_newest_source_mtime(files)
+    # Load existing artifacts first (needed for incremental decisions)
     existing_snapshot = load_existing_snapshot(resolve_snapshot_file(output_dir))
     existing_index_state = load_existing_index_state(resolve_index_state_file(output_dir))
 
+    # Phase 1: Scan files
+    print(f'  scanning files...', file=sys.stderr)
+    files = scan_files(project_path)
+    print(f'  found {len(files):,} files', file=sys.stderr)
+
+    # Phase 2: Compute file signatures (incremental when previous state exists)
+    print(f'  computing file signatures...', file=sys.stderr)
+    if existing_index_state and not force:
+        previous_files = existing_index_state.get('files', {})
+        previous_commit = (existing_snapshot or {}).get('git', {}).get('commit')
+        current_commit = run_git_command(project_path, ['rev-parse', 'HEAD'])
+        current_signatures, _hashed_paths, _audit_cursor = build_incremental_file_signatures(
+            files, project_path, previous_files,
+            previous_commit=previous_commit, current_commit=current_commit,
+        )
+    else:
+        current_signatures = build_file_signatures(files, project_path)
+
+    source_fingerprint = build_source_fingerprint(current_signatures)
+    newest_source_mtime = get_newest_source_mtime(files)
+
+    # Fast path: source fingerprint unchanged → reuse cached snapshot
     if (
         existing_snapshot
         and not force
@@ -3822,9 +3892,16 @@ def generate_snapshot(project_path: str, force: bool = False) -> dict:
             existing_snapshot.get('importantFiles', []),
         )
         write_snapshot(output_file, existing_snapshot, chunks=cached_chunks)
+        print(
+            f"  Snapshot reused (fingerprint unchanged): {output_file}",
+            file=sys.stderr,
+        )
         return existing_snapshot
 
+    # Phase 3: Read and analyze all files
+    print(f'  reading and analyzing {len(files):,} files...', file=sys.stderr)
     file_records, total_lines = collect_file_records(files, project_path)
+    print(f'  read {len(file_records):,} files ({total_lines:,} lines)', file=sys.stderr)
 
     # Threading: submit git stats early (I/O-bound subprocess calls), overlap with CPU work
     _git_stats_executor = ThreadPoolExecutor(max_workers=2)
@@ -3848,7 +3925,9 @@ def generate_snapshot(project_path: str, force: bool = False) -> dict:
         important_files = build_important_files(file_records, entry_points, workspace)
         modules = summarize_modules_from_records(file_records)
         analysis = build_analysis_metadata(file_records)
+        print(f'  building chunks...', file=sys.stderr)
         chunks = build_chunks(file_records)
+        print(f'  built {len(chunks):,} chunks', file=sys.stderr)
 
         chunk_catalog = build_chunk_catalog(chunks, important_files)
         index_metadata = build_index_metadata(
@@ -3944,6 +4023,7 @@ def generate_snapshot(project_path: str, force: bool = False) -> dict:
 
         # Infer architecture
         architecture = infer_architecture(files, project_path)
+        print(f'  building code graph...', file=sys.stderr)
         graph = build_code_graph(file_records, unique_routes, unique_models, key_functions, workspace, Path(project_path))
         external_context = collect_external_context(project_path, file_records)
 
@@ -3958,6 +4038,7 @@ def generate_snapshot(project_path: str, force: bool = False) -> dict:
     finally:
         _git_stats_executor.shutdown(wait=False)
 
+    print(f'  building retrieval artifacts...', file=sys.stderr)
     retrieval, context_packs = build_retrieval_artifacts(chunks, important_files, graph, external_context)
 
     # Build fuzzy symbol index
@@ -4001,6 +4082,7 @@ def generate_snapshot(project_path: str, force: bool = False) -> dict:
     }
 
     # Save to file
+    print(f'  writing snapshot and FTS5 index...', file=sys.stderr)
     write_snapshot(output_file, snapshot, chunks=chunks)
     try:
         save_index_state(index_state_file, current_signatures, chunks, file_records, source_fingerprint)
@@ -4069,7 +4151,10 @@ def refresh_index(project_path: str) -> dict:
         write_snapshot(output_file, existing_snapshot, chunks=cached_chunks)
         return existing_snapshot
 
+    print(f'  scanning files...', file=sys.stderr)
     files = scan_files(project_path)
+    print(f'  found {len(files):,} files', file=sys.stderr)
+
     audit_cursor = int((existing_snapshot.get('freshness') or {}).get('hashAuditCursor') or 0)
     current_signatures, hashed_candidate_paths, next_audit_cursor = build_incremental_file_signatures(
         files,
@@ -4117,8 +4202,10 @@ def refresh_index(project_path: str) -> dict:
         write_snapshot(output_file, existing_snapshot, chunks=previous_chunks)
         return existing_snapshot
 
+    print(f'  processing {len(changed_or_new_paths):,} changed/new files...', file=sys.stderr)
     changed_files = [str(base / path) for path in sorted(changed_or_new_paths)]
     changed_records, _ = collect_file_records(changed_files, project_path)
+    print(f'  chunking changed files...', file=sys.stderr)
     changed_chunks = build_chunks(changed_records)
     changed_payload = build_index_files_payload(current_signatures, changed_chunks, changed_records)
 
@@ -4135,13 +4222,14 @@ def refresh_index(project_path: str) -> dict:
     }
     next_files_payload.update(changed_payload)
 
-    next_index_state = {
+    next_index_state: dict = {
         'version': INDEX_STATE_VERSION,
         'generatedAt': utc_now_iso(),
         'sourceFingerprint': source_fingerprint,
         'files': next_files_payload,
-        'chunks': next_chunks,
     }
+    if not USE_SQLITE_INDEX:
+        next_index_state['chunks'] = next_chunks
     save_index_state_payload(index_state_file, next_index_state)
 
     existing_snapshot['generatedAt'] = utc_now_iso()
@@ -4166,7 +4254,14 @@ def refresh_index(project_path: str) -> dict:
         next_chunks,
         existing_snapshot.get('importantFiles', []),
     )
-    write_snapshot(output_file, existing_snapshot, chunks=next_chunks)
+    changed_paths_for_fts5 = changed_or_new_paths | removed_paths
+    print(f'  writing refreshed snapshot and FTS5 index...', file=sys.stderr)
+    write_snapshot(output_file, existing_snapshot, chunks=next_chunks, changed_paths=changed_paths_for_fts5)
+    print(
+        f"  Incremental refresh done: {len(next_chunks):,} chunks, "
+        f"{len(changed_or_new_paths):,} changed, {len(removed_paths):,} removed",
+        file=sys.stderr,
+    )
     return existing_snapshot
 
 
