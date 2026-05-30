@@ -25,17 +25,12 @@ jurisdiction notes and native-mobile parity. Heuristic rules and
 linter-checked items live in sibling craft files; WCAG SC numbers map to
 specific rules below rather than being re-listed.
 
-## The legal floor changes by jurisdiction
+## Legal floor
 
-- **EU (EAA, enforcement live 2025-06-28):** EN 301 549 v3.2.1 is the OJ-cited harmonised standard; it references **WCAG 2.1 AA**. EN 301 549 v4.1.1 (which incorporates WCAG 2.2's nine new SCs) is OJ-citation-targeted late 2026 / 2027. Until then, EAA references WCAG 2.1. The Web Accessibility Directive (WAD, EU 2016/2102) covers public-sector bodies separately and also points at EN 301 549.
-- **US public sector — ADA Title II 2024 final rule:** **WCAG 2.1 AA**. The 2026-04-20 IFR slipped deadlines: 2027-04-26 for jurisdictions with population ≥ 50,000; 2028-04-26 for sub-50,000 and special districts.
-- **US federal procurement — Section 508 (Revised 508 Standards):** harmonised with EN 301 549 → references **WCAG 2.0 AA** in the current published rev. The Access Board has WCAG 2.x updates in flight; until they ship, federal IT procurement floor is WCAG 2.0.
-- **US private sector — ADA Title III:** no federal regulation specifies a technical standard. Settlements and DOJ guidance routinely cite **WCAG 2.1 AA** as the de-facto target, but the legal mechanism is case-by-case, not rule-based.
-- **ISO/IEC 40500:2025** (October 2025) ratified WCAG 2.2 verbatim. Does not by itself change EU or US legal floors.
-
-**Practical rule for craft:** target **WCAG 2.2 AA** as the working
-ceiling. It clears the WCAG 2.1 AA legal floor in both jurisdictions
-and prepares for v4.1.1. Anything below 2.2 AA is craft debt.
+Target **WCAG 2.2 AA** as the working standard. It clears the WCAG 2.1 AA
+legal floor in both EU (EN 301 549) and US (ADA Title II / Section 508 /
+Title III de-facto), and prepares for upcoming EN 301 549 v4.1.1.
+Anything below 2.2 AA is craft debt.
 
 ## Color contrast
 

@@ -14,18 +14,6 @@ high-polish product demos, and visually led prototypes.
   cards.
 - Keep the system tight: two typefaces max and one accent color by default.
 
-## Working Model
-
-Before building, write:
-
-- visual thesis: one sentence describing mood, material, and energy
-- content plan: hero, support, detail, final CTA
-- interaction thesis: two or three motion ideas that change the feel of the
-  page
-
-Each section gets one job, one dominant visual idea, and one primary takeaway
-or action.
-
 ## Landing Pages
 
 Default sequence:

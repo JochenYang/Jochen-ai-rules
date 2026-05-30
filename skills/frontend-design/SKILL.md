@@ -263,12 +263,9 @@ When the user wants options:
 
 ### Color And Surface
 
-- Commit to one coherent palette.
-- Prefer one accent color by default.
-- Avoid purple-on-white AI gradients and washed-out startup palettes.
-- Avoid pure `#000000`; use tinted dark neutrals or off-black.
-- Use CSS variables for consistency.
-- Tint shadows to the palette instead of using generic black presets.
+- Commit to one coherent palette with one accent color. See `craft/color.md` for palette structure, contrast min, and dark theme rules.
+- Avoid pure `#000000`, purple-on-white AI gradients, and generic black shadows.
+- Use CSS variables for token-driven consistency.
 
 ### Layout
 
@@ -415,19 +412,9 @@ Before delivery, verify:
 
 ### Anti-AI-Slop Checks
 
-These rules prevent the most common AI-design tells. Reference
-`craft/anti-ai-slop.md` for the full checklist:
-
-- no default indigo accent (`#6366f1`, `#4f46e5`, etc.) — use the chosen
-  design system's accent color
-- no two-stop "trust" gradients (purple→blue, blue→cyan) on hero sections
-- no emoji as feature icons (`✨`, `🚀`, `🎯`, `⚡`, `🔥`, `💡`) — use
-  monoline SVG with `currentColor`
-- no sans-serif on display text when the design system specifies a serif
-- no rounded cards with colored left-border accent ("AI dashboard tile")
-- no invented metrics ("10× faster", "99.9% uptime") without a real source
-- no filler copy — lorem ipsum, "feature one / two / three", placeholder text
-- no external placeholder image CDNs (unsplash.com, placehold.co, etc.)
+Run `craft/anti-ai-slop.md` as the quality gate before shipping. Covers:
+indigo accent, trust gradients, emoji icons, wrong display fonts, AI
+dashboard tiles, invented metrics, filler copy, and external placeholder CDNs.
 
 ## Final Output Contract
 
