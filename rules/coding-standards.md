@@ -65,50 +65,27 @@ Escalate before closing the task when:
 
 ## Anti-Rationalization Pattern
 
-This pattern prevents common rationalization failures where models skip verification steps.
+This pattern prevents rationalization failures where models skip verification steps.
 
-### Pre-Execution Traps
+**Pre-Execution Traps — when you feel like skipping, do it instead:**
+- "The code looks right" → Execute and verify, don't just read
+- "Tests already passed" → Run them yourself, trust nothing
+- "The logic is simple" → Prove it with tests
+- "I already read the file" → Files change, re-read before editing
+- "It worked before" → Dependencies change, retest
+- "No errors in output" → Check exit codes and side effects
 
-When planning or implementing, you may feel the urge to skip these checks:
+**Decision Traps — question every assumption:**
+- "This is the right approach" → What would make this wrong?
+- "No breaking changes" → Did you verify all callers?
+- "Performance is fine" → Did you measure it?
+- "It's tested" → Is coverage >80% on changed paths?
+- "Edge cases are handled" → Did you enumerate them?
 
-| Urge                      | Reality                               | Correct Action            |
-|---------------------------|---------------------------------------|---------------------------|
-| "The code looks right"    | Reading ≠ verification. Run it.       | Execute and verify output |
-| "Tests already passed"    | Trust nothing. Verify independently.  | Run tests yourself        |
-| "The logic is simple"     | Prove it with tests.                  | Write verification tests  |
-| "I already read the file" | Files change. Read the current state. | Verify before editing     |
-| "It worked before"        | Dependencies may have changed.        | Retest the affected flow  |
-| "No errors in output"     | Check exit code and side effects.     | Verify full completion    |
-
-### Decision Traps
-
-When making decisions, question these assumptions:
-
-| Assumption                   | Counter-Question                   |
-|------------------------------|------------------------------------|
-| "This is the right approach" | What would make this wrong?        |
-| "No breaking changes"        | Did you verify all callers?        |
-| "Performance is fine"        | Did you measure it?                |
-| "It's tested"                | Is coverage >80% on changed paths? |
-| "Edge cases are handled"     | Did you enumerate them?            |
-
-### Remember
-
-**When you feel like skipping a verification step, that's exactly when you should do it.**
-
-Skip-proof checklist:
-
+**Skip-proof checklist:**
 - [ ] Did I run the code, not just read it?
 - [ ] Did I verify the test results myself?
-- [ ] Did I check for side effects?
-- [ ] Did I confirm exit codes?
+- [ ] Did I check for side effects, confirm exit codes?
 - [ ] Did I measure performance when it matters?
 
-### How to Apply
-
-Reference this pattern in Skill execution when:
-
-- Starting a new implementation phase
-- Reviewing someone else's work
-- Declaring a task complete
-- Skipping a verification step feels "obvious"
+Reference this when starting implementation, reviewing work, or declaring a task complete.

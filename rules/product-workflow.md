@@ -43,30 +43,17 @@ Build a real, shippable, maintainable product. Avoid demo-only delivery.
 
 #### Design Requirements
 
-- Keep interface simple, readable, and consistent.
-- Reuse existing theme tokens and component library first.
-- Avoid overly flashy gradients and heavy visual effects.
-- Limit primary color count (recommended <= 3).
-- In dark mode, avoid pure black `#000`.
-- Use design tokens for colors, spacing, and typography.
-- Unified spacing scale (4/8/12/16/24/32...).
-- Unified radius scale (4/8/12...).
-- Consistent elevation and shadow depth.
-- Clear visual hierarchy for primary vs secondary actions.
+- Reuse existing design tokens; keep palette <= 3 colors, avoid pure black `#000` in dark mode
+- Use unified spacing (4/8/12/16/24/32) and radius (4/8/12) scales with consistent elevation
+- Maintain clear visual hierarchy for primary vs secondary actions
 
 #### Accessibility Requirements (WCAG 2.1 AA)
 
-- Contrast >= 4.5:1 for normal text.
-- Contrast >= 3:1 for large text.
-- Keyboard navigable interactions.
-- Visible focus states.
-- Semantic HTML structure.
+- Meet WCAG 2.1 AA: contrast >= 4.5:1 (normal) / 3:1 (large), keyboard navigation, visible focus, semantic HTML
 
 #### Responsive Requirements
 
-- Build mobile-first.
-- Scale spacing and layout progressively for larger screens.
-- Keep interaction targets accessible on touch devices.
+- Build mobile-first with progressive enhancement; ensure touch targets are accessible
 
 ### 5. Handoff
 
