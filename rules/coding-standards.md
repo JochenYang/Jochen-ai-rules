@@ -1,10 +1,6 @@
 ---
 name: coding-standards
 description: Mandatory engineering standards for code quality.
-scope: implementation
-applies_to: [code-implementer, tdd-guide, database-migration, devops-engineer]
-priority: critical
-always_active: true
 ---
 
 # Coding Standards
@@ -13,19 +9,20 @@ always_active: true
 
 ## Core Rules
 
-1. Minimal change: modify only what is required by the goal.
+1. **Correct minimal change**: change only what the goal requires; prefer the **shortest correct** implementation. Not a license for hacks, missing validation, or wrong stack choices; not a license for over-engineering, extra layers, or premature abstraction. Correct and maintainable first; then simple and small.
 2. Readability first: clear naming, short functions, shallow nesting.
-3. Comments must explain business decisions and algorithm choices, not obvious code logic.
-4. Treat inputs and shared state as immutable.
+3. Comments explain design intent, constraints, or non-obvious exceptions; do not restate what clear code already says or record task history. Comment language follows project conventions; docs and user-facing text follow the target audience and localization strategy.
+4. Avoid mutating inputs or shared state unless ownership, compatibility impact, and concurrency implications are explicit.
 5. Avoid `any` unless an explicit boundary requires it.
 6. Validate all external inputs before use.
 7. Handle errors with actionable context.
+8. No leftover debug logs, temp files, unrelated edits, or hardcoded secrets/paths.
 
-## Immutability Rule
+## State and API Change Rule
 
-- Never mutate function arguments.
-- Never mutate shared state directly.
-- Local mutation is allowed only on fresh local copies with clear justification.
+- Prefer immutable inputs and local copies.
+- Do not change public function contracts or mutate shared state without checking callers, ownership, and concurrent access.
+- Local mutation is allowed for newly created local objects when it improves clarity.
 
 ## Error Handling Rule
 
@@ -40,7 +37,7 @@ always_active: true
 
 ## Size Guidelines
 
-- Function: <= 50 lines. File: 200-400 lines preferred, <= 800 hard limit. Nesting depth: <= 4.
+- **Code files**: Function <= 50 lines and file 200-400 lines are review signals, not mechanical limits. Investigate files above 800 lines unless generated, vendored, or required by an established framework convention. Nesting depth: <= 4 where practical.
 
 ## Quality Gate
 
@@ -51,8 +48,9 @@ always_active: true
 ## Testing Norms
 
 - Never mark a task complete without proof (test results, behavior delta, or log snippet).
-- Bugfix: reproduce with failing test first, apply minimal fix, then refactor.
-- Coverage baseline: >= 80% overall; high-risk modules (auth, security, business logic) target 100%.
+- Bugfix: reproduce with failing test first, apply a **correct minimal** fix (short and right, not a hack), then refactor only if needed.
+- Cover changed behavior and the failure paths that define correctness. For high-risk modules (auth, security, business logic), test critical properties and boundary failures. Coverage is a supporting signal, never a substitute for a relevant assertion.
+- If a project has no runnable tests, use the strongest available evidence: typecheck, lint, smoke command, diff review, or behavior log.
 - Use AAA structure; behavior-driven test names.
 
 ## Testing Escalation Rules
@@ -79,7 +77,7 @@ This pattern prevents rationalization failures where models skip verification st
 - "This is the right approach" → What would make this wrong?
 - "No breaking changes" → Did you verify all callers?
 - "Performance is fine" → Did you measure it?
-- "It's tested" → Is coverage >80% on changed paths?
+- "It's tested" → Can this check fail while the user-visible claim is still false?
 - "Edge cases are handled" → Did you enumerate them?
 
 **Skip-proof checklist:**

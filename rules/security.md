@@ -1,11 +1,6 @@
-﻿---
+---
 name: security
 description: Mandatory security baseline for all code changes.
-scope: security
-applies_to: ["*"]
-priority: critical
-always_active: true
-related_workflows: [secure-feature]
 ---
 
 # Security Guidelines
@@ -34,7 +29,7 @@ related_workflows: [secure-feature]
 2. Patch critical vulnerabilities first.
 3. Rotate leaked credentials immediately.
 4. Search codebase for similar patterns and patch globally.
-5. Trigger `security-reviewer` when scope includes auth/payment/PII/secrets.
+5. Trigger `security-auditor` skill when scope includes auth/payment/PII/secrets.
 
 ## High-Risk Escalation (Mandatory)
 
