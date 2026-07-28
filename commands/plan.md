@@ -1,5 +1,5 @@
 ---
-argument-hint: <task-description>
+argument-hint: "<task-description>"
 description: Create an approval-gated implementation plan before coding. Restates requirements, identifies risks, and outputs phased steps that wait for user confirmation.
 ---
 
