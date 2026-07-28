@@ -1,5 +1,5 @@
 ---
-argument-hint: [task-description]
+argument-hint: "[task-description]"
 description: Run a structured code review focused on correctness, security, performance, and maintainability. Invokes the code-reviewer agent and returns prioritized findings with a recommendation.
 ---
 

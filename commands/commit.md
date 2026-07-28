@@ -1,5 +1,5 @@
 ---
-argument-hint: [--no-verify] [--style=simple|full] [--type=feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert]
+argument-hint: "[--no-verify] [--style=simple|full] [--type=feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert]"
 description: Create Conventional Commit messages with optional pre-commit checks. Prepares focused commit metadata in simple or full style before committing.
 ---
 
