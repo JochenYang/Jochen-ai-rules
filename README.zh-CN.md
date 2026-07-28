@@ -187,6 +187,26 @@ git push origin v1.3.1
 | `/branch`         | Git Worktree 管理        |
 | `/build-fix`      | 修复构建错误             |
 | `/refactor-clean` | 清理死代码               |
+
+### Frontmatter 约定：`argument-hint`
+
+`argument-hint` 必须是 YAML string。值含 YAML 会当作 flow 语法的字符
+（`[`、`]`、`<`、`>`、`|`、`"` 等）时，**整个值必须用双引号包裹**，确保解析为 string：
+
+```yaml
+# 正确 — quoted string
+argument-hint: "[--no-verify] [--style=simple|full] [--type=feat|fix|docs]"
+argument-hint: "<task-description>"
+
+# 错误 — 会被解析为 flow sequence（数组）甚至 YAML parse 报错
+argument-hint: [--no-verify] [--style=simple|full]
+argument-hint: [scope]
+argument-hint: <task-description>
+```
+
+裸写 `[...]` 会被 YAML 当作 flow sequence，下游 slash-command 加载器
+（GitHub Copilot CLI ≥ 1.0.65 等）会拒绝加载，导致命令从 CLI 菜单消失。
+原始问题见 issue [#1](https://github.com/JochenYang/Jochen-ai-rules/issues/1)。
 ## 智能体 (Agents)
 
 | Agent                   | 说明                                   |

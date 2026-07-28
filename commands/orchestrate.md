@@ -1,5 +1,5 @@
 ---
-argument-hint: <feature|feature-tdd|bugfix|refactor|ui-design|secure-feature|db-feature|performance-audit|deploy> <task-description> | custom "<agents>" "<task-description>"
+argument-hint: "<feature|feature-tdd|bugfix|refactor|ui-design|secure-feature|db-feature|performance-audit|deploy> <task-description> | custom \"<agents>\" \"<task-description>\""
 description: Run sequential multi-agent workflows with approval gates, structured handoffs, and repair loops. Coordinates the right agent chain and finishes at a review recommendation.
 ---
 

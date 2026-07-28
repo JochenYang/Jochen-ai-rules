@@ -192,6 +192,28 @@ git push origin v1.3.1
 | `/branch`         | Git worktree management                          |
 | `/build-fix`      | Fix build errors                                 |
 | `/refactor-clean` | Clean up dead code                               |
+
+### Frontmatter convention: `argument-hint`
+
+`argument-hint` must be a YAML string. When the value contains characters
+that YAML would interpret as flow syntax (`[`, `]`, `<`, `>`, `|`, `"`, etc.),
+**wrap the whole value in double quotes** so it parses as a string:
+
+```yaml
+# Correct — quoted string
+argument-hint: "[--no-verify] [--style=simple|full] [--type=feat|fix|docs]"
+argument-hint: "<task-description>"
+
+# Wrong — parses as a flow sequence (array) or causes YAML parse error
+argument-hint: [--no-verify] [--style=simple|full]
+argument-hint: [scope]
+argument-hint: <task-description>
+```
+
+Bare `[...]` is parsed as a YAML flow sequence, which downstream slash-command
+loaders (GitHub Copilot CLI ≥ 1.0.65, etc.) reject, causing the command to
+disappear from the CLI menu. See issue [#1](https://github.com/JochenYang/Jochen-ai-rules/issues/1)
+for the original report.
 ## Agents
 
 | Agent                   | Description                                              |

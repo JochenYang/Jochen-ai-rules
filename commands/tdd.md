@@ -1,5 +1,5 @@
 ---
-argument-hint: <task-description>
+argument-hint: "<task-description>"
 description: Run a TDD implementation workflow for new code or bug fixes. Invokes the tdd-guide agent to produce RED-GREEN-REFACTOR evidence before review.
 ---
 
